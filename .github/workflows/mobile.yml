@@ -1,0 +1,36 @@
+name: mobile
+
+on:
+  pull_request:
+    paths: ["apps/mobile/**", "contracts/**", "pnpm-lock.yaml", "pnpm-workspace.yaml", "package.json", ".github/workflows/mobile.yml"]
+  push:
+    branches: [main]
+    paths: ["apps/mobile/**", "contracts/**", "pnpm-lock.yaml", "pnpm-workspace.yaml", "package.json", ".github/workflows/mobile.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Cliente da API está em dia (falha se mudou)
+        run: pnpm gen:api:check
+      - name: Lint (ESLint + camadas) e tsc
+        run: pnpm lint
+      - name: Lint de arquitetura barra violações
+        run: pnpm lint-arch-test
+      - name: Testes
+        run: pnpm test --coverage
+      - name: Export web
+        run: pnpm exec expo export --platform web

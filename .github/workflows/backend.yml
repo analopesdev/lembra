@@ -1,0 +1,45 @@
+name: backend
+
+on:
+  pull_request:
+    paths: ["backend/**", "contracts/**", ".github/workflows/backend.yml"]
+  push:
+    branches: [main]
+    paths: ["backend/**", "contracts/**", ".github/workflows/backend.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Instala ferramentas
+        run: |
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.9.0
+          go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
+      - name: Config do lint está em dia (gerada de scripts/modules.txt)
+        run: make lint-config && git diff --exit-code -- .golangci.yml
+      - name: Código gerado está em dia (falha se mudou)
+        run: make gen-check
+      - name: Lint (inclui regras de arquitetura)
+        run: make lint
+      - name: Lint de arquitetura barra violações
+        run: make lint-arch-test
+      - name: Testes
+        run: make test
+      - name: Build
+        run: make build
+
+  # Integração com testcontainers (Postgres, MinIO) entra na Etapa 3.
+  # test-int:
+  #   needs: check
+  #   steps: [... make test-int]
