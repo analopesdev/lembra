@@ -11,3 +11,6 @@ bin/
 .DS_Store
 .idea/
 .vscode/
+.cursor/
+*.md
+docs

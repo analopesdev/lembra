@@ -522,7 +522,7 @@ linters:
         review-domain:
           list-mode: strict
           files: ["**/internal/modules/review/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel, github.com/open-spaced-repetition/go-fsrs/v4]
         review-domain-io:
           files: ["**/internal/modules/review/domain/**", "!$test"]
           deny:

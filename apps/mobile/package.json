@@ -22,12 +22,14 @@
     "react-native-web": "^0.21.4",
     "react-native-worklets": "0.13.0",
     "tailwindcss": "^3.4.19",
+    "ts-fsrs": "^6.0.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@testing-library/react-native": "^14.1.0",
     "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
     "@types/react": "~19.3.0",
     "@types/react-test-renderer": "^19.3.1",
     "eslint": "^9.39.5",
@@ -35,6 +37,7 @@
     "eslint-plugin-boundaries": "^7.4.4",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-native-a11y": "^3.5.1",
+    "fast-check": "^4.10.3",
     "globals": "^17.14.0",
     "jest": "^30.5.2",
     "jest-expo": "^58.0.15",
@@ -56,7 +59,9 @@
     "lint": "eslint . && tsc --noEmit",
     "lint-arch-test": "bash scripts/lint-arch-test.sh",
     "test": "jest",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "gen:vectors": "node scripts/gen-fsrs-vectors.mjs",
+    "gen:vectors:check": "pnpm gen:vectors && git diff --exit-code -- ../../contracts/fsrs-vectors"
   },
   "private": true,
   "jest": {

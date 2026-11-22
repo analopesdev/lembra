@@ -70,4 +70,3 @@ func AccessLog(clock kernel.Clock) func(http.Handler) http.Handler {
 		})
 	}
 }
-

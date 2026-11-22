@@ -26,6 +26,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Cliente da API está em dia (falha se mudou)
         run: pnpm gen:api:check
+      - name: Vetores FSRS estão em dia (gerados com ts-fsrs fixado)
+        run: pnpm gen:vectors:check
       - name: Lint (ESLint + camadas) e tsc
         run: pnpm lint
       - name: Lint de arquitetura barra violações

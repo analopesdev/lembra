@@ -6,6 +6,14 @@ cd "$(dirname "$0")/.."
 MOD=github.com/anamorais/lembra/backend
 mapfile -t MODULES < scripts/modules.txt
 
+# Dependências de terceiros permitidas no domain de cada módulo (além de stdlib e kernel).
+extra_allow() {
+  case "$1" in
+    review) echo ", github.com/open-spaced-repetition/go-fsrs/v4" ;; # ADR-0006
+    *) echo "" ;;
+  esac
+}
+
 {
 cat <<YAML
 # GERADO por scripts/gen-golangci.sh. Não edite à mão.
@@ -30,7 +38,7 @@ cat <<YAML
         ${m}-domain:
           list-mode: strict
           files: ["**/internal/modules/${m}/domain/**", "!\$test"]
-          allow: [\$gostd, ${MOD}/internal/kernel]
+          allow: [\$gostd, ${MOD}/internal/kernel$(extra_allow "$m")]
 YAML
 cat <<YAML
         ${m}-domain-io:

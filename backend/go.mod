@@ -5,6 +5,8 @@ go 1.26.0
 require (
 	github.com/getkin/kin-openapi v0.153.0
 	github.com/google/uuid v1.6.0
+	github.com/open-spaced-repetition/go-fsrs/v4 v4.0.0
+	pgregory.net/rapid v1.3.0
 )
 
 require (
