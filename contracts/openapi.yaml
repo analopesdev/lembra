@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: Lembra API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/health:
+    get:
+      operationId: getHealth
+      summary: Verifica se a API está no ar
+      responses:
+        "200":
+          description: API saudável
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        default:
+          description: Erro
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+    Problem:
+      description: RFC 9457 problem details
+      type: object
+      required: [title, status]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
