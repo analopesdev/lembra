@@ -1,2 +1,4 @@
 packages:
   - "apps/*"
+# Metro/Expo precisam de node_modules plano.
+nodeLinker: hoisted

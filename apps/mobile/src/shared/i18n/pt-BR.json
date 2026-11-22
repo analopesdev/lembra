@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "today": "Hoje",
+    "quizzes": "Quizzes",
+    "collections": "Coleções",
+    "progress": "Progresso"
+  },
+  "empty": {
+    "title": "Em breve",
+    "description": "Esta tela ainda não tem conteúdo."
+  }
+}
