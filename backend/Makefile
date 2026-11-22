@@ -1,6 +1,9 @@
 GOBIN ?= $(shell go env GOPATH)/bin
 export PATH := $(PATH):$(GOBIN)
 
+# Só pacotes com testes: -cover em pacote sem teste quebra quando o toolchain é trocado automaticamente.
+TEST_PKGS := $(shell go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+
 .PHONY: dev gen gen-check test test-int lint lint-arch-test migrate-up build lint-config
 
 dev:
@@ -13,7 +16,7 @@ gen-check: gen
 	git diff --exit-code -- internal/platform/apigen
 
 test:
-	go test -race -cover ./...
+	go test -race -cover $(TEST_PKGS)
 
 test-int:
 	go test -tags=integration ./...
