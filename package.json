@@ -2,8 +2,5 @@
   "name": "lembra",
   "private": true,
   "packageManager": "pnpm@12.16.1",
-  "engines": { "node": ">=20" },
-  "scripts": {
-    "prepare": "husky || true"
-  }
+  "engines": { "node": ">=20" }
 }

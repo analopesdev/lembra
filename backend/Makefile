@@ -1,0 +1,34 @@
+GOBIN ?= $(shell go env GOPATH)/bin
+export PATH := $(PATH):$(GOBIN)
+
+.PHONY: dev gen gen-check test test-int lint lint-arch-test migrate-up build lint-config
+
+dev:
+	go run ./cmd/api
+
+gen:
+	oapi-codegen -config oapi-codegen.yaml ../contracts/openapi.yaml
+
+gen-check: gen
+	git diff --exit-code -- internal/platform/apigen
+
+test:
+	go test -race -cover ./...
+
+test-int:
+	go test -tags=integration ./...
+
+lint-config:
+	./scripts/gen-golangci.sh
+
+lint:
+	golangci-lint run ./...
+
+lint-arch-test:
+	./scripts/lint-arch-test.sh
+
+migrate-up:
+	@echo "sem migrações ainda (Etapa 3)"
+
+build:
+	go build -o bin/ ./cmd/...

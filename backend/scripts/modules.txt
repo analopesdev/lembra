@@ -1,0 +1,10 @@
+auth
+collections
+cards
+sources
+media
+review
+quiz
+habit
+ai
+sync
