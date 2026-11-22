@@ -132,3 +132,11 @@ func TestRecoverTurnsPanicInto500(t *testing.T) {
 		t.Fatalf("status = %d", rec.Code)
 	}
 }
+
+func TestUnknownRouteIsProblemJSON(t *testing.T) {
+	rec := httptest.NewRecorder()
+	newHandler(&bytes.Buffer{}).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/nada", nil))
+	if rec.Code != 404 || rec.Header().Get("Content-Type") != "application/problem+json" {
+		t.Fatalf("status=%d content-type=%q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+}
