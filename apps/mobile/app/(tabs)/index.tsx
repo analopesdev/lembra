@@ -1,5 +1,8 @@
+import { useRouter } from "expo-router";
+
 import { TodayScreen } from "@/features/today";
 
 export default function Index() {
-  return <TodayScreen />;
+  const router = useRouter();
+  return <TodayScreen onStartSession={() => router.push("/revisao/sessao")} />;
 }

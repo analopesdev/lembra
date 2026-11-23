@@ -7,6 +7,8 @@ const OUT = resolve(__dirname, "results/visual");
 
 const SCREENS: { name: string; route: string; ref?: string }[] = [
   { name: "hoje", route: "/dev/today", ref: "hoje" },
+  { name: "revisao-frente", route: "/dev/revisao-frente", ref: "revisao-responder" },
+  { name: "revisao-verso", route: "/dev/revisao-verso", ref: "revisao-resultado" },
   { name: "adicionar", route: "/dev/adicionar" },
 ];
 const THEMES = [
