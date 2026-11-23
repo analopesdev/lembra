@@ -72,3 +72,29 @@ export function deriveState(history: readonly ReviewEvent[], params: FsrsParams,
   for (const ev of history) card = step(card, ev, params);
   return toCardState(card);
 }
+
+/** Estado de um card que nunca foi revisado, vencendo em `now` (injetado). */
+export function initialState(now: Date): CardState {
+  return {
+    due: now,
+    lastReview: null,
+    stability: 0,
+    difficulty: 0,
+    state: 0,
+    reps: 0,
+    lapses: 0,
+    scheduledDays: 0,
+  };
+}
+
+/**
+ * Chance de lembrar agora (R), pela curva de esquecimento do FSRS-6. Card novo (S = 0) → 0.
+ * Mesma fórmula do ts-fsrs, para a tela Hoje poder calcular sem instanciar o agendador.
+ */
+export function retrievability(state: CardState, now: Date, weights: readonly number[]): number {
+  if (state.lastReview === null || state.stability <= 0) return 0;
+  const decay = -(weights[20] ?? 0.1542);
+  const factor = Math.exp(Math.log(0.9) / decay) - 1;
+  const elapsedDays = Math.max(0, (now.getTime() - state.lastReview.getTime()) / 86_400_000);
+  return Math.pow(1 + (factor * elapsedDays) / state.stability, decay);
+}

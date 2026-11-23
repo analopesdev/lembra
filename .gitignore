@@ -14,3 +14,5 @@ bin/
 .cursor/
 *.md
 docs
+e2e/playwright/results/
+test-results/
