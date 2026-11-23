@@ -56,6 +56,8 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...a11y.configs.all.rules,
+      // A dica descreve resultados não óbvios; exigi-la em todo rótulo polui leitores de tela (ADR-0029).
+      "react-native-a11y/has-accessibility-hint": "off",
       "@typescript-eslint/no-explicit-any": "error",
       "no-restricted-properties": [
         "error",
