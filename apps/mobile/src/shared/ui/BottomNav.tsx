@@ -3,7 +3,7 @@ import { Plus } from "lucide-react-native";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { Icon } from "./Icon";
-import { radius, space } from "./theme";
+import { space } from "./theme";
 import { Text } from "./Text";
 import { useTheme } from "./useTheme";
 
@@ -71,22 +71,23 @@ const styles = StyleSheet.create({
     right: space.lg,
     bottom: space["2xl"],
     height: 68,
-    borderRadius: radius.xl,
+    borderRadius: 22,
     borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: space.sm,
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
   },
   tab: {
     minHeight: 44,
     minWidth: 44,
-    borderRadius: radius.pill,
-    paddingHorizontal: space.md,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
   },
-  add: { width: 52, height: 52, borderRadius: radius.lg, alignItems: "center", justifyContent: "center" },
+  add: { width: 52, height: 52, borderRadius: 18, alignItems: "center", justifyContent: "center" },
 });

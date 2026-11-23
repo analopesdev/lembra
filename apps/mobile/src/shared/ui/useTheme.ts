@@ -1,16 +1,24 @@
 import { useColorScheme } from "react-native";
+import { useSyncExternalStore } from "react";
 
 import { themes, type ThemeColors, type ThemeName } from "./theme";
 
-/** Mesmas chaves do kit, valores como string (claro e escuro têm hexes diferentes). */
 export type Colors = Record<keyof ThemeColors, string>;
 
-/**
- * Tema ativo: segue o sistema (`useColorScheme`). A opção manual Claro/Escuro/Automático das
- * Configurações entra com a tela de Configurações (DESIGN.md).
- */
+const subscribe = () => () => undefined;
+
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
+}
+
 export function useThemeName(): ThemeName {
-  return useColorScheme() === "dark" ? "escuro" : "claro";
+  const scheme = useColorScheme();
+  const hydrated = useHydrated();
+  return hydrated && scheme === "dark" ? "escuro" : "claro";
 }
 
 export function useTheme(): Colors {

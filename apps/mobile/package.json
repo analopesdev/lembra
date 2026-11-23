@@ -74,7 +74,8 @@
     "db:generate": "drizzle-kit generate && node scripts/gen-migrations.mjs",
     "db:check": "bash scripts/check-migrations.sh",
     "gen:study-day": "node scripts/gen-study-day-vectors.mjs",
-    "gen:study-day:check": "pnpm gen:study-day && git diff --exit-code -- ../../contracts/study-day-vectors"
+    "gen:study-day:check": "pnpm gen:study-day && git diff --exit-code -- ../../contracts/study-day-vectors",
+    "e2e:visual": "playwright test -c e2e/playwright/playwright.config.ts visual"
   },
   "private": true,
   "jest": {

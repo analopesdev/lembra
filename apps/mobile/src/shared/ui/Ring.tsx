@@ -12,7 +12,7 @@ type Props = {
 };
 
 /** Anel de memória: trilho `heroTrack`, arco `accent`; o conteúdo (número + legenda) vai no centro. */
-export function Ring({ value, size = 112, stroke = 10, accessibilityLabel, children }: Props) {
+export function Ring({ value, size = 112, stroke = 12, accessibilityLabel, children }: Props) {
   const t = useTheme();
   const v = Math.min(1, Math.max(0, value));
   const r = (size - stroke) / 2;
