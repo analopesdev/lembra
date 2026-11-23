@@ -12,7 +12,7 @@ interface VectorFile {
     name: string;
     params: string;
     weights?: number[];
-    reviews: { at: string; rating: number; retention?: number }[];
+    reviews: { at: string; rating: number; retention?: number; kind?: "review" | "in_session_retry" }[];
     expected: {
       due: string;
       stability: number;
@@ -49,6 +49,7 @@ describe("conformidade FSRS com contracts/fsrs-vectors", () => {
       id: String(i).padStart(6, "0"),
       at: new Date(r.at),
       rating: r.rating as Rating,
+      ...(r.kind ? { kind: r.kind } : {}),
       ...(r.retention ? { retention: r.retention } : {}),
     }));
     const start = new Date(c.reviews[0]!.at);

@@ -13,8 +13,12 @@ export interface FsrsParams {
 }
 
 /** Evento do histórico. `retention` > 0 é a retenção alvo vigente na revisão (RN-05). */
+/** Tipo do evento no revlog (ADR-0031). `in_session_retry` NÃO entra na derivação do estado FSRS. */
+export type ReviewKind = "review" | "in_session_retry";
+
 export interface ReviewEvent {
   readonly id: string;
+  readonly kind?: ReviewKind;
   readonly at: Date;
   readonly rating: Rating;
   readonly retention?: number;
@@ -69,7 +73,10 @@ function step(card: Card, ev: ReviewEvent, p: FsrsParams): Card {
  */
 export function deriveState(history: readonly ReviewEvent[], params: FsrsParams, start: Date): CardState {
   let card = createEmptyCard(start);
-  for (const ev of history) card = step(card, ev, params);
+  for (const ev of history) {
+    if (ev.kind === "in_session_retry") continue; // repetição na sessão: só histórico (ADR-0031)
+    card = step(card, ev, params);
+  }
   return toCardState(card);
 }
 

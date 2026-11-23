@@ -29,6 +29,7 @@ type vectorFile struct {
 			At        time.Time `json:"at"`
 			Rating    int       `json:"rating"`
 			Retention float64   `json:"retention"`
+			Kind      string    `json:"kind"`
 		} `json:"reviews"`
 		Expected []struct {
 			Due           time.Time `json:"due"`
@@ -76,7 +77,7 @@ func TestFSRSConformance(t *testing.T) {
 			history := make([]domain.ReviewEvent, 0, len(c.Reviews))
 			for i, r := range c.Reviews {
 				r := r
-				history = append(history, domain.ReviewEvent{At: r.At, Rating: domain.Rating(r.Rating), Retention: r.Retention})
+				history = append(history, domain.ReviewEvent{At: r.At, Rating: domain.Rating(r.Rating), Retention: r.Retention, Kind: r.Kind})
 				got, err := domain.DeriveState(history, p, c.Reviews[0].At)
 				if err != nil {
 					t.Fatalf("passo %d: %v", i, err)

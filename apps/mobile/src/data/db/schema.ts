@@ -55,7 +55,9 @@ export const reviewLogs = sqliteTable(
     cardId: text("card_id").notNull(),
     at: integer("at", { mode: "timestamp_ms" }).notNull(),
     rating: integer("rating").$type<1 | 2 | 3 | 4>().notNull(),
+    // Retenção alvo usada neste agendamento (RN-05/RN-12) e tipo do evento (ADR-0031).
     retention: real("retention"),
+    kind: text("kind").$type<"review" | "in_session_retry">().notNull().default("review"),
   },
   (t) => [index("idx_review_logs_card").on(t.cardId, t.at)],
 );

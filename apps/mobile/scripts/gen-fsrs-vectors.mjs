@@ -40,6 +40,10 @@ function run(paramName, reviews, w) {
   let card = createEmptyCard(new Date(reviews[0].at));
   const expected = [];
   for (const r of reviews) {
+    if (r.kind === "in_session_retry") {
+      expected.push({ ...expected[expected.length - 1] }); // fora da derivação: estado inalterado
+      continue;
+    }
     const params = generatorParameters({
       ...base,
       ...(r.retention ? { request_retention: r.retention } : {}),
@@ -70,6 +74,7 @@ function add(name, paramName, reviews, w) {
     reviews: reviews.map((r) => ({
       at: iso(r.at),
       rating: r.rating,
+      ...(r.kind ? { kind: r.kind } : {}),
       ...(r.retention ? { retention: r.retention } : {}),
     })),
   };
@@ -243,6 +248,15 @@ add(
   ]),
   altW,
 );
+
+// Repetição na sessão (ADR-0031): errou → volta no fim da sessão; a nova resposta só entra no histórico.
+add("repeticao-na-sessao/erro-e-retry", "padrao", [
+  { at: T0, rating: 3 },
+  { at: T0 + 2 * DAY, rating: 1 },
+  { at: T0 + 2 * DAY + 10 * MIN, rating: 3, kind: "in_session_retry" },
+  { at: T0 + 2 * DAY + 20 * MIN, rating: 1, kind: "in_session_retry" },
+  { at: T0 + 5 * DAY, rating: 3 },
+]);
 
 // --- Sequências pseudoaleatórias fixas (seed no nome; os dados ficam no arquivo) ---
 const RATING_WEIGHTS = [0.12, 0.13, 0.55, 0.2];

@@ -3383,6 +3383,86 @@
    ]
   },
   {
+   "name": "repeticao-na-sessao/erro-e-retry",
+   "params": "padrao",
+   "reviews": [
+    {
+     "at": "2026-01-05T07:00:00.000Z",
+     "rating": 3
+    },
+    {
+     "at": "2026-01-07T07:00:00.000Z",
+     "rating": 1
+    },
+    {
+     "at": "2026-01-07T07:10:00.000Z",
+     "rating": 3,
+     "kind": "in_session_retry"
+    },
+    {
+     "at": "2026-01-07T07:20:00.000Z",
+     "rating": 1,
+     "kind": "in_session_retry"
+    },
+    {
+     "at": "2026-01-10T07:00:00.000Z",
+     "rating": 3
+    }
+   ],
+   "expected": [
+    {
+     "due": "2026-01-08T07:00:00.000Z",
+     "stability": 2.3065,
+     "difficulty": 2.11810397,
+     "state": 2,
+     "reps": 1,
+     "lapses": 0,
+     "scheduled_days": 3,
+     "last_review": "2026-01-05T07:00:00.000Z"
+    },
+    {
+     "due": "2026-01-08T07:00:00.000Z",
+     "stability": 0.6075801,
+     "difficulty": 7.39450274,
+     "state": 2,
+     "reps": 2,
+     "lapses": 1,
+     "scheduled_days": 1,
+     "last_review": "2026-01-07T07:00:00.000Z"
+    },
+    {
+     "due": "2026-01-08T07:00:00.000Z",
+     "stability": 0.6075801,
+     "difficulty": 7.39450274,
+     "state": 2,
+     "reps": 2,
+     "lapses": 1,
+     "scheduled_days": 1,
+     "last_review": "2026-01-07T07:00:00.000Z"
+    },
+    {
+     "due": "2026-01-08T07:00:00.000Z",
+     "stability": 0.6075801,
+     "difficulty": 7.39450274,
+     "state": 2,
+     "reps": 2,
+     "lapses": 1,
+     "scheduled_days": 1,
+     "last_review": "2026-01-07T07:00:00.000Z"
+    },
+    {
+     "due": "2026-01-14T07:00:00.000Z",
+     "stability": 3.83967647,
+     "difficulty": 7.38233661,
+     "state": 2,
+     "reps": 3,
+     "lapses": 1,
+     "scheduled_days": 4,
+     "last_review": "2026-01-10T07:00:00.000Z"
+    }
+   ]
+  },
+  {
    "name": "padrao/aleatorio-seed1-n5",
    "params": "padrao",
    "reviews": [

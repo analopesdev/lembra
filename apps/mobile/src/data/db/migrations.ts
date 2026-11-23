@@ -36,7 +36,8 @@ export const MIGRATIONS: readonly string[] = [
     card_id TEXT NOT NULL,
     at INTEGER NOT NULL,
     rating INTEGER NOT NULL,
-    retention REAL
+    retention REAL,
+    kind TEXT NOT NULL DEFAULT 'review'
   );
   CREATE INDEX idx_review_logs_card ON review_logs (card_id, at);
   CREATE TABLE outbox (

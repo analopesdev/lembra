@@ -51,8 +51,12 @@ func DefaultParams() Params {
 
 // ReviewEvent é um evento do histórico append-only. Retention, quando > 0, é a retenção alvo
 // vigente no momento da revisão (RN-05); 0 usa Params.RequestRetention.
+// KindInSessionRetry marca a repetição na sessão: fica no histórico mas não entra na derivação (ADR-0031).
+const KindInSessionRetry = "in_session_retry"
+
 type ReviewEvent struct {
 	ID        string
+	Kind      string
 	At        time.Time
 	Rating    Rating
 	Retention float64
@@ -75,6 +79,9 @@ type CardState struct {
 func DeriveState(history []ReviewEvent, p Params, start time.Time) (CardState, error) {
 	card := fsrs.NewCard(start)
 	for i, ev := range history {
+		if ev.Kind == KindInSessionRetry {
+			continue
+		}
 		fp := fsrs.DefaultParam()
 		fp.RequestRetention = p.RequestRetention
 		if ev.Retention > 0 {
