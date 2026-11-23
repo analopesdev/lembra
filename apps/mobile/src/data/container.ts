@@ -8,6 +8,7 @@ import { SqliteCardsRepository } from "./repositories/cards.sqlite";
 export interface Container {
   readonly cards: CardsRepository;
   readonly now: () => Date;
+  readonly newId: () => string;
 }
 
 let pending: Promise<Container> | null = null;
@@ -16,12 +17,9 @@ export function getContainer(): Promise<Container> {
   pending ??= (async () => {
     const { db } = await openDb("lembra.db");
     const now = () => new Date();
-    const cards = new SqliteCardsRepository(db, {
-      clock: now,
-      newId: () => uuidv7(now().getTime(), cryptoRandomBytes),
-      fsrs: defaultParams(),
-    });
-    return { cards, now };
+    const newId = () => uuidv7(now().getTime(), cryptoRandomBytes);
+    const cards = new SqliteCardsRepository(db, { clock: now, newId, fsrs: defaultParams() });
+    return { cards, now, newId };
   })();
   return pending;
 }

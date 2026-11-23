@@ -69,5 +69,48 @@
       "title": "Foto de anotação ou slide",
       "sub": "A IA lê a imagem e sugere cards"
     }
+  },
+  "review": {
+    "close": "Encerrar sessão",
+    "timer": "Tempo da sessão",
+    "cardOf": "Card {{current}} de {{total}}",
+    "hint": "Escreva com suas palavras. Não precisa ser exato.",
+    "answerLabel": "Sua resposta",
+    "send": "Enviar resposta",
+    "giveUp": "Não sei — mostrar resposta",
+    "answer": "Resposta",
+    "verdict": {
+      "1": "Dessa vez não",
+      "2": "Quase lá",
+      "3": "Mandou bem!",
+      "4": "Perfeito!"
+    },
+    "verdictSub": {
+      "1": "Errei ou não lembrei, em {{seconds}} segundos.",
+      "2": "Lembrou com dificuldade, em {{seconds}} segundos.",
+      "3": "Correta, em {{seconds}} segundos.",
+      "4": "Correta e rápida, em {{seconds}} segundos."
+    },
+    "skippedSub": "Sem resposta. Veja o verso e tente de novo mais tarde.",
+    "returnsIn_one": "Volta em {{count}} dia",
+    "returnsIn_other": "Volta em {{count}} dias",
+    "adjust": "Não concorda? Ajuste a nota",
+    "grade": "Nota",
+    "ratings": {
+      "1": "Errei",
+      "2": "Difícil",
+      "3": "Bom",
+      "4": "Fácil"
+    },
+    "next": "Próximo card",
+    "finish": "Ver resumo",
+    "summaryTitle": "Sessão concluída",
+    "summaryEmpty": "Nada para revisar agora.",
+    "summaryReviewed_one": "{{count}} card revisado",
+    "summaryReviewed_other": "{{count}} cards revisados",
+    "summaryHits": "{{count}} acertos",
+    "summaryMinutes": "Em {{value}}",
+    "done": "Voltar para Hoje",
+    "loading": "Montando a sessão"
   }
 }
