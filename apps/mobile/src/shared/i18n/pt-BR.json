@@ -42,5 +42,32 @@
     "dueToday": "{{count}} para hoje",
     "exam": "Prova de {{name}}",
     "examLine": "Em {{days}} dias · prontidão {{readiness}}%"
+  },
+  "add": {
+    "title": "O que vamos adicionar?",
+    "close": "Fechar",
+    "withAi": "Com a IA",
+    "manual": "Manual",
+    "soon": "Em breve",
+    "pdf": {
+      "title": "Enviar PDF ou documento",
+      "sub": "A IA sugere até 10 cards com a fonte"
+    },
+    "text": {
+      "title": "Colar um texto",
+      "sub": "Anotações, resumo ou trecho de livro"
+    },
+    "card": {
+      "title": "Criar card",
+      "sub": "Texto, imagem, áudio ou fórmula"
+    },
+    "collection": {
+      "title": "Nova coleção",
+      "sub": "Agrupe cards e defina a data da prova"
+    },
+    "photo": {
+      "title": "Foto de anotação ou slide",
+      "sub": "A IA lê a imagem e sugere cards"
+    }
   }
 }

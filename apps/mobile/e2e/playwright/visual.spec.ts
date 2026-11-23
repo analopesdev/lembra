@@ -5,7 +5,10 @@ import { resolve } from "node:path";
 const REF = resolve(__dirname, "../../../../docs/lembra-design-kit/referencia");
 const OUT = resolve(__dirname, "results/visual");
 
-const SCREENS = [{ name: "hoje", route: "/dev/today", ref: "hoje" }];
+const SCREENS: { name: string; route: string; ref?: string }[] = [
+  { name: "hoje", route: "/dev/today", ref: "hoje" },
+  { name: "adicionar", route: "/dev/adicionar" },
+];
 const THEMES = [
   { name: "claro", scheme: "light" as const },
   { name: "escuro", scheme: "dark" as const },
@@ -21,20 +24,24 @@ for (const screen of SCREENS) {
         viewport: { width: 390, height: 844 },
         colorScheme: theme.scheme,
       });
-      const ref = await ctx.newPage();
-      await ref.goto(`file://${REF}/${screen.ref}-${theme.name}.html`);
-      await ref.evaluate(() => document.fonts.ready);
-      await ref.waitForTimeout(500);
-      const refShot = await ref.screenshot();
-
       const app = await ctx.newPage();
       await app.goto(screen.route);
       await app.evaluate(() => document.fonts.ready);
       await app.waitForTimeout(1200);
       const appShot = await app.screenshot();
-
-      writeFileSync(`${OUT}/${screen.name}-${theme.name}-ref.png`, refShot);
       writeFileSync(`${OUT}/${screen.name}-${theme.name}-app.png`, appShot);
+      if (!screen.ref) {
+        writeFileSync(`${OUT}/${screen.name}-${theme.name}.png`, appShot);
+        await ctx.close();
+        return;
+      }
+
+      const ref = await ctx.newPage();
+      await ref.goto(`file://${REF}/${screen.ref}-${theme.name}.html`);
+      await ref.evaluate(() => document.fonts.ready);
+      await ref.waitForTimeout(500);
+      const refShot = await ref.screenshot();
+      writeFileSync(`${OUT}/${screen.name}-${theme.name}-ref.png`, refShot);
 
       const side = await ctx.newPage();
       await side.setViewportSize({ width: 800, height: 844 });

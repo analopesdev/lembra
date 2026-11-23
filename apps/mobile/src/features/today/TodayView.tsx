@@ -148,25 +148,29 @@ export function TodayView({
             </Text>
           </Ring>
           <View style={styles.heroSide}>
-            <View style={styles.streakRow}>
-              <View style={[styles.streakIcon, { backgroundColor: t.heroTrack }]}>
-                <Icon icon={Zap} size={18} color="accent" />
+            {model.streakDays !== null ? (
+              <View style={styles.streakRow}>
+                <View style={[styles.streakIcon, { backgroundColor: t.heroTrack }]}>
+                  <Icon icon={Zap} size={18} color="accent" />
+                </View>
+                <View>
+                  <Num size={16} tone="onHero" style={styles.streakNum}>
+                    {tr("today.streakDays", { count: model.streakDays })}
+                  </Num>
+                  <Text variant="legenda" tone="onHeroMuted">
+                    {tr("today.streakLabel")}
+                  </Text>
+                </View>
               </View>
-              <View>
-                <Num size={16} tone="onHero" style={styles.streakNum}>
-                  {tr("today.streakDays", { count: model.streakDays })}
-                </Num>
-                <Text variant="legenda" tone="onHeroMuted">
-                  {tr("today.streakLabel")}
-                </Text>
-              </View>
-            </View>
-            <Text variant="legenda" tone="onHeroMuted">
-              {tr("today.retention", { value: model.retentionPct, target: model.retentionTargetPct })}
-            </Text>
+            ) : null}
+            {model.retentionPct !== null ? (
+              <Text variant="legenda" tone="onHeroMuted">
+                {tr("today.retention", { value: model.retentionPct, target: model.retentionTargetPct })}
+              </Text>
+            ) : null}
           </View>
         </View>
-        <WeekStrip week={model.week} />
+        {model.week.length > 0 ? <WeekStrip week={model.week} /> : null}
       </View>
 
       <Pressable
