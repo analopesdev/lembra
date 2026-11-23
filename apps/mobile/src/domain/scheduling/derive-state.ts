@@ -1,6 +1,6 @@
 // Estado FSRS derivado do histórico append-only (RN-12, ADR-0007). Funções puras:
 // sem relógio, I/O nem aleatoriedade (fuzz sempre desligado). `start` é injetado.
-import { createEmptyCard, fsrs, generatorParameters, type Card, type Grade } from "ts-fsrs";
+import { fsrs, generatorParameters, type Card, type Grade } from "ts-fsrs";
 
 export type Rating = 1 | 2 | 3 | 4;
 export type FsrsState = 0 | 1 | 2 | 3; // Novo, Aprendendo, Revisão, Reaprendendo
@@ -55,6 +55,20 @@ function toCardState(card: Card): CardState {
   };
 }
 
+function toCard(s: CardState): Card {
+  return {
+    due: s.due,
+    stability: s.stability,
+    difficulty: s.difficulty,
+    scheduled_days: s.scheduledDays,
+    learning_steps: 0, // sem aprendizado em passos (ADR-0031)
+    reps: s.reps,
+    lapses: s.lapses,
+    state: s.state,
+    ...(s.lastReview ? { last_review: s.lastReview } : {}),
+  };
+}
+
 /** Aplica uma revisão sobre o card interno do ts-fsrs. */
 function step(card: Card, ev: ReviewEvent, p: FsrsParams): Card {
   const params = generatorParameters({
@@ -72,12 +86,16 @@ function step(card: Card, ev: ReviewEvent, p: FsrsParams): Card {
  * O histórico deve vir em ordem canônica (use `sortHistory`). Vazio → card novo vencendo em `start`.
  */
 export function deriveState(history: readonly ReviewEvent[], params: FsrsParams, start: Date): CardState {
-  let card = createEmptyCard(start);
-  for (const ev of history) {
-    if (ev.kind === "in_session_retry") continue; // repetição na sessão: só histórico (ADR-0031)
-    card = step(card, ev, params);
-  }
-  return toCardState(card);
+  return history.reduce((state, ev) => applyReview(state, ev, params), initialState(start));
+}
+
+/**
+ * Aplica UMA revisão ao estado (recálculo incremental, ADR-0007). Mesma função usada por `deriveState`:
+ * só existe um caminho de cálculo. `in_session_retry` não altera o estado (ADR-0031).
+ */
+export function applyReview(state: CardState, ev: ReviewEvent, params: FsrsParams): CardState {
+  if (ev.kind === "in_session_retry") return state;
+  return toCardState(step(toCard(state), ev, params));
 }
 
 /** Estado de um card que nunca foi revisado, vencendo em `now` (injetado). */
