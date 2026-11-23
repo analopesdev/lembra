@@ -5,20 +5,28 @@
     "scheme": "lembra",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icone/app-icon-1024.png",
     "userInterfaceStyle": "automatic",
-    "plugins": ["expo-router"],
-    "experiments": { "typedRoutes": true },
-    "ios": { "supportsTablet": true },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "supportsTablet": true
+    },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/icone/android-adaptive-foreground-1024.png",
+        "backgroundColor": "#293746"
       },
       "predictiveBackGestureEnabled": false
     },
-    "web": { "bundler": "metro", "output": "static", "favicon": "./assets/favicon.png" }
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/icone/favicon-32.png"
+    }
   }
 }

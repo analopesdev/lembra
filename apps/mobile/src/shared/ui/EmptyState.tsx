@@ -1,18 +1,44 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+
+import { fonts, radius, space, type } from "./theme";
+import { useTheme } from "./useTheme";
 
 type Props = { title: string; description: string };
 
-/** Estado vazio genérico; não conhece domínio (recebe dados prontos). */
+/** Estado vazio genérico; não conhece domínio (recebe dados prontos). Cores só pelos tokens. */
 export function EmptyState({ title, description }: Props) {
+  const t = useTheme();
   return (
-    <View
-      accessibilityRole="summary"
-      className="flex-1 items-center justify-center bg-fundo p-6 dark:bg-fundo-escuro"
-    >
-      <Text accessibilityRole="header" className="text-2xl font-bold text-texto dark:text-texto-escuro">
+    <View accessibilityRole="summary" style={[styles.box, { backgroundColor: t.background }]}>
+      <Text
+        accessibilityRole="header"
+        style={{
+          color: t.text,
+          fontFamily: fonts.text.extrabold,
+          fontSize: type.titulo.size,
+          lineHeight: type.titulo.size * type.titulo.lineHeight,
+          letterSpacing: type.titulo.size * type.titulo.letterSpacing,
+        }}
+      >
         {title}
       </Text>
-      <Text className="mt-2 text-center text-base text-suave dark:text-suave-escuro">{description}</Text>
+      <Text
+        style={{
+          color: t.textMuted,
+          fontFamily: fonts.text.regular,
+          fontSize: type.corpo.size,
+          lineHeight: type.corpo.size * type.corpo.lineHeight,
+          marginTop: space.sm,
+          textAlign: "center",
+          borderRadius: radius.sm,
+        }}
+      >
+        {description}
+      </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  box: { flex: 1, alignItems: "center", justifyContent: "center", padding: space["2xl"] },
+});

@@ -4,6 +4,12 @@ import reactHooks from "eslint-plugin-react-hooks";
 import a11y from "eslint-plugin-react-native-a11y";
 import tseslint from "typescript-eslint";
 
+// Cores só pelos tokens: nenhum hex solto em componentes (DESIGN.md). O theme.ts é a fonte.
+const noHexColor = {
+  selector: "Literal[value=/^#[0-9a-fA-F]{3,8}$/]",
+  message: "Use um token do tema (useTheme), não um hex direto.",
+};
+
 const noImpureInDomain = [
   {
     selector: "NewExpression[callee.name='Date']",
@@ -95,7 +101,7 @@ export default tseslint.config(
     files: ["src/domain/**/*.ts"],
     ignores: ["**/__tests__/**"],
     rules: {
-      "no-restricted-syntax": ["error", ...noImpureInDomain],
+      "no-restricted-syntax": ["error", noHexColor, ...noImpureInDomain], // sobrescreve a regra geral: manter os dois conjuntos
       "no-restricted-imports": [
         "error",
         {
@@ -108,6 +114,11 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    files: ["app/**/*.{ts,tsx}", "src/**/*.{ts,tsx}"],
+    ignores: ["src/shared/ui/theme.ts", "src/domain/**", "**/__tests__/**"],
+    rules: { "no-restricted-syntax": ["error", noHexColor] },
   },
   // Platform.OS permitido só nos adaptadores.
   { files: ["src/data/platform/**", "src/shared/ui/**"], rules: { "no-restricted-properties": "off" } },
