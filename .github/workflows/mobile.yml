@@ -30,6 +30,8 @@ jobs:
         run: pnpm db:check
       - name: Vetores FSRS estão em dia (gerados com ts-fsrs fixado)
         run: pnpm gen:vectors:check
+      - name: Vetores de dia de estudo estão em dia
+        run: pnpm gen:study-day:check
       - name: Lint (ESLint + camadas) e tsc
         run: pnpm lint
       - name: Lint de arquitetura barra violações
