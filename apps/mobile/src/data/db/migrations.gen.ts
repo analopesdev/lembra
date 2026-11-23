@@ -9,9 +9,5 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     "CREATE UNIQUE INDEX `outbox_id_unique` ON `outbox` (`id`);",
     "CREATE TABLE `review_logs` (\n\t`id` text PRIMARY KEY NOT NULL,\n\t`card_id` text NOT NULL,\n\t`at` integer NOT NULL,\n\t`rating` integer NOT NULL,\n\t`retention` real,\n\t`kind` text DEFAULT 'review' NOT NULL\n);",
     "CREATE INDEX `idx_review_logs_card` ON `review_logs` (`card_id`,`at`);"
-  ],
-  [
-    "DROP INDEX `idx_states_active_retained`;",
-    "CREATE INDEX `idx_states_active_retained2` ON `card_states` (`is_active`,`retained_until`);"
   ]
 ];
