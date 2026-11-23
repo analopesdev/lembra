@@ -1,4 +1,3 @@
-import "../global.css";
 import "@/shared/i18n";
 
 import {

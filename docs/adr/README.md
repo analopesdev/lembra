@@ -42,7 +42,7 @@ Cada arquivo registra **uma decisão técnica**: o contexto, o que foi decidido,
 | [ADR-0017](0017-conteudo-rico-dos-cards-em-json-de-blocos-tiptap.md) | Conteúdo rico dos cards em JSON de blocos (TipTap) | Frontend | Aceita |
 | [ADR-0018](0018-ingestao-de-materiais-e-geracao-de-cards-com-trecho-de-orige.md) | Ingestão de materiais e geração de cards com trecho de origem | IA | Proposta — validar no spike da semana 3 |
 | [ADR-0019](0019-estado-no-app-banco-reativo-zustand-e-tanstack-query.md) | Estado no app: banco reativo, Zustand e TanStack Query | Frontend | Aceita |
-| [ADR-0020](0020-design-system-proprio-com-nativewind.md) | Design system próprio com NativeWind | Frontend | Proposta |
+| [ADR-0020](0020-design-system-proprio-com-nativewind.md) | Design system próprio (theme.ts + useTheme; NativeWind removido) | Frontend | Aceita |
 | [ADR-0021](0021-estrategia-de-testes.md) | Estratégia de testes | Qualidade | Aceita |
 | [ADR-0022](0022-notificacoes-locais-no-maximo-uma-por-dia.md) | Notificações locais, no máximo uma por dia | Frontend | Aceita |
 | [ADR-0023](0023-observabilidade-e-monitoramento-de-erros.md) | Observabilidade e monitoramento de erros | Operação | Aceita |
