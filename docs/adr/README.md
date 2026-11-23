@@ -14,8 +14,8 @@ Cada arquivo registra **uma decisão técnica**: o contexto, o que foi decidido,
 
 | Semana | Spike | ADR | Critério de sucesso |
 |---|---|---|---|
-| 1 | Banco local SQLite na web + consultas reativas | ADR-0010 | CRUD e tela Hoje < 1 s com 10 mil cards na web |
-| 1 | Conformidade ts-fsrs × go-fsrs | ADR-0006 | Mesmos estados em 100% dos vetores |
+| 1 ✔ | Banco local SQLite na web + consultas reativas | ADR-0010 | CRUD e tela Hoje < 1 s com 10 mil cards na web |
+| 1 ✔ | Conformidade ts-fsrs × go-fsrs | ADR-0006 | Mesmos estados em 100% dos vetores |
 | 3 | Geração com trecho de origem (citações) | ADR-0018 | Trecho literal correto em ≥ 95% dos cards de teste |
 | 3 | Nota pela IA | ADR-0014 | Concordância ≥ 85% em 100 respostas |
 
@@ -32,7 +32,7 @@ Cada arquivo registra **uma decisão técnica**: o contexto, o que foi decidido,
 | [ADR-0007](0007-estado-fsrs-derivado-de-historico-append-only-rn-12.md) | Estado FSRS derivado de histórico append-only (RN-12) | Domínio | Aceita |
 | [ADR-0008](0008-sincronizacao-outbox-push-pull-e-regras-de-conflito.md) | Sincronização: outbox, push/pull e regras de conflito | Dados | Aceita |
 | [ADR-0009](0009-ids-uuidv7-gerados-no-cliente.md) | IDs UUIDv7 gerados no cliente | Dados | Aceita |
-| [ADR-0010](0010-banco-local-sqlite-atras-de-repositorios-com-drizzle.md) | Banco local SQLite atrás de repositórios, com Drizzle | Frontend | Proposta — validar no spike da semana 1 |
+| [ADR-0010](0010-banco-local-sqlite-atras-de-repositorios-com-drizzle.md) | Banco local SQLite atrás de repositórios, com Drizzle | Frontend | Aceita (spike OK no Chromium; Safari/Firefox pendentes) |
 | [ADR-0011](0011-contrato-de-api-primeiro-openapi-com-geracao-de-codigo.md) | Contrato de API primeiro (OpenAPI) com geração de código | Integração | Aceita |
 | [ADR-0012](0012-autenticacao-e-mail-google-e-apple-com-tokens-curtos.md) | Autenticação: e-mail, Google e Apple com tokens curtos | Segurança | Aceita |
 | [ADR-0013](0013-ia-via-backend-com-a-api-do-claude-e-um-modulo-unico.md) | IA via backend com a API do Claude e um módulo único | IA | Aceita |
@@ -53,3 +53,5 @@ Cada arquivo registra **uma decisão técnica**: o contexto, o que foi decidido,
 | [ADR-0028](0028-quizzes-geracao-no-servidor-e-efeito-no-agendamento.md) | Quizzes: geração no servidor e efeito no agendamento | Domínio | Aceita |
 | [ADR-0029](0029-internacionalizacao-e-acessibilidade-desde-a-v1.md) | Internacionalização e acessibilidade desde a v1 | Frontend | Aceita |
 | [ADR-0030](0030-versionamento-releases-e-compatibilidade.md) | Versionamento, releases e compatibilidade | Operação | Aceita |
+| [ADR-0031](0031-sem-aprendizado-em-passos-e-repeticao-na-sessao.md) | Sem aprendizado em passos e repetição na sessão | Domínio | Aceita |
+| [ADR-0032](0032-denormalizacao-do-cache-retencao-no-revlog-e-otimizacao.md) | Cache denormalizado de card_states, retenção no revlog e otimização | Domínio | Aceita |

@@ -43,16 +43,6 @@ type vectorFile struct {
 	} `json:"cases"`
 }
 
-// Divergência CONHECIDA entre as bibliotecas (spike da Etapa 1, ADR-0006): com aprendizado em passos
-// (short-term ligado), a nota "Difícil" dentro de um passo vence em 5m30s no ts-fsrs (média dos passos)
-// e em 6m no go-fsrs (arredonda para minutos inteiros). Só afeta vencimentos de poucos minutos e
-// só nessa combinação; estado, contadores e estabilidade seguem iguais. Pendente de decisão do produto
-// (desligar o aprendizado em passos elimina o problema).
-func knownHardLearningStepDivergence(shortTerm bool, rating, state int, diff time.Duration) bool {
-	learning := state == int(domain.Learning) || state == int(domain.Relearning)
-	return shortTerm && rating == int(domain.Hard) && learning && diff >= -time.Minute && diff <= time.Minute && diff != 0
-}
-
 func near(a, b, tol float64) bool { return math.Abs(a-b) <= tol*math.Max(1, math.Abs(b)) }
 
 // Conformidade (ADR-0006): go-fsrs deve reproduzir, passo a passo, o estado gerado pelo ts-fsrs.
@@ -70,6 +60,9 @@ func TestFSRSConformance(t *testing.T) {
 	}
 	tol := vf.Tolerance.Float
 	for _, c := range vf.Cases {
+		if params := vf.Params[c.Params]; params.EnableShortTerm {
+			t.Fatalf("%s: vetores devem ter enable_short_term=false (ADR-0031)", c.Name)
+		}
 		t.Run(c.Name, func(t *testing.T) {
 			ps := vf.Params[c.Params]
 			p := domain.Params{RequestRetention: ps.RequestRetention, MaximumInterval: ps.MaximumInterval, EnableShortTerm: ps.EnableShortTerm}
@@ -89,9 +82,6 @@ func TestFSRSConformance(t *testing.T) {
 					t.Fatalf("passo %d: %v", i, err)
 				}
 				want := c.Expected[i]
-				if knownHardLearningStepDivergence(ps.EnableShortTerm, r.Rating, want.State, got.Due.Sub(want.Due)) {
-					want.Due = got.Due // exceção documentada abaixo; o resto do estado continua exato
-				}
 				if !got.Due.Equal(want.Due) || !got.LastReview.Equal(want.LastReview) ||
 					int(got.State) != want.State || got.Reps != want.Reps || got.Lapses != want.Lapses ||
 					got.ScheduledDays != want.ScheduledDays ||

@@ -34,7 +34,7 @@ const vectors = JSON.parse(readFileSync(file, "utf8")) as VectorFile;
 describe("conformidade FSRS com contracts/fsrs-vectors", () => {
   it("tem vetores", () => {
     expect(vectors.version).toBe(1);
-    expect(vectors.cases.length).toBeGreaterThan(100);
+    expect(vectors.cases.length).toBeGreaterThanOrEqual(80);
   });
 
   it.each(vectors.cases.map((c) => [c.name, c] as const))("%s", (_name, c) => {

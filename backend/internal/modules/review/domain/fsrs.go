@@ -43,10 +43,10 @@ type Params struct {
 	EnableShortTerm  bool
 }
 
-// DefaultParams devolve os parâmetros padrão (retenção 90%, FSRS-6).
+// DefaultParams devolve os parâmetros padrão (retenção 90%, FSRS-6, sem aprendizado em passos: ADR-0031).
 func DefaultParams() Params {
 	p := fsrs.DefaultParam()
-	return Params{RequestRetention: p.RequestRetention, MaximumInterval: p.MaximumInterval, Weights: p.W, EnableShortTerm: p.EnableShortTerm}
+	return Params{RequestRetention: p.RequestRetention, MaximumInterval: p.MaximumInterval, Weights: p.W, EnableShortTerm: false}
 }
 
 // ReviewEvent é um evento do histórico append-only. Retention, quando > 0, é a retenção alvo

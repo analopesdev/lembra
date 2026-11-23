@@ -20,11 +20,11 @@ function mulberry32(seed) {
   };
 }
 
+// ADR-0031: aprendizado em passos desligado (enable_short_term=false) em todos os conjuntos.
 const PARAM_SETS = {
-  "padrao-curto": { request_retention: 0.9, maximum_interval: 36500, enable_short_term: true },
-  "sem-curto": { request_retention: 0.9, maximum_interval: 36500, enable_short_term: false },
+  padrao: { request_retention: 0.9, maximum_interval: 36500, enable_short_term: false },
   r85: { request_retention: 0.85, maximum_interval: 36500, enable_short_term: false },
-  r95: { request_retention: 0.95, maximum_interval: 36500, enable_short_term: true },
+  r95: { request_retention: 0.95, maximum_interval: 36500, enable_short_term: false },
   "max-365": { request_retention: 0.9, maximum_interval: 365, enable_short_term: false },
 };
 
@@ -200,7 +200,7 @@ for (const p of Object.keys(PARAM_SETS)) {
 // Retenção que muda entre revisões (modo prova, RN-05 x RN-12).
 add(
   "retencao-por-revisao/prova-chegando",
-  "sem-curto",
+  "padrao",
   seq([
     [3, 0],
     [3, 2 * DAY],
@@ -211,7 +211,7 @@ add(
 );
 add(
   "retencao-por-revisao/prova-chegando-curto",
-  "padrao-curto",
+  "padrao",
   seq([
     [3, 0],
     [3, 2 * DAY],
@@ -222,7 +222,7 @@ add(
 // Pesos otimizados (RF-32).
 add(
   "pesos-alternativos/bom",
-  "sem-curto",
+  "padrao",
   seq([
     [3, 0],
     [3, 1 * DAY],
@@ -234,7 +234,7 @@ add(
 );
 add(
   "pesos-alternativos/curto",
-  "padrao-curto",
+  "padrao",
   seq([
     [1, 0],
     [3, 10 * MIN],
