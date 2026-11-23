@@ -99,5 +99,69 @@
       "retries": "Repetições na sessão",
       "back": "Voltar para Hoje"
     }
+  },
+  "collection": {
+    "newTitle": "Nova coleção",
+    "back": "Voltar",
+    "name": "Nome",
+    "namePlaceholder": "Ex.: Anatomia I",
+    "icon": "Ícone",
+    "color": "Cor",
+    "exam": "Data da prova (opcional)",
+    "examPlaceholder": "DD/MM/AAAA",
+    "examHint": "Perto da prova, o Lembra aumenta a meta de memória desta coleção.",
+    "create": "Criar coleção",
+    "preview": "Prévia",
+    "examIn_one": "Prova em {{count}} dia",
+    "examIn_other": "Prova em {{count}} dias",
+    "examToday": "Prova hoje",
+    "errors": {
+      "empty": "Dê um nome à coleção.",
+      "too_long": "O nome pode ter até 60 caracteres.",
+      "invalid": "Use o formato DD/MM/AAAA.",
+      "past": "A data da prova não pode ser no passado."
+    },
+    "icons": {
+      "bone": "Osso",
+      "heart": "Coração",
+      "flask": "Frasco",
+      "help": "Pergunta",
+      "chart": "Gráfico",
+      "copy": "Cartas"
+    },
+    "tones": {
+      "tint": "Azul",
+      "collection2": "Azul claro",
+      "collection3": "Cinza"
+    }
+  },
+  "card": {
+    "newTitle": "Novo card",
+    "save": "Salvar",
+    "saveAndNew": "Salvar e criar outro",
+    "type": "Tipo",
+    "types": {
+      "basic": "Básico",
+      "reversed": "Invertido",
+      "cloze": "Lacuna",
+      "typed": "Digitar"
+    },
+    "front": "Frente (pergunta)",
+    "back": "Verso (resposta)",
+    "collection": "Coleção",
+    "noCollection": "Crie uma coleção antes de adicionar cards.",
+    "importance": "Importância",
+    "importanceHint": "Alta aparece primeiro perto da prova",
+    "levels": {
+      "1": "Baixa",
+      "2": "Média",
+      "3": "Alta"
+    },
+    "errors": {
+      "front_empty": "Escreva a pergunta.",
+      "back_empty": "Escreva a resposta.",
+      "collection_missing": "Escolha uma coleção."
+    },
+    "saved": "Card salvo"
   }
 }

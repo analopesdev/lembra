@@ -18,6 +18,17 @@ export const cards = sqliteTable(
   (t) => [index("idx_cards_collection").on(t.collectionId)],
 );
 
+export const collections = sqliteTable("collections", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  icon: text("icon").$type<"bone" | "heart" | "flask" | "help" | "chart" | "copy">().notNull(),
+  tone: text("tone").$type<"tint" | "collection2" | "collection3">().notNull(),
+  examDay: text("exam_day"),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
+});
+
 // Cache do estado FSRS (RN-12): pode ser apagado e recalculado do histórico.
 export const cardStates = sqliteTable(
   "card_states",

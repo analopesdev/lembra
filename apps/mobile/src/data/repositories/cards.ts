@@ -37,7 +37,7 @@ export interface ReviewInput {
 
 export interface OutboxEntry {
   readonly id: string;
-  readonly entity: "card" | "review";
+  readonly entity: "card" | "review" | "collection";
   readonly entityId: Id;
   readonly op: "upsert" | "delete";
   readonly createdAt: Date;

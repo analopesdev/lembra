@@ -24,3 +24,17 @@ export interface CardWithState {
   readonly card: Card;
   readonly state: CardState;
 }
+
+export type CollectionTone = "tint" | "collection2" | "collection3";
+export type CollectionIconName = "bone" | "heart" | "flask" | "help" | "chart" | "copy";
+
+export interface Collection {
+  readonly id: Id;
+  readonly name: string;
+  readonly icon: CollectionIconName;
+  readonly tone: CollectionTone;
+  readonly examDay: string | null;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+  readonly deletedAt: Date | null;
+}
