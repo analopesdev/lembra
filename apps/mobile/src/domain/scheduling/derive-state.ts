@@ -1,6 +1,6 @@
 // Estado FSRS derivado do histórico append-only (RN-12, ADR-0007). Funções puras:
 // sem relógio, I/O nem aleatoriedade (fuzz sempre desligado). `start` é injetado.
-import { fsrs, generatorParameters, type Card, type Grade } from "ts-fsrs";
+import { default_w, fsrs, generatorParameters, type Card, type Grade } from "ts-fsrs";
 
 export type Rating = 1 | 2 | 3 | 4;
 export type FsrsState = 0 | 1 | 2 | 3; // Novo, Aprendendo, Revisão, Reaprendendo
@@ -122,4 +122,8 @@ export function retrievability(state: CardState, now: Date, weights: readonly nu
   const factor = Math.exp(Math.log(0.9) / decay) - 1;
   const elapsedDays = Math.max(0, (now.getTime() - state.lastReview.getTime()) / 86_400_000);
   return Math.pow(1 + (factor * elapsedDays) / state.stability, decay);
+}
+
+export function defaultParams(): FsrsParams {
+  return { requestRetention: 0.9, maximumInterval: 36500, weights: [...default_w], enableShortTerm: false };
 }

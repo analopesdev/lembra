@@ -1,3 +1,4 @@
+import type { CardState, Rating, ReviewEvent, ReviewKind } from "@/domain/scheduling";
 import type { Card, CardWithState, Id } from "@/domain/types";
 
 export type Unsubscribe = () => void;
@@ -25,9 +26,18 @@ export interface TodaySummary {
   readonly dueRows: readonly ScheduleRow[];
 }
 
+export interface ReviewInput {
+  readonly id: Id;
+  readonly cardId: Id;
+  readonly at: Date;
+  readonly rating: Rating;
+  readonly retention?: number;
+  readonly kind?: ReviewKind;
+}
+
 export interface OutboxEntry {
   readonly id: string;
-  readonly entity: "card";
+  readonly entity: "card" | "review";
   readonly entityId: Id;
   readonly op: "upsert" | "delete";
   readonly createdAt: Date;
@@ -53,5 +63,9 @@ export interface CardsRepository {
   watchActive(): Subscribable<readonly CardWithState[]>;
   /** Tela Hoje sem varrer a base inteira: custo proporcional aos vencidos, não ao total de cards. */
   watchToday(now: Date): Subscribable<TodaySummary>;
+  recordReview(input: ReviewInput): Promise<void>;
+  getState(cardId: Id): Promise<CardState | null>;
+  listReviews(cardId: Id): Promise<readonly ReviewEvent[]>;
+  rebuildStates(): Promise<number>;
   pendingOutbox(): Promise<readonly OutboxEntry[]>;
 }

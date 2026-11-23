@@ -1,3 +1,4 @@
+import { defaultParams } from "@/domain/scheduling";
 import { uuidv7 } from "@/shared/lib/uuidv7";
 
 import { cardsContract, type ContractEnv } from "../cards.contract";
@@ -10,6 +11,7 @@ function env(): ContractEnv {
   let dup = false;
   const repo = new InMemoryCardsRepository({
     clock: () => now,
+    fsrs: defaultParams(),
     newId: () => {
       if (dup && last) {
         dup = false;

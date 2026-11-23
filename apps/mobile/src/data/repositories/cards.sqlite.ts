@@ -1,13 +1,21 @@
 import { and, asc, count, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 
-import { initialState, type CardState } from "@/domain/scheduling";
+import {
+  applyReview,
+  cacheRow,
+  initialState,
+  rebuildCache,
+  sortHistory,
+  type CardState,
+  type ReviewEvent,
+} from "@/domain/scheduling";
 import type { Card, CardWithState, Id } from "@/domain/types";
 
 import { ChangeBus } from "../db/change-bus";
 import type { AppDb } from "../db/client";
-import { cardStates, cards, outbox } from "../db/schema";
-import type { CardsRepository, OutboxEntry, Subscribable, TodaySummary } from "./cards";
+import { cardStates, cards, outbox, reviewLogs } from "../db/schema";
+import type { CardsRepository, OutboxEntry, ReviewInput, Subscribable, TodaySummary } from "./cards";
 import type { RepoDeps } from "./cards.memory";
 
 type CardRow = typeof cards.$inferSelect;
@@ -35,6 +43,14 @@ const toState = (r: StateRow): CardState => ({
   reps: r.reps,
   lapses: r.lapses,
   scheduledDays: r.scheduledDays,
+});
+
+const toEvent = (r: typeof reviewLogs.$inferSelect): ReviewEvent => ({
+  id: r.id,
+  at: r.at,
+  rating: r.rating,
+  kind: r.kind,
+  ...(r.retention ? { retention: r.retention } : {}),
 });
 
 const CHUNK = 100; // 10 colunas × 100 linhas, bem abaixo do limite de variáveis do SQLite
@@ -132,11 +148,125 @@ export class SqliteCardsRepository implements CardsRepository {
     });
   }
 
+  async getState(cardId: Id): Promise<CardState | null> {
+    const rows = await this.db.select().from(cardStates).where(eq(cardStates.cardId, cardId)).limit(1);
+    return rows[0] ? toState(rows[0]) : null;
+  }
+
+  async listReviews(cardId: Id): Promise<readonly ReviewEvent[]> {
+    const rows = await this.db.select().from(reviewLogs).where(eq(reviewLogs.cardId, cardId));
+    return sortHistory(rows.map(toEvent));
+  }
+
+  recordReview(input: ReviewInput): Promise<void> {
+    return this.enqueue(async () => {
+      const cardRows = await this.db
+        .select()
+        .from(cards)
+        .where(and(eq(cards.id, input.cardId), isNull(cards.deletedAt)))
+        .limit(1);
+      const cardRow = cardRows[0];
+      if (!cardRow) throw new Error(`card inexistente: ${input.cardId}`);
+      const stateRows = await this.db
+        .select()
+        .from(cardStates)
+        .where(eq(cardStates.cardId, input.cardId))
+        .limit(1);
+      const current = stateRows[0] ? toState(stateRows[0]) : initialState(input.at);
+      const event: ReviewEvent = {
+        id: input.id,
+        at: input.at,
+        rating: input.rating,
+        kind: input.kind ?? "review",
+        ...(input.retention ? { retention: input.retention } : {}),
+      };
+      const next = applyReview(current, event, this.deps.fsrs);
+      const stmts: BatchItem<"sqlite">[] = [
+        this.db.insert(reviewLogs).values({
+          id: event.id,
+          cardId: input.cardId,
+          at: input.at,
+          rating: input.rating,
+          retention: input.retention ?? null,
+          kind: event.kind ?? "review",
+        }),
+      ];
+      if (event.kind !== "in_session_retry")
+        stmts.push(this.upsertState(input.cardId, toCard(cardRow), next));
+      stmts.push(
+        this.db.insert(outbox).values({
+          id: this.deps.newId(),
+          entity: "review",
+          entityId: input.id,
+          op: "upsert",
+          payload: "{}",
+          createdAt: this.deps.clock(),
+        }),
+      );
+      await this.db.batch(stmts as [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]]);
+      this.bus.emit(["card_states", "review_logs", "outbox"]);
+    });
+  }
+
+  rebuildStates(): Promise<number> {
+    return this.enqueue(async () => {
+      const cardRows = await this.db
+        .select()
+        .from(cards)
+        .where(and(isNull(cards.deletedAt), eq(cards.status, "active")));
+      const logs = await this.db.select().from(reviewLogs).orderBy(asc(reviewLogs.at), asc(reviewLogs.id));
+      const byCard = new Map<string, ReviewEvent[]>();
+      for (const l of logs) byCard.set(l.cardId, [...(byCard.get(l.cardId) ?? []), toEvent(l)]);
+      const rebuilt = rebuildCache(
+        cardRows.map((r) => ({
+          id: r.id,
+          card: toCard(r),
+          history: byCard.get(r.id) ?? [],
+          createdAt: r.createdAt,
+        })),
+        this.deps.fsrs,
+      );
+      const byId = new Map(cardRows.map((r) => [r.id, toCard(r)]));
+      for (let i = 0; i < rebuilt.length; i += CHUNK) {
+        const part = rebuilt.slice(i, i + CHUNK);
+        await this.db.batch(
+          part.map((r) => this.upsertState(r.cardId, byId.get(r.cardId) as Card, r.state)) as [
+            BatchItem<"sqlite">,
+            ...BatchItem<"sqlite">[],
+          ],
+        );
+      }
+      this.bus.emit(["card_states"]);
+      return rebuilt.length;
+    });
+  }
+
+  private upsertState(cardId: Id, card: Card, state: CardState): BatchItem<"sqlite"> {
+    const row = cacheRow(card, state);
+    const set = {
+      due: state.due,
+      stability: state.stability,
+      difficulty: state.difficulty,
+      state: state.state,
+      reps: state.reps,
+      lapses: state.lapses,
+      scheduledDays: state.scheduledDays,
+      lastReview: state.lastReview,
+      isActive: row.isActive,
+      importance: row.importance,
+      retainedUntil: row.retainedUntil === null ? null : new Date(row.retainedUntil),
+    };
+    return this.db
+      .insert(cardStates)
+      .values({ cardId, ...set })
+      .onConflictDoUpdate({ target: cardStates.cardId, set });
+  }
+
   async pendingOutbox(): Promise<readonly OutboxEntry[]> {
     const rows = await this.db.select().from(outbox).orderBy(asc(outbox.seq));
     return rows.map((r) => ({
       id: r.id,
-      entity: "card",
+      entity: r.entity === "review" ? "review" : "card",
       entityId: r.entityId,
       op: r.op,
       createdAt: r.createdAt,
@@ -146,8 +276,14 @@ export class SqliteCardsRepository implements CardsRepository {
   /** Escritas são serializadas: uma transação por vez, na ordem de chamada. */
   private queue: Promise<unknown> = Promise.resolve();
 
+  private enqueue<T>(run: () => Promise<T>): Promise<T> {
+    const next = this.queue.then(run, run);
+    this.queue = next.catch(() => undefined);
+    return next;
+  }
+
   private write(list: readonly Card[], deletedIds: ReadonlySet<Id>): Promise<void> {
-    const run = async () => {
+    return this.enqueue(async () => {
       if (list.length === 0) return;
       const now = this.deps.clock();
       const stmts: BatchItem<"sqlite">[] = [];
@@ -215,10 +351,7 @@ export class SqliteCardsRepository implements CardsRepository {
       }
       await this.db.batch(stmts as [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]]);
       this.bus.emit(["cards", "card_states", "outbox"]);
-    };
-    const next = this.queue.then(run, run);
-    this.queue = next.catch(() => undefined);
-    return next;
+    });
   }
 
   /** Reexecuta a consulta a cada mudança relevante; rajadas são coalescidas (a última vence). */

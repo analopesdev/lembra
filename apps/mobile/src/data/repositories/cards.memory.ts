@@ -1,13 +1,21 @@
-import { initialState } from "@/domain/scheduling";
+import {
+  applyReview,
+  initialState,
+  rebuildCache,
+  sortHistory,
+  type FsrsParams,
+  type ReviewEvent,
+} from "@/domain/scheduling";
 import type { Card, CardWithState, Id } from "@/domain/types";
 
-import type { CardsRepository, OutboxEntry, Subscribable, TodaySummary } from "./cards";
+import type { CardsRepository, OutboxEntry, ReviewInput, Subscribable, TodaySummary } from "./cards";
 
 import type { CardState } from "@/domain/scheduling";
 
 export interface RepoDeps {
   readonly clock: () => Date;
   readonly newId: () => string;
+  readonly fsrs: FsrsParams;
 }
 
 /** Implementação em memória: base dos testes de features e referência do contrato. */
@@ -16,6 +24,8 @@ export class InMemoryCardsRepository implements CardsRepository {
   private states = new Map<Id, CardState>();
   private outbox: OutboxEntry[] = [];
   private outboxIds = new Set<string>();
+  private reviews = new Map<Id, ReviewEvent[]>();
+  private reviewIds = new Set<string>();
   private listeners = new Set<() => void>();
 
   constructor(private readonly deps: RepoDeps) {}
@@ -82,6 +92,58 @@ export class InMemoryCardsRepository implements CardsRepository {
           })),
       };
     });
+  }
+
+  async getState(cardId: Id): Promise<CardState | null> {
+    return this.states.get(cardId) ?? null;
+  }
+
+  async listReviews(cardId: Id): Promise<readonly ReviewEvent[]> {
+    return sortHistory(this.reviews.get(cardId) ?? []);
+  }
+
+  async recordReview(input: ReviewInput): Promise<void> {
+    const card = this.cards.get(input.cardId);
+    if (!card || card.deletedAt) throw new Error(`card inexistente: ${input.cardId}`);
+    if (this.reviewIds.has(input.id)) throw new Error(`revisão duplicada: ${input.id}`);
+    const outboxId = this.deps.newId();
+    if (this.outboxIds.has(outboxId)) throw new Error(`outbox: id duplicado ${outboxId}`);
+    const event: ReviewEvent = {
+      id: input.id,
+      at: input.at,
+      rating: input.rating,
+      kind: input.kind ?? "review",
+      ...(input.retention ? { retention: input.retention } : {}),
+    };
+    const current = this.states.get(card.id) ?? initialState(input.at);
+    this.states.set(card.id, applyReview(current, event, this.deps.fsrs));
+    this.reviews.set(card.id, [...(this.reviews.get(card.id) ?? []), event]);
+    this.reviewIds.add(input.id);
+    this.outbox.push({
+      id: outboxId,
+      entity: "review",
+      entityId: input.id,
+      op: "upsert",
+      createdAt: this.deps.clock(),
+    });
+    this.outboxIds.add(outboxId);
+    for (const l of [...this.listeners]) l();
+  }
+
+  async rebuildStates(): Promise<number> {
+    const targets = [...this.cards.values()].filter((c) => !c.deletedAt && c.status === "active");
+    const rebuilt = rebuildCache(
+      targets.map((c) => ({
+        id: c.id,
+        card: c,
+        history: sortHistory(this.reviews.get(c.id) ?? []),
+        createdAt: c.createdAt,
+      })),
+      this.deps.fsrs,
+    );
+    for (const r of rebuilt) this.states.set(r.cardId, r.state);
+    for (const l of [...this.listeners]) l();
+    return rebuilt.length;
   }
 
   async pendingOutbox(): Promise<readonly OutboxEntry[]> {

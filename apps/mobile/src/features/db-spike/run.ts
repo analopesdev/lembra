@@ -7,7 +7,7 @@ import { cardsContract, type ContractEnv } from "@/data/repositories/cards.contr
 import type { RepoDeps } from "@/data/repositories/cards.memory";
 import type { TodaySummary } from "@/data/repositories/cards";
 import { SqliteCardsRepository } from "@/data/repositories/cards.sqlite";
-import { initialState, retrievability } from "@/domain/scheduling";
+import { defaultParams, initialState, retrievability } from "@/domain/scheduling";
 import type { Card } from "@/domain/types";
 import { cryptoRandomBytes, uuidv7 } from "@/shared/lib/uuidv7";
 
@@ -30,6 +30,7 @@ function deps(): { deps: RepoDeps; env: Pick<ContractEnv, "setNow" | "duplicateN
   return {
     deps: {
       clock: () => now,
+      fsrs: defaultParams(),
       newId: () => {
         if (dup && last) {
           dup = false;

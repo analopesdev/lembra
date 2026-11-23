@@ -211,4 +211,158 @@ export const cardsContract: readonly ContractCase[] = [
       eq(seen.length, count, "assinatura cancelada não recebe mais nada");
     },
   },
+  {
+    name: "recordReview atualiza estado, revlog, cache da tela Hoje e outbox na mesma operação",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const card = makeCard(1, { importance: 3 });
+      await repo.save(card);
+      await repo.recordReview({ id: "rev-1", cardId: card.id, at: T0, rating: 3 });
+      const state = await repo.getState(card.id);
+      assert(state, "estado existe");
+      eq(
+        [state.reps, state.state, state.lastReview?.toISOString()],
+        [1, 2, T0.toISOString()],
+        "estado após a revisão",
+      );
+      assert(state.due.getTime() > T0.getTime(), "vencimento no futuro");
+      const log = await repo.listReviews(card.id);
+      eq(
+        log.map((e) => [e.id, e.rating, e.kind]),
+        [["rev-1", 3, "review"]],
+        "revlog",
+      );
+      const outbox = await repo.pendingOutbox();
+      eq(
+        outbox.filter((e) => e.entity === "review").map((e) => e.entityId),
+        ["rev-1"],
+        "outbox da revisão",
+      );
+      const today = await nextValue(repo.watchToday(T0), (v) => v.activeCount === 1);
+      eq(
+        [today.activeCount, today.retainedCount, today.dueRows.length],
+        [1, 1, 0],
+        "Hoje: ativo, retido e fora dos vencidos",
+      );
+    },
+  },
+  {
+    name: "repetição na sessão fica no revlog e não altera o estado (ADR-0031)",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const card = makeCard(1);
+      await repo.save(card);
+      await repo.recordReview({ id: "rev-1", cardId: card.id, at: T0, rating: 1 });
+      const before = await repo.getState(card.id);
+      await repo.recordReview({
+        id: "rev-2",
+        cardId: card.id,
+        at: new Date(T0.getTime() + 600_000),
+        rating: 3,
+        kind: "in_session_retry",
+      });
+      eq(await repo.getState(card.id), before, "estado inalterado");
+      eq(
+        (await repo.listReviews(card.id)).map((e) => [e.id, e.kind]),
+        [
+          ["rev-1", "review"],
+          ["rev-2", "in_session_retry"],
+        ],
+        "revlog completo",
+      );
+    },
+  },
+  {
+    name: "recordReview é atômico e idempotente: ID repetido ou outbox falho não deixam rastro",
+    async run({ repo, setNow, duplicateNextOutboxId }) {
+      setNow(T0);
+      const card = makeCard(1);
+      await repo.save(card);
+      await repo.recordReview({ id: "rev-1", cardId: card.id, at: T0, rating: 3 });
+      const stateBefore = await repo.getState(card.id);
+      const outboxBefore = (await repo.pendingOutbox()).length;
+      let failed = 0;
+      duplicateNextOutboxId();
+      try {
+        await repo.recordReview({
+          id: "rev-2",
+          cardId: card.id,
+          at: new Date(T0.getTime() + 86_400_000),
+          rating: 1,
+        });
+      } catch {
+        failed++;
+      }
+      try {
+        await repo.recordReview({
+          id: "rev-1",
+          cardId: card.id,
+          at: new Date(T0.getTime() + 86_400_000),
+          rating: 1,
+        });
+      } catch {
+        failed++;
+      }
+      eq(failed, 2, "as duas devem falhar");
+      eq(await repo.getState(card.id), stateBefore, "estado intacto");
+      eq((await repo.listReviews(card.id)).length, 1, "revlog intacto");
+      eq((await repo.pendingOutbox()).length, outboxBefore, "outbox intacto");
+    },
+  },
+  {
+    name: "recordReview em card inexistente ou excluído falha",
+    async run({ repo }) {
+      let failed = 0;
+      try {
+        await repo.recordReview({ id: "r", cardId: "nao-existe", at: T0, rating: 3 });
+      } catch {
+        failed++;
+      }
+      await repo.save(makeCard(1));
+      await repo.softDelete(makeCard(1).id);
+      try {
+        await repo.recordReview({ id: "r2", cardId: makeCard(1).id, at: T0, rating: 3 });
+      } catch {
+        failed++;
+      }
+      eq(failed, 2, "as duas devem falhar");
+    },
+  },
+  {
+    name: "rebuildStates recria o cache do zero e dá o mesmo estado do cálculo incremental",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const DAY = 86_400_000;
+      await repo.saveMany([makeCard(1), makeCard(2, { importance: 3 })]);
+      const plan: [string, number, number, 1 | 2 | 3 | 4][] = [
+        ["a1", 0, 1, 3],
+        ["a2", 2, 1, 3],
+        ["a3", 7, 1, 1],
+        ["a4", 8, 1, 4],
+        ["b1", 0, 2, 3],
+        ["b2", 3, 2, 2],
+      ];
+      for (const [id, days, n, rating] of plan)
+        await repo.recordReview({
+          id,
+          cardId: makeCard(n).id,
+          at: new Date(T0.getTime() + days * DAY),
+          rating,
+        });
+      const before = [await repo.getState(makeCard(1).id), await repo.getState(makeCard(2).id)];
+      const total = await repo.rebuildStates();
+      eq(total, 2, "cards reconstruídos");
+      eq(
+        [await repo.getState(makeCard(1).id), await repo.getState(makeCard(2).id)],
+        before,
+        "estados iguais após o rebuild",
+      );
+      eq(await repo.rebuildStates(), 2, "idempotente");
+      const today = await nextValue(
+        repo.watchToday(new Date(T0.getTime() + 8 * DAY)),
+        (v) => v.activeCount === 2,
+      );
+      eq(today.retainedCount >= 1, true, "retained_until reconstruído");
+    },
+  },
 ];
