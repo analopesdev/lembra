@@ -1,7 +1,9 @@
 import { drizzle, type SqliteRemoteDatabase } from "drizzle-orm/sqlite-proxy";
 import * as SQLite from "expo-sqlite";
 
-import { MIGRATIONS } from "./migrations";
+import { runMigrations } from "./migrate";
+import type { MigrationExecutor } from "./migrate";
+import { MIGRATIONS } from "./migrations.gen";
 import * as schema from "./schema";
 
 export type AppDb = SqliteRemoteDatabase<typeof schema>;
@@ -27,15 +29,13 @@ async function exec(sqlite: SQLite.SQLiteDatabase, sql: string, params: unknown[
   }
 }
 
-async function migrate(sqlite: SQLite.SQLiteDatabase): Promise<void> {
-  const row = await sqlite.getFirstAsync<{ user_version: number }>("PRAGMA user_version");
-  const current = row?.user_version ?? 0;
-  for (let v = current; v < MIGRATIONS.length; v++) {
-    await sqlite.withTransactionAsync(async () => {
-      await sqlite.execAsync(MIGRATIONS[v] as string);
-      await sqlite.execAsync(`PRAGMA user_version = ${v + 1}`);
-    });
-  }
+function executorFor(sqlite: SQLite.SQLiteDatabase): MigrationExecutor {
+  return {
+    userVersion: async () =>
+      (await sqlite.getFirstAsync<{ user_version: number }>("PRAGMA user_version"))?.user_version ?? 0,
+    exec: (sql) => sqlite.execAsync(sql),
+    transaction: (task) => sqlite.withTransactionAsync(task),
+  };
 }
 
 /**
@@ -48,7 +48,7 @@ export async function openDb(name: string): Promise<OpenedDb> {
   // O cache padrão (2 MB) é menor que o conjunto de trabalho com 10 mil cards e faz cada consulta reler
   // páginas do OPFS (~1 s). 64 MB só são alocados se usados (spike ADR-0010).
   await sqlite.execAsync("PRAGMA foreign_keys = ON; PRAGMA cache_size = -65536;");
-  await migrate(sqlite);
+  await runMigrations(executorFor(sqlite), MIGRATIONS);
   const db = drizzle<typeof schema>(
     (sql, params, method) => exec(sqlite, sql, params, method),
     // `db.batch` = uma transação atômica: se uma instrução falha, nada é gravado.

@@ -70,7 +70,9 @@
     "gen:vectors": "node scripts/gen-fsrs-vectors.mjs",
     "gen:vectors:check": "pnpm gen:vectors && git diff --exit-code -- ../../contracts/fsrs-vectors",
     "e2e:web": "playwright test -c e2e/playwright/playwright.config.ts",
-    "build:web": "expo export --platform web"
+    "build:web": "expo export --platform web",
+    "db:generate": "drizzle-kit generate && node scripts/gen-migrations.mjs",
+    "db:check": "bash scripts/check-migrations.sh"
   },
   "private": true,
   "jest": {
