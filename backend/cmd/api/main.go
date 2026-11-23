@@ -11,10 +11,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/anamorais/lembra/backend/internal/kernel"
-	"github.com/anamorais/lembra/backend/internal/platform/config"
-	"github.com/anamorais/lembra/backend/internal/platform/httpx"
-	"github.com/anamorais/lembra/backend/internal/platform/observ"
+	"github.com/analopesdev/lembra/backend/internal/kernel"
+	"github.com/analopesdev/lembra/backend/internal/platform/config"
+	"github.com/analopesdev/lembra/backend/internal/platform/httpx"
+	"github.com/analopesdev/lembra/backend/internal/platform/observ"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/anamorais/lembra/backend/internal/kernel"
+	"github.com/analopesdev/lembra/backend/internal/kernel"
 )
 
 // WriteError traduz um erro para problem+json (RFC 9457). É o único lugar que faz isso.

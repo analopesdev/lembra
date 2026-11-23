@@ -3,7 +3,7 @@
 # Novo módulo: adicione o nome em modules.txt e rode `make lint-config`.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-MOD=github.com/anamorais/lembra/backend
+MOD=github.com/analopesdev/lembra/backend
 mapfile -t MODULES < scripts/modules.txt
 
 # Dependências de terceiros permitidas no domain de cada módulo (além de stdlib e kernel).

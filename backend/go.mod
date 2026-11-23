@@ -1,4 +1,4 @@
-module github.com/anamorais/lembra/backend
+module github.com/analopesdev/lembra/backend
 
 go 1.26.0
 

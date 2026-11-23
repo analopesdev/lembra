@@ -3,7 +3,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 export PATH="$PATH:$(go env GOPATH)/bin"
-MOD=github.com/anamorais/lembra/backend
+MOD=github.com/analopesdev/lembra/backend
 T=internal/modules
 cleanup() { rm -rf "$T/cards/domain/zz_bad.go" "$T/cards/app/zz_bad.go" "$T/cards/adapters/zz_bad.go" \
   "$T/quiz/app/zz_bad.go"; rmdir "$T/cards/domain" "$T/cards/app" "$T/cards/adapters" "$T/cards" "$T/quiz/app" "$T/quiz" 2>/dev/null; true; }

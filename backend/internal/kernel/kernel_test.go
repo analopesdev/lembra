@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anamorais/lembra/backend/internal/kernel"
+	"github.com/analopesdev/lembra/backend/internal/kernel"
 )
 
 func TestUUIDv7Generator(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/anamorais/lembra/backend/internal/kernel"
-	"github.com/anamorais/lembra/backend/internal/platform/observ"
+	"github.com/analopesdev/lembra/backend/internal/kernel"
+	"github.com/analopesdev/lembra/backend/internal/platform/observ"
 )
 
 // RequestIDHeader é o cabeçalho usado para correlacionar requisições.

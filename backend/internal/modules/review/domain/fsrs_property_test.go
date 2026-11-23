@@ -7,7 +7,7 @@ import (
 
 	"pgregory.net/rapid"
 
-	"github.com/anamorais/lembra/backend/internal/modules/review/domain"
+	"github.com/analopesdev/lembra/backend/internal/modules/review/domain"
 )
 
 var propStart = time.Date(2026, 1, 5, 7, 0, 0, 0, time.UTC)

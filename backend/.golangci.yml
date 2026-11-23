@@ -17,7 +17,7 @@ linters:
         auth-domain:
           list-mode: strict
           files: ["**/internal/modules/auth/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         auth-domain-io:
           files: ["**/internal/modules/auth/domain/**", "!$test"]
           deny:
@@ -32,7 +32,7 @@ linters:
         auth-app:
           files: ["**/internal/modules/auth/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -40,85 +40,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         auth-adapters:
           files: ["**/internal/modules/auth/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         collections-domain:
           list-mode: strict
           files: ["**/internal/modules/collections/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         collections-domain-io:
           files: ["**/internal/modules/collections/domain/**", "!$test"]
           deny:
@@ -133,7 +133,7 @@ linters:
         collections-app:
           files: ["**/internal/modules/collections/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -141,85 +141,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         collections-adapters:
           files: ["**/internal/modules/collections/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         cards-domain:
           list-mode: strict
           files: ["**/internal/modules/cards/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         cards-domain-io:
           files: ["**/internal/modules/cards/domain/**", "!$test"]
           deny:
@@ -234,7 +234,7 @@ linters:
         cards-app:
           files: ["**/internal/modules/cards/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -242,85 +242,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         cards-adapters:
           files: ["**/internal/modules/cards/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         sources-domain:
           list-mode: strict
           files: ["**/internal/modules/sources/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         sources-domain-io:
           files: ["**/internal/modules/sources/domain/**", "!$test"]
           deny:
@@ -335,7 +335,7 @@ linters:
         sources-app:
           files: ["**/internal/modules/sources/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -343,85 +343,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         sources-adapters:
           files: ["**/internal/modules/sources/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         media-domain:
           list-mode: strict
           files: ["**/internal/modules/media/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         media-domain-io:
           files: ["**/internal/modules/media/domain/**", "!$test"]
           deny:
@@ -436,7 +436,7 @@ linters:
         media-app:
           files: ["**/internal/modules/media/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -444,85 +444,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         media-adapters:
           files: ["**/internal/modules/media/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         review-domain:
           list-mode: strict
           files: ["**/internal/modules/review/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel, github.com/open-spaced-repetition/go-fsrs/v4]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel, github.com/open-spaced-repetition/go-fsrs/v4]
         review-domain-io:
           files: ["**/internal/modules/review/domain/**", "!$test"]
           deny:
@@ -537,7 +537,7 @@ linters:
         review-app:
           files: ["**/internal/modules/review/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -545,85 +545,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         review-adapters:
           files: ["**/internal/modules/review/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         quiz-domain:
           list-mode: strict
           files: ["**/internal/modules/quiz/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         quiz-domain-io:
           files: ["**/internal/modules/quiz/domain/**", "!$test"]
           deny:
@@ -638,7 +638,7 @@ linters:
         quiz-app:
           files: ["**/internal/modules/quiz/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -646,85 +646,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         quiz-adapters:
           files: ["**/internal/modules/quiz/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         habit-domain:
           list-mode: strict
           files: ["**/internal/modules/habit/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         habit-domain-io:
           files: ["**/internal/modules/habit/domain/**", "!$test"]
           deny:
@@ -739,7 +739,7 @@ linters:
         habit-app:
           files: ["**/internal/modules/habit/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -747,85 +747,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         habit-adapters:
           files: ["**/internal/modules/habit/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         ai-domain:
           list-mode: strict
           files: ["**/internal/modules/ai/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         ai-domain-io:
           files: ["**/internal/modules/ai/domain/**", "!$test"]
           deny:
@@ -840,7 +840,7 @@ linters:
         ai-app:
           files: ["**/internal/modules/ai/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -848,85 +848,85 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         ai-adapters:
           files: ["**/internal/modules/ai/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: módulos só se falam pelo app.Service público
         sync-domain:
           list-mode: strict
           files: ["**/internal/modules/sync/domain/**", "!$test"]
-          allow: [$gostd, github.com/anamorais/lembra/backend/internal/kernel]
+          allow: [$gostd, github.com/analopesdev/lembra/backend/internal/kernel]
         sync-domain-io:
           files: ["**/internal/modules/sync/domain/**", "!$test"]
           deny:
@@ -941,7 +941,7 @@ linters:
         sync-app:
           files: ["**/internal/modules/sync/app/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sync/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sync/adapters
               desc: app não importa adapters (adapters → app → domain)
             - pkg: net/http
               desc: sem HTTP em app
@@ -949,80 +949,80 @@ linters:
               desc: sem SQL em app
             - pkg: github.com/jackc/pgx
               desc: sem SQL em app
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
         sync-adapters:
           files: ["**/internal/modules/sync/adapters/**"]
           deny:
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/auth/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/auth/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/collections/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/collections/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/cards/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/cards/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/sources/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/sources/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/media/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/media/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/review/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/review/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/quiz/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/quiz/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/habit/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/habit/adapters
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/domain
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/domain
               desc: módulos só se falam pelo app.Service público
-            - pkg: github.com/anamorais/lembra/backend/internal/modules/ai/adapters
+            - pkg: github.com/analopesdev/lembra/backend/internal/modules/ai/adapters
               desc: módulos só se falam pelo app.Service público
   exclusions:
     rules:

@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/anamorais/lembra/backend/internal/kernel"
-	"github.com/anamorais/lembra/backend/internal/platform/apigen"
+	"github.com/analopesdev/lembra/backend/internal/kernel"
+	"github.com/analopesdev/lembra/backend/internal/platform/apigen"
 )
 
 // NewHandler monta o roteador com os middlewares padrão.

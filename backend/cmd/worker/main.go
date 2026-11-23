@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/anamorais/lembra/backend/internal/platform/config"
-	"github.com/anamorais/lembra/backend/internal/platform/observ"
+	"github.com/analopesdev/lembra/backend/internal/platform/config"
+	"github.com/analopesdev/lembra/backend/internal/platform/observ"
 )
 
 func main() {

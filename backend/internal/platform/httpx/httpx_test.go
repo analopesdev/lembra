@@ -14,10 +14,10 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/getkin/kin-openapi/routers/gorillamux"
 
-	"github.com/anamorais/lembra/backend/internal/kernel"
-	"github.com/anamorais/lembra/backend/internal/platform/apigen"
-	"github.com/anamorais/lembra/backend/internal/platform/httpx"
-	"github.com/anamorais/lembra/backend/internal/platform/observ"
+	"github.com/analopesdev/lembra/backend/internal/kernel"
+	"github.com/analopesdev/lembra/backend/internal/platform/apigen"
+	"github.com/analopesdev/lembra/backend/internal/platform/httpx"
+	"github.com/analopesdev/lembra/backend/internal/platform/observ"
 )
 
 type seqIDs struct{ n int }

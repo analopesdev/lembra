@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anamorais/lembra/backend/internal/modules/review/domain"
+	"github.com/analopesdev/lembra/backend/internal/modules/review/domain"
 )
 
 const vectorsPath = "../../../../../contracts/fsrs-vectors/vectors.v1.json"

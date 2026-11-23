@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/anamorais/lembra/backend/internal/platform/apigen"
+	"github.com/analopesdev/lembra/backend/internal/platform/apigen"
 )
 
 // Server implementa apigen.ServerInterface.

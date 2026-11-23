@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/anamorais/lembra/backend/internal/platform/config"
+	"github.com/analopesdev/lembra/backend/internal/platform/config"
 )
 
 func lookup(m map[string]string) func(string) (string, bool) {
