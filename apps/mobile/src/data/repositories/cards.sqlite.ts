@@ -266,7 +266,7 @@ export class SqliteCardsRepository implements CardsRepository {
     const rows = await this.db.select().from(outbox).orderBy(asc(outbox.seq));
     return rows.map((r) => ({
       id: r.id,
-      entity: r.entity === "review" ? "review" : "card",
+      entity: r.entity === "review" || r.entity === "collection" ? r.entity : "card",
       entityId: r.entityId,
       op: r.op,
       createdAt: r.createdAt,

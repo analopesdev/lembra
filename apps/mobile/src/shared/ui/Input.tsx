@@ -5,27 +5,37 @@ import { fonts, radius, space } from "./theme";
 import { Text } from "./Text";
 import { useTheme } from "./useTheme";
 
-type Props = Omit<TextInputProps, "style"> & { label: string; hint?: string; trailing?: React.ReactNode };
+type Props = Omit<TextInputProps, "style"> & {
+  label: string;
+  hint?: string;
+  error?: string;
+  trailing?: React.ReactNode;
+  minLines?: number;
+};
 
-/** Campo: rótulo acima, 52 px, cantos 16, borda de 2 px azul aço em foco. */
-export function Input({ label, hint, trailing, onFocus, onBlur, ...rest }: Props) {
+const LINE_HEIGHT = 22;
+
+export function Input({ label, hint, error, trailing, minLines, onFocus, onBlur, ...rest }: Props) {
   const t = useTheme();
   const [focused, setFocused] = useState(false);
+  const multiline = minLines !== undefined && minLines > 1;
+  const border = error ? t.danger : focused ? t.button : t.border;
   return (
     <View style={styles.wrap}>
       <Text variant="label">{label}</Text>
       <View
         style={[
           styles.field,
-          {
-            backgroundColor: t.surface,
-            borderColor: focused ? t.button : t.border,
-            borderWidth: focused ? 2 : 1,
-          },
+          multiline
+            ? { minHeight: minLines * LINE_HEIGHT + 28, alignItems: "flex-start", paddingVertical: 14 }
+            : { height: 52 },
+          { backgroundColor: t.surface, borderColor: border, borderWidth: focused || error ? 2 : 1 },
         ]}
       >
         <TextInput
           {...rest}
+          multiline={multiline}
+          textAlignVertical={multiline ? "top" : "center"}
           accessibilityLabel={label}
           placeholderTextColor={t.textMuted}
           onFocus={(e) => {
@@ -36,11 +46,15 @@ export function Input({ label, hint, trailing, onFocus, onBlur, ...rest }: Props
             setFocused(false);
             onBlur?.(e);
           }}
-          style={[styles.input, { color: t.text }]}
+          style={[styles.input, multiline && styles.multi, { color: t.text }]}
         />
         {trailing}
       </View>
-      {hint ? (
+      {error ? (
+        <Text variant="legenda" tone="danger" accessibilityRole="alert">
+          {error}
+        </Text>
+      ) : hint ? (
         <Text variant="legenda" tone="textMuted">
           {hint}
         </Text>
@@ -52,7 +66,6 @@ export function Input({ label, hint, trailing, onFocus, onBlur, ...rest }: Props
 const styles = StyleSheet.create({
   wrap: { gap: space.sm },
   field: {
-    height: 52,
     borderRadius: radius.md,
     paddingHorizontal: space.lg,
     flexDirection: "row",
@@ -60,4 +73,5 @@ const styles = StyleSheet.create({
     gap: space.sm,
   },
   input: { flex: 1, minWidth: 0, fontFamily: fonts.text.regular, fontSize: 15, padding: 0 },
+  multi: { lineHeight: LINE_HEIGHT, alignSelf: "stretch" },
 });

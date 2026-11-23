@@ -1,6 +1,6 @@
 // Barramento de mudanças por tabela: base das consultas reativas (ADR-0019).
 // O repositório emite após cada commit; os `watch*` reexecutam a consulta.
-export type TableName = "cards" | "card_states" | "review_logs" | "outbox";
+export type TableName = "collections" | "cards" | "card_states" | "review_logs" | "outbox";
 type Listener = (tables: readonly TableName[]) => void;
 
 export class ChangeBus {
