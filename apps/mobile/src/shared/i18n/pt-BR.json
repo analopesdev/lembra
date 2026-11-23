@@ -69,5 +69,35 @@
       "title": "Foto de anotação ou slide",
       "sub": "A IA lê a imagem e sugere cards"
     }
+  },
+  "review": {
+    "close": "Encerrar sessão",
+    "timeLeft": "Tempo da sessão",
+    "position": "Card {{current}} de {{total}}",
+    "show": "Mostrar resposta",
+    "answer": "Resposta",
+    "source": "Fonte",
+    "grades": {
+      "label": "Nota",
+      "again": "Errei",
+      "hard": "Difícil",
+      "good": "Bom",
+      "easy": "Fácil"
+    },
+    "gradeWarning": "Só “Errei” conta como erro. Difícil, Bom e Fácil são acertos.",
+    "retryNote": "Você errou este card: ele volta no fim da sessão.",
+    "loading": "Montando a sessão…",
+    "empty": {
+      "title": "Nada para revisar agora",
+      "text": "Quando houver cards vencidos, eles aparecem aqui."
+    },
+    "summary": {
+      "title": "Sessão concluída",
+      "reviewed": "Cards revisados",
+      "hits": "Acertos",
+      "memory": "Memória retida",
+      "retries": "Repetições na sessão",
+      "back": "Voltar para Hoje"
+    }
   }
 }
