@@ -8,14 +8,23 @@ export interface DayActivity {
   readonly planned: number;
   /** Quantos cards desse conjunto já foram feitos. */
   readonly plannedDone: number;
-  /** Respostas dadas no dia (qualquer card) e tempo de recordação ativa em segundos. */
+  /**
+   * Respostas da SESSÃO DE REVISÃO no dia, inclusive repetições na sessão (`in_session_retry`).
+   * Respostas de quiz NÃO contam (RN-09): o chamador não deve incluí-las.
+   */
   readonly answered: number;
+  /** Tempo de recordação ativa em segundos. */
   readonly activeSeconds: number;
 }
 
-/** Válido se fez ≥ 80% do conjunto planejado, OU ≥ 3 min de recordação ativa com ≥ 10 respostas. */
-export function isValidDay(a: DayActivity): boolean {
-  const byPlan = a.planned > 0 && a.plannedDone / a.planned >= VALID_SHARE;
+/**
+ * valid: conta na sequência · invalid: quebra (ou gasta congelamento) · neutral: plano vazio e sem estudo,
+ * não quebra a sequência, não consome congelamento e não incrementa o contador.
+ */
+export type DayStatus = "valid" | "invalid" | "neutral";
+
+export function dayStatus(a: DayActivity): DayStatus {
   const byEffort = a.activeSeconds >= MIN_ACTIVE_SECONDS && a.answered >= MIN_ANSWERS;
-  return byPlan || byEffort;
+  if (a.planned <= 0) return byEffort ? "valid" : "neutral";
+  return a.plannedDone / a.planned >= VALID_SHARE || byEffort ? "valid" : "invalid";
 }
