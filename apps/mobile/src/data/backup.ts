@@ -66,6 +66,11 @@ export async function createBackup(d: BackupDeps): Promise<BackupFile> {
       collectionId: c.collectionId,
       front: c.front,
       back: c.back,
+      frontDoc: c.frontDoc,
+      backDoc: c.backDoc,
+      kind: c.kind,
+      direction: c.direction,
+      pairId: c.pairId,
       tags: [...c.tags],
       importance: c.importance,
       status: c.status,
@@ -107,6 +112,11 @@ export async function restoreBackup(d: BackupDeps, file: BackupFile): Promise<Re
   for (const c of file.cards) {
     const incoming: Card = {
       ...c,
+      frontDoc: c.frontDoc ?? null,
+      backDoc: c.backDoc ?? null,
+      kind: c.kind ?? "basic",
+      direction: c.direction ?? "forward",
+      pairId: c.pairId ?? null,
       createdAt: new Date(c.createdAt),
       updatedAt: new Date(c.updatedAt),
       deletedAt: null,

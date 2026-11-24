@@ -57,6 +57,13 @@
       "when": 1795485020073,
       "tag": "0007_noop_compat",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1795562087734,
+      "tag": "0008_card_content_kind",
+      "breakpoints": true
     }
   ]
 }
