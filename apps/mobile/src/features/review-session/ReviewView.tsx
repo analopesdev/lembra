@@ -1,11 +1,14 @@
-import { ArrowRight, X } from "lucide-react-native";
+import { ArrowRight, Pencil, X } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import Animated, { Easing, FadeInDown, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 
 import type { Rating } from "@/domain/scheduling";
 import { Button, Icon, Num, ProgressBar, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
+
+import { FlipCard } from "./FlipCard";
 
 export interface ReviewCardView {
   readonly collectionName: string;
@@ -21,6 +24,7 @@ type Props = {
   elapsedRatio: number;
   remainingLabel: string;
   onClose: () => void;
+  onEdit?: () => void;
   onReveal: () => void;
   onGrade: (rating: Rating) => void;
 };
@@ -32,10 +36,35 @@ const GRADES: { rating: Rating; key: "again" | "hard" | "good" | "easy" }[] = [
   { rating: 4, key: "easy" },
 ];
 
-export function ReviewView({ card, phase, elapsedRatio, remainingLabel, onClose, onReveal, onGrade }: Props) {
+export function ReviewView({
+  card,
+  phase,
+  elapsedRatio,
+  remainingLabel,
+  onClose,
+  onEdit,
+  onReveal,
+  onGrade,
+}: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
   const revealed = phase === "back";
+  const cardKey = `${card.position.current}-${card.isRetry ? "r" : "n"}`;
+  const face = [styles.card, { backgroundColor: t.surface, borderColor: t.border }];
+  const chips = (
+    <View style={styles.chips}>
+      <View style={[styles.chip, { backgroundColor: t.tint }]}>
+        <Text variant="legenda" tone="onTint" style={styles.chipText}>
+          {card.collectionName}
+        </Text>
+      </View>
+      <View style={[styles.chip, { backgroundColor: t.surfaceMuted }]}>
+        <Text variant="legenda" tone="textMuted" style={styles.chipText}>
+          {tr("review.position", card.position)}
+        </Text>
+      </View>
+    </View>
+  );
   return (
     <View style={[styles.screen, { backgroundColor: t.background }]}>
       <View style={styles.top}>
@@ -55,48 +84,61 @@ export function ReviewView({ card, phase, elapsedRatio, remainingLabel, onClose,
             {remainingLabel}
           </Num>
         </View>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]}>
-        <View style={styles.chips}>
-          <View style={[styles.chip, { backgroundColor: t.tint }]}>
-            <Text variant="legenda" tone="onTint" style={styles.chipText}>
-              {card.collectionName}
-            </Text>
-          </View>
-          <View style={[styles.chip, { backgroundColor: t.surfaceMuted }]}>
-            <Text variant="legenda" tone="textMuted" style={styles.chipText}>
-              {tr("review.position", card.position)}
-            </Text>
-          </View>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.body}>
-          <Text variant="pergunta" accessibilityRole="header">
-            {card.front}
-          </Text>
-          {revealed ? (
-            <>
-              <View style={[styles.rule, { backgroundColor: t.border }]} />
-              <Text variant="legenda" tone="textMuted" style={styles.kicker}>
-                {tr("review.answer")}
-              </Text>
-              <Text variant="subtitulo" style={styles.answer}>
-                {card.back}
-              </Text>
-            </>
-          ) : null}
-        </ScrollView>
-
-        {card.isRetry ? (
-          <Text variant="legenda" tone="textMuted">
-            {tr("review.retryNote")}
-          </Text>
+        {onEdit ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={tr("review.edit")}
+            onPress={onEdit}
+            style={[styles.close, { borderColor: t.border, backgroundColor: t.surface }]}
+          >
+            <Icon icon={Pencil} size={18} strokeWidth={2.2} />
+          </Pressable>
         ) : null}
       </View>
 
+      <View style={styles.stage}>
+        <Animated.View
+          key={cardKey}
+          style={StyleSheet.absoluteFill}
+          entering={SlideInRight.duration(320).easing(Easing.out(Easing.cubic))}
+          exiting={SlideOutLeft.duration(240)}
+        >
+          <FlipCard
+            flipped={revealed}
+            front={
+              <View style={face}>
+                {chips}
+                <ScrollView contentContainerStyle={styles.body}>
+                  <Text variant="pergunta" accessibilityRole="header">
+                    {card.front}
+                  </Text>
+                </ScrollView>
+                {card.isRetry ? (
+                  <Text variant="legenda" tone="textMuted">
+                    {tr("review.retryNote")}
+                  </Text>
+                ) : null}
+              </View>
+            }
+            back={
+              <View style={[face, { backgroundColor: t.tint, borderColor: t.tint }]}>
+                {chips}
+                <ScrollView contentContainerStyle={styles.body}>
+                  <Text variant="legenda" tone="onTint" style={styles.kicker}>
+                    {tr("review.answer")}
+                  </Text>
+                  <Text variant="subtitulo" tone="onTint" style={styles.answer}>
+                    {card.back}
+                  </Text>
+                </ScrollView>
+              </View>
+            }
+          />
+        </Animated.View>
+      </View>
+
       {revealed ? (
-        <View style={styles.gradeArea}>
+        <Animated.View entering={FadeInDown.duration(260)} style={styles.gradeArea}>
           <View
             accessibilityRole="radiogroup"
             accessibilityLabel={tr("review.grades.label")}
@@ -108,7 +150,11 @@ export function ReviewView({ card, phase, elapsedRatio, remainingLabel, onClose,
                 accessibilityRole="button"
                 accessibilityLabel={tr(`review.grades.${g.key}`)}
                 onPress={() => onGrade(g.rating)}
-                style={[styles.grade, g.rating === 1 && { backgroundColor: t.dangerTint }]}
+                style={({ pressed }) => [
+                  styles.grade,
+                  g.rating === 1 && { backgroundColor: t.dangerTint },
+                  pressed && { transform: [{ scale: 0.95 }], opacity: 0.85 },
+                ]}
               >
                 <Text variant="label" tone={g.rating === 1 ? "danger" : "text"} style={styles.gradeText}>
                   {tr(`review.grades.${g.key}`)}
@@ -119,13 +165,15 @@ export function ReviewView({ card, phase, elapsedRatio, remainingLabel, onClose,
           <Text variant="legenda" tone="textMuted" style={styles.warning}>
             {tr("review.gradeWarning")}
           </Text>
-        </View>
+        </Animated.View>
       ) : (
-        <Button
-          label={tr("review.show")}
-          onPress={onReveal}
-          leading={<Icon icon={ArrowRight} size={20} color="onButton" strokeWidth={2.2} />}
-        />
+        <Animated.View exiting={FadeOut.duration(120)}>
+          <Button
+            label={tr("review.show")}
+            onPress={onReveal}
+            leading={<Icon icon={ArrowRight} size={20} color="onButton" strokeWidth={2.2} />}
+          />
+        </Animated.View>
       )}
     </View>
   );
@@ -145,6 +193,8 @@ const styles = StyleSheet.create({
   bar: { flex: 1 },
   time: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: radius.pill, borderWidth: 1 },
   timeNum: { fontWeight: "600", lineHeight: 16 },
+  flex: { flex: 1 },
+  stage: { flex: 1, overflow: "hidden" },
   card: { flex: 1, borderRadius: radius.xl, borderWidth: 1, padding: space["2xl"], gap: 18 },
   chips: { flexDirection: "row", gap: space.sm },
   chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: radius.pill },

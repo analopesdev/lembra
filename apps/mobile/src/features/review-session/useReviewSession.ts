@@ -49,7 +49,7 @@ function readToday(container: Container): Promise<TodaySummary> {
   });
 }
 
-export function useReviewSession(): ReviewSession {
+export function useReviewSession(reloadSignal = 0): ReviewSession {
   const [container, setContainer] = useState<Container | null>(null);
   const [state, setState] = useState<SessionState | null>(null);
   const [status, setStatus] = useState<ReviewStatus>("loading");
@@ -106,7 +106,7 @@ export function useReviewSession(): ReviewSession {
     return () => {
       cancelled = true;
     };
-  }, [container, currentId]);
+  }, [container, currentId, reloadSignal]);
 
   useEffect(() => {
     if (status !== "active" || !container) return;

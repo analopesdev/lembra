@@ -123,4 +123,19 @@ describe("ReviewScreen: sessão clássica ponta a ponta", () => {
     expect((await repo.listReviews(makeCard(1).id)).length).toBe(1);
     expect((await repo.listReviews(makeCard(2).id)).length).toBe(0);
   });
+
+  it("botão de editar abre o card atual e, ao voltar, mostra o texto editado", async () => {
+    const repo = newRepo();
+    await repo.saveMany([makeCard(1)]);
+    const onEditCard = jest.fn();
+    const view = await render(
+      <ReviewScreen onExit={() => undefined} onEditCard={onEditCard} reloadSignal={0} />,
+    );
+    expect(await screen.findByText("frente 1")).toBeTruthy();
+    await press("Editar card");
+    expect(onEditCard).toHaveBeenCalledWith(makeCard(1).id);
+    await repo.save({ ...makeCard(1), front: "frente editada", updatedAt: new Date("2026-03-11T00:00:00Z") });
+    await view.rerender(<ReviewScreen onExit={() => undefined} onEditCard={onEditCard} reloadSignal={1} />);
+    expect(await screen.findByText("frente editada")).toBeTruthy();
+  });
 });
