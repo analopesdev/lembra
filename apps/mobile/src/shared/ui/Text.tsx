@@ -34,6 +34,7 @@ export type Tone = keyof Pick<
   | "onTint"
   | "onHero"
   | "onHeroMuted"
+  | "onDanger"
   | "success"
   | "danger"
 >;

@@ -3,14 +3,16 @@ import { useTranslation } from "react-i18next";
 
 import { getContainer } from "@/data/container";
 import { validateCardDraft } from "@/domain/card/card";
-import type { Collection, Importance } from "@/domain/types";
+import type { Card, Collection, Importance } from "@/domain/types";
+import { ConfirmSheet } from "@/shared/ui";
 
 import { NewCardView } from "./NewCardView";
 
-type Props = { onDone: () => void; onClose: () => void; initialCollectionId?: string };
+type Props = { onDone: () => void; onClose: () => void; initialCollectionId?: string; cardId?: string };
 
-export function NewCardScreen({ onDone, onClose, initialCollectionId }: Props) {
+export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: Props) {
   const { t } = useTranslation();
+  const [original, setOriginal] = useState<Card | null>(null);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [collections, setCollections] = useState<readonly Collection[]>([]);
@@ -19,12 +21,25 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId }: Props) {
   const [errors, setErrors] = useState<{ front?: string; back?: string; collection?: string }>({});
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const editing = cardId !== undefined;
 
   useEffect(() => {
     let off: (() => void) | null = null;
     let cancelled = false;
-    void getContainer().then((c) => {
+    void getContainer().then(async (c) => {
       if (cancelled) return;
+      if (cardId) {
+        const found = await c.cards.get(cardId);
+        if (cancelled) return;
+        if (found) {
+          setOriginal(found);
+          setFront(found.front);
+          setBack(found.back);
+          setCollectionId(found.collectionId);
+          setImportance(found.importance);
+        }
+      }
       off = c.collections.watchAll().subscribe((list) => {
         setCollections(list);
         setCollectionId((current) => current ?? list[0]?.id ?? null);
@@ -34,7 +49,7 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId }: Props) {
       cancelled = true;
       off?.();
     };
-  }, []);
+  }, [cardId]);
 
   const persist = async (): Promise<boolean> => {
     const result = validateCardDraft({ front, back, collectionId, importance });
@@ -55,14 +70,14 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId }: Props) {
       const c = await getContainer();
       const now = c.now();
       await c.cards.save({
-        id: c.newId(),
+        id: original?.id ?? c.newId(),
         collectionId: result.collectionId,
         front: result.front,
         back: result.back,
-        tags: [],
+        tags: original?.tags ?? [],
         importance: result.importance,
-        status: "active",
-        createdAt: now,
+        status: original?.status ?? "active",
+        createdAt: original?.createdAt ?? now,
         updatedAt: now,
         deletedAt: null,
       });
@@ -72,30 +87,84 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId }: Props) {
     }
   };
 
+  const toggleSuspend = async () => {
+    if (!original) return;
+    setBusy(true);
+    try {
+      const c = await getContainer();
+      const next: Card = {
+        ...original,
+        status: original.status === "suspended" ? "active" : "suspended",
+        updatedAt: c.now(),
+      };
+      await c.cards.save(next);
+      setOriginal(next);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async () => {
+    if (!original) return;
+    setBusy(true);
+    try {
+      const c = await getContainer();
+      await c.cards.softDelete(original.id);
+      setConfirmingDelete(false);
+      onDone();
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
-    <NewCardView
-      front={front}
-      onFront={setFront}
-      back={back}
-      onBack={setBack}
-      collections={collections}
-      collectionId={collectionId}
-      onCollection={setCollectionId}
-      importance={importance}
-      onImportance={setImportance}
-      errors={errors}
-      savedNotice={saved}
-      busy={busy}
-      onSave={() => void persist().then((ok) => ok && onDone())}
-      onSaveAndNew={() =>
-        void persist().then((ok) => {
-          if (!ok) return;
-          setFront("");
-          setBack("");
-          setSaved(true);
-        })
-      }
-      onClose={onClose}
-    />
+    <>
+      <NewCardView
+        front={front}
+        onFront={setFront}
+        back={back}
+        onBack={setBack}
+        collections={collections}
+        collectionId={collectionId}
+        onCollection={setCollectionId}
+        importance={importance}
+        onImportance={setImportance}
+        errors={errors}
+        savedNotice={saved}
+        busy={busy}
+        title={editing ? t("card.editTitle") : undefined}
+        edit={
+          editing && original
+            ? {
+                suspended: original.status === "suspended",
+                onToggleSuspend: () => void toggleSuspend(),
+                onDelete: () => setConfirmingDelete(true),
+              }
+            : undefined
+        }
+        onSave={() => void persist().then((ok) => ok && onDone())}
+        onSaveAndNew={() =>
+          void persist().then((ok) => {
+            if (!ok) return;
+            setFront("");
+            setBack("");
+            setSaved(true);
+          })
+        }
+        onClose={onClose}
+      />
+      <ConfirmSheet
+        visible={confirmingDelete}
+        title={t("card.delete.title")}
+        message={t("card.delete.message")}
+        confirmLabel={t("card.delete.confirm")}
+        cancelLabel={t("common.cancel")}
+        dismissLabel={t("common.close")}
+        destructive
+        busy={busy}
+        onConfirm={() => void remove()}
+        onCancel={() => setConfirmingDelete(false)}
+      />
+    </>
   );
 }

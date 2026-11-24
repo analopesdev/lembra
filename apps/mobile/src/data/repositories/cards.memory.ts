@@ -8,7 +8,15 @@ import {
 } from "@/domain/scheduling";
 import type { Card, CardWithState, Id } from "@/domain/types";
 
-import type { CardsRepository, OutboxEntry, ReviewInput, Subscribable, TodaySummary } from "./cards";
+import type {
+  CardListPage,
+  CardListQuery,
+  CardsRepository,
+  OutboxEntry,
+  ReviewInput,
+  Subscribable,
+  TodaySummary,
+} from "./cards";
 
 import type { CardState } from "@/domain/scheduling";
 
@@ -102,6 +110,26 @@ export class InMemoryCardsRepository implements CardsRepository {
           })),
       };
     });
+  }
+
+  watchCards(query: CardListQuery): Subscribable<CardListPage> {
+    return this.watch(() => {
+      const all = [...this.cards.values()]
+        .filter((c) => c.collectionId === query.collectionId && !c.deletedAt)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || (a.id < b.id ? 1 : -1));
+      return { items: all.slice(0, query.limit), hasMore: all.length > query.limit };
+    });
+  }
+
+  async softDeleteByCollection(collectionId: Id): Promise<number> {
+    const targets = [...this.cards.values()].filter((c) => c.collectionId === collectionId && !c.deletedAt);
+    if (targets.length === 0) return 0;
+    const now = this.deps.clock();
+    await this.commit(
+      targets.map((c) => ({ ...c, deletedAt: now, updatedAt: now })),
+      targets.map((c) => c.id),
+    );
+    return targets.length;
   }
 
   async getState(cardId: Id): Promise<CardState | null> {

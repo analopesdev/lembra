@@ -1,6 +1,7 @@
 export { BottomNav, type NavItem } from "./BottomNav";
 export { Button } from "./Button";
 export { Card } from "./Card";
+export { ConfirmSheet } from "./ConfirmSheet";
 export { EmptyState } from "./EmptyState";
 export { Icon } from "./Icon";
 export { Input } from "./Input";

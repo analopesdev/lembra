@@ -1,4 +1,4 @@
-import { and, asc, count, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 
 import {
@@ -15,7 +15,15 @@ import type { Card, CardWithState, Id } from "@/domain/types";
 import { ChangeBus } from "../db/change-bus";
 import type { AppDb } from "../db/client";
 import { cardStates, cards, outbox, reviewLogs } from "../db/schema";
-import type { CardsRepository, OutboxEntry, ReviewInput, Subscribable, TodaySummary } from "./cards";
+import type {
+  CardListPage,
+  CardListQuery,
+  CardsRepository,
+  OutboxEntry,
+  ReviewInput,
+  Subscribable,
+  TodaySummary,
+} from "./cards";
 import type { RepoDeps } from "./cards.memory";
 
 type CardRow = typeof cards.$inferSelect;
@@ -165,6 +173,32 @@ export class SqliteCardsRepository implements CardsRepository {
         dueRows,
       };
     });
+  }
+
+  watchCards(query: CardListQuery): Subscribable<CardListPage> {
+    return this.watch(["cards"], async () => {
+      const rows = await this.db
+        .select()
+        .from(cards)
+        .where(and(eq(cards.collectionId, query.collectionId), isNull(cards.deletedAt)))
+        .orderBy(desc(cards.createdAt), desc(cards.id))
+        .limit(query.limit + 1);
+      return { items: rows.slice(0, query.limit).map(toCard), hasMore: rows.length > query.limit };
+    });
+  }
+
+  async softDeleteByCollection(collectionId: Id): Promise<number> {
+    const rows = await this.db
+      .select()
+      .from(cards)
+      .where(and(eq(cards.collectionId, collectionId), isNull(cards.deletedAt)));
+    if (rows.length === 0) return 0;
+    const now = this.deps.clock();
+    await this.write(
+      rows.map((r) => ({ ...toCard(r), deletedAt: now, updatedAt: now })),
+      new Set(rows.map((r) => r.id)),
+    );
+    return rows.length;
   }
 
   async getState(cardId: Id): Promise<CardState | null> {

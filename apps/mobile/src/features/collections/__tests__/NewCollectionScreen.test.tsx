@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 
+import { makeCollection } from "@/data/repositories/collections.contract";
 import { InMemoryCollectionsRepository } from "@/data/repositories/collections.memory";
 import { defaultParams } from "@/domain/scheduling";
 import "@/shared/i18n";
@@ -84,5 +85,71 @@ describe("NewCollectionScreen", () => {
     await submit();
     await waitFor(() => expect(onDone).toHaveBeenCalled());
     expect((await repo.get("col-0"))?.examDay).toBeNull();
+  });
+});
+
+describe("NewCollectionScreen: edição", () => {
+  const seed = (over = {}) => {
+    const ctx = setup();
+    return ctx.repo
+      .save(
+        makeCollection(1, {
+          id: "col-x",
+          name: "Anatomia I",
+          icon: "heart",
+          tone: "collection2",
+          examDay: "2026-12-04",
+          ...over,
+        }),
+      )
+      .then(() => ctx);
+  };
+
+  it("carrega os dados atuais e salva mantendo id e data de criação", async () => {
+    const { repo, onDone } = await seed();
+    const original = await repo.get("col-x");
+    await render(<NewCollectionScreen collectionId="col-x" onDone={onDone} onBack={() => undefined} />);
+    expect(await screen.findByText("Editar coleção")).toBeTruthy();
+    await waitFor(() => expect(screen.getByLabelText("Nome").props.value).toBe("Anatomia I"));
+    expect(screen.getByLabelText("Data da prova (opcional)").props.value).toBe("04/12/2026");
+    await fireEvent.changeText(screen.getByLabelText("Nome"), "Anatomia II");
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Salvar alterações" })));
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    const saved = await repo.get("col-x");
+    expect(saved).toMatchObject({
+      id: "col-x",
+      name: "Anatomia II",
+      icon: "heart",
+      tone: "collection2",
+      examDay: "2026-12-04",
+    });
+    expect(saved?.createdAt).toEqual(original?.createdAt);
+    expect((await repo.pendingOutbox()).map((e) => e.op)).toEqual(["upsert", "upsert"]);
+  });
+
+  it("prova que já passou e não foi alterada não bloqueia o salvamento", async () => {
+    const { repo, onDone } = await seed({ examDay: "2026-03-01" });
+    await render(<NewCollectionScreen collectionId="col-x" onDone={onDone} onBack={() => undefined} />);
+    await waitFor(() =>
+      expect(screen.getByLabelText("Data da prova (opcional)").props.value).toBe("01/03/2026"),
+    );
+    await fireEvent.changeText(screen.getByLabelText("Nome"), "Renomeada");
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Salvar alterações" })));
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect((await repo.get("col-x"))?.examDay).toBe("2026-03-01");
+  });
+
+  it("trocar para uma data passada é recusado; limpar a data remove a prova", async () => {
+    const { repo, onDone } = await seed();
+    await render(<NewCollectionScreen collectionId="col-x" onDone={onDone} onBack={() => undefined} />);
+    await waitFor(() => expect(screen.getByLabelText("Nome").props.value).toBe("Anatomia I"));
+    await fireEvent.changeText(screen.getByLabelText("Data da prova (opcional)"), "01012020");
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Salvar alterações" })));
+    expect(await screen.findByText("A data da prova não pode ser no passado.")).toBeTruthy();
+    expect(onDone).not.toHaveBeenCalled();
+    await fireEvent.changeText(screen.getByLabelText("Data da prova (opcional)"), "");
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Salvar alterações" })));
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect((await repo.get("col-x"))?.examDay).toBeNull();
   });
 });

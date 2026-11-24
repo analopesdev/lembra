@@ -40,3 +40,7 @@ jobs:
         run: pnpm test --coverage
       - name: Export web
         run: pnpm exec expo export --platform web
+      - name: Navegadores do Playwright
+        run: pnpm exec playwright install --with-deps chromium
+      - name: E2E no navegador (CRUD com SQLite real)
+        run: pnpm e2e:crud

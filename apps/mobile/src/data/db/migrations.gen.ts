@@ -19,5 +19,9 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     "UPDATE `card_states` SET `collection_id` = (SELECT `collection_id` FROM `cards` WHERE `cards`.`id` = `card_states`.`card_id`);",
     "CREATE INDEX `idx_states_collection` ON `card_states` (`is_active`,`collection_id`,`retained_until`);",
     "CREATE INDEX `idx_states_active_due` ON `card_states` (`is_active`,`due`,`card_id`,`importance`,`collection_id`,`stability`,`last_review`);"
+  ],
+  [
+    "DROP INDEX `idx_cards_collection`;",
+    "CREATE INDEX `idx_cards_collection` ON `cards` (`collection_id`,`deleted_at`,`created_at`);"
   ]
 ];

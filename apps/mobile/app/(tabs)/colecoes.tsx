@@ -1,8 +1,16 @@
-import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
 
-import { EmptyState } from "@/shared/ui";
+import { CollectionsListView } from "@/features/collections";
+import { useTodayModel } from "@/features/today";
 
-export default function Screen() {
-  const { t } = useTranslation();
-  return <EmptyState title={t("tabs.collections")} description={t("empty.description")} />;
+export default function CollectionsTab() {
+  const router = useRouter();
+  const model = useTodayModel();
+  return (
+    <CollectionsListView
+      collections={model.collections}
+      onOpen={(id) => router.push(`/colecao/${id}`)}
+      onCreate={() => router.push("/colecao/nova")}
+    />
+  );
 }
