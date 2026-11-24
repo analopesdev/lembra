@@ -20,8 +20,7 @@ export function Icon({ icon: Glyph, size = 24, color = "text", strokeWidth = 2, 
       color={t[color]}
       strokeWidth={strokeWidth}
       fill={filled ? t[color] : "none"}
-      accessibilityElementsHidden
-      importantForAccessibility="no"
+      aria-hidden
     />
   );
 }
