@@ -64,7 +64,7 @@ export function CollectionDetailView(p: Props) {
       </View>
 
       <Card tone="tint" style={styles.summary}>
-        <View style={[styles.summaryIcon, { backgroundColor: t.surface }]}>
+        <View style={[styles.summaryIcon, { backgroundColor: tone.bg }]}>
           <CollectionGlyph name={p.collection.icon} size={26} color={tone.fg} />
         </View>
         <View style={styles.flex}>

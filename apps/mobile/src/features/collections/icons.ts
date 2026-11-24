@@ -27,8 +27,13 @@ export function resolveCollectionIcon(name: string): string {
   return LEGACY_ICONS[name] ?? name;
 }
 
-export function toneColors(tone: CollectionTone, theme: Colors): { bg: string; fg: string } {
+export function toneColors(tone: CollectionTone, theme: Colors): { bg: string; fg: string; well: string } {
   const legacy = LEGACY_TONES[tone];
-  if (legacy) return { bg: theme[legacy.bg], fg: theme[legacy.fg] };
-  return { bg: tone, fg: GLYPH_INK[contrastOf(tone)] };
+  if (legacy) return { bg: theme[legacy.bg], fg: theme[legacy.fg], well: theme.surface };
+  const dark = contrastOf(tone) === "dark";
+  return {
+    bg: tone,
+    fg: GLYPH_INK[dark ? "dark" : "light"],
+    well: dark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.25)",
+  };
 }

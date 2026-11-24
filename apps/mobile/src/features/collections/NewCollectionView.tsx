@@ -63,7 +63,7 @@ export function NewCollectionView(p: Props) {
       </View>
 
       <Card tone="tint" style={styles.preview}>
-        <View style={[styles.previewIcon, { backgroundColor: t.surface }]}>
+        <View style={[styles.previewIcon, { backgroundColor: tone.bg }]}>
           <CollectionGlyph name={p.icon} size={26} color={tone.fg} />
         </View>
         <View style={styles.previewText}>
@@ -146,7 +146,7 @@ export function NewCollectionView(p: Props) {
                     },
                   ]}
                 >
-                  <CollectionGlyph name={name} size={22} color={on ? tone.fg : "textMuted"} />
+                  <CollectionGlyph name={name} size={22} color={on ? tone.fg : "text"} />
                 </Pressable>
               );
             })}

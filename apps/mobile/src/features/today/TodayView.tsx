@@ -66,7 +66,7 @@ function CollectionTile({ item, onPress }: { item: CollectionCard; onPress?: () 
       onPress={onPress}
       style={[styles.tile, { backgroundColor: tone.bg }]}
     >
-      <View style={[styles.tileIcon, { backgroundColor: t.surface }]}>
+      <View style={[styles.tileIcon, { backgroundColor: tone.well }]}>
         <CollectionGlyph name={item.icon} size={20} color={tone.fg} />
       </View>
       <View style={styles.flex} />

@@ -54,7 +54,7 @@ export function CollectionsListView({ collections, onOpen, onCreate }: Props) {
               onPress={() => onOpen(c.id)}
               style={[styles.row, { backgroundColor: tone.bg }]}
             >
-              <View style={[styles.rowIcon, { backgroundColor: t.surface }]}>
+              <View style={[styles.rowIcon, { backgroundColor: tone.well }]}>
                 <CollectionGlyph name={c.icon} size={22} color={tone.fg} />
               </View>
               <View style={styles.rowText}>
