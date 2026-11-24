@@ -142,12 +142,22 @@
       "suspended": "Suspenso",
       "cardsDue_one": "{{count}} para hoje",
       "cardsDue_other": "{{count}} para hoje",
-      "menu": "Mais ações"
+      "menu": "Mais ações",
+      "ready": "pronta",
+      "target": "meta",
+      "examDays": "dias p/ prova",
+      "study": "Estudar {{name}}",
+      "ready_count_one": "{{count}} card pronto",
+      "ready_count_other": "{{count}} cards prontos",
+      "cardsSection": "Cards · {{count}}",
+      "drafts": "Revisar rascunhos",
+      "dueToday": "hoje"
     },
     "delete": {
       "title": "Excluir coleção?",
       "message": "Isto exclui “{{name}}” e todos os cards dela. A ação sincroniza com seus outros aparelhos.",
-      "confirm": "Excluir coleção e cards"
+      "confirm": "Excluir coleção e cards",
+      "action": "Excluir coleção"
     },
     "statCollections": "coleções",
     "statDue": "para hoje",

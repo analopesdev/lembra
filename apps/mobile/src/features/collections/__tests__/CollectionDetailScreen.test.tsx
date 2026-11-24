@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-
 import { InMemoryCardsRepository } from "@/data/repositories/cards.memory";
 import { makeCard } from "@/data/repositories/cards.contract";
 import { InMemoryCollectionsRepository } from "@/data/repositories/collections.memory";
+import { InMemorySettingsRepository } from "@/data/repositories/settings.memory";
 import { makeCollection } from "@/data/repositories/collections.contract";
 import { defaultParams } from "@/domain/scheduling";
 import "@/shared/i18n";
@@ -12,15 +13,18 @@ import { CollectionDetailScreen } from "../CollectionDetailScreen";
 const mockState: {
   cards: InMemoryCardsRepository | null;
   collections: InMemoryCollectionsRepository | null;
+  settings: InMemorySettingsRepository | null;
 } = {
   cards: null,
   collections: null,
+  settings: null,
 };
 jest.mock("@/data/container", () => ({
   getContainer: () =>
     Promise.resolve({
       cards: mockState.cards,
       collections: mockState.collections,
+      settings: mockState.settings,
       now: () => new Date("2026-03-10T13:00:00Z"),
     }),
 }));
@@ -36,6 +40,7 @@ async function setup(cardCount: number) {
   const collections = new InMemoryCollectionsRepository(deps);
   mockState.cards = cards;
   mockState.collections = collections;
+  mockState.settings = new InMemorySettingsRepository(deps);
   await collections.save(makeCollection(1, { id: "col-1", name: "Anatomia I", examDay: "2026-03-22" }));
   await cards.saveMany(
     Array.from({ length: cardCount }, (_, i) =>
@@ -49,6 +54,7 @@ const handlers = () => ({
   onBack: jest.fn(),
   onEdit: jest.fn(),
   onNewCard: jest.fn(),
+  onStudy: jest.fn(),
   onOpenCard: jest.fn(),
   onDeleted: jest.fn(),
 });
@@ -58,7 +64,9 @@ describe("CollectionDetailScreen", () => {
     await setup(3);
     await render(<CollectionDetailScreen collectionId="col-1" {...handlers()} />);
     expect(await screen.findByText("Anatomia I")).toBeTruthy();
-    expect(screen.getByText("Prova em 12 dias")).toBeTruthy();
+    expect(screen.getByText("dias p/ prova")).toBeTruthy();
+    expect(screen.getByText("12")).toBeTruthy();
+    expect(screen.getByText(/^Cards · \d+$/)).toBeTruthy();
     const order = screen.getAllByText(/^Pergunta \d$/).map((n) => n.props.children);
     expect(order).toEqual(["Pergunta 3", "Pergunta 2", "Pergunta 1"]);
   });
@@ -119,5 +127,16 @@ describe("CollectionDetailScreen", () => {
     expect(await collections.get("col-1")).toBeNull();
     expect([await cards.get(makeCard(1).id), await cards.get(makeCard(2).id)]).toEqual([null, null]);
     expect((await cards.get(makeCard(9).id))?.collectionId).toBe("outra");
+  });
+
+  it("botão de estudar mostra os cards prontos e inicia a sessão", async () => {
+    await setup(2);
+    const h = handlers();
+    await render(<CollectionDetailScreen collectionId="col-1" {...h} />);
+    await screen.findByText("Pergunta 1");
+    await fireEvent.press(screen.getByRole("button", { name: "Estudar Anatomia I" }));
+    expect(h.onStudy).toHaveBeenCalled();
+    expect(await screen.findByText("2 cards prontos")).toBeTruthy();
+    expect(screen.getAllByText("hoje")).toHaveLength(2);
   });
 });

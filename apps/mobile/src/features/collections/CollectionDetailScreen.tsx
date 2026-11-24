@@ -7,7 +7,10 @@ import { diffDays, studyDayOf } from "@/domain/study-day/study-day";
 import type { Collection } from "@/domain/types";
 import { ConfirmSheet } from "@/shared/ui";
 
-import { CollectionDetailView } from "./CollectionDetailView";
+import { useTodayModel } from "@/features/today";
+
+import { cardRowKind, dueLabel } from "./cardRow";
+import { CollectionDetailView, type CardListRow } from "./CollectionDetailView";
 
 const PAGE = 30;
 
@@ -16,6 +19,7 @@ type Props = {
   onBack: () => void;
   onEdit: () => void;
   onNewCard: () => void;
+  onStudy: () => void;
   onOpenCard: (id: string) => void;
   onDeleted: () => void;
 };
@@ -25,6 +29,7 @@ export function CollectionDetailScreen({
   onBack,
   onEdit,
   onNewCard,
+  onStudy,
   onOpenCard,
   onDeleted,
 }: Props) {
@@ -35,6 +40,8 @@ export function CollectionDetailScreen({
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [today, setToday] = useState<string | null>(null);
+  const [dues, setDues] = useState<ReadonlyMap<string, Date>>(new Map());
+  const model = useTodayModel();
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +62,20 @@ export function CollectionDetailScreen({
     };
   }, [collectionId, limit]);
 
+  useEffect(() => {
+    let cancelled = false;
+    void getContainer().then(async (c) => {
+      const states = await Promise.all(page.items.map((card) => c.cards.getState(card.id)));
+      if (cancelled) return;
+      setDues(
+        new Map(page.items.flatMap((card, i) => (states[i] ? [[card.id, states[i].due] as const] : []))),
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [page]);
+
   const remove = async () => {
     setBusy(true);
     try {
@@ -70,14 +91,34 @@ export function CollectionDetailScreen({
 
   if (!collection) return null;
   const days = collection.examDay === null || today === null ? null : diffDays(today, collection.examDay);
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const stats = model.collections.find((x) => x.id === collectionId);
+  const visible = page.items.filter((c) => c.status !== "draft");
+  const rows: CardListRow[] = visible.map((c) => {
+    const due = dues.get(c.id);
+    const untilDue = due && today ? diffDays(today, studyDayOf(due, tz)) : 0;
+    return {
+      id: c.id,
+      front: c.front,
+      kind: cardRowKind(untilDue),
+      due: dueLabel(untilDue, t("collection.detail.dueToday")),
+      suspended: c.status === "suspended",
+    };
+  });
   return (
     <>
       <CollectionDetailView
-        collection={collection}
+        name={collection.name}
+        readinessPct={Math.round((stats?.progress ?? 0) * 100)}
+        targetPct={model.retentionTargetPct}
         examDaysLeft={days !== null && days >= 0 ? days : null}
-        cards={page.items}
+        dueCount={stats?.dueToday ?? 0}
+        cardCount={stats?.cardCount ?? page.items.length}
+        draftCount={page.items.length - visible.length}
+        rows={rows}
         hasMore={page.hasMore}
         onLoadMore={() => setLimit((n) => n + PAGE)}
+        onStudy={onStudy}
         onOpenCard={onOpenCard}
         onNewCard={onNewCard}
         onEdit={onEdit}
