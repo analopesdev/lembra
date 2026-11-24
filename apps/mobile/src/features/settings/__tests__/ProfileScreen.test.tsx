@@ -138,4 +138,14 @@ describe("ProfileScreen", () => {
     );
     await waitFor(async () => expect((await repo.get())?.glassNav).toBe(true));
   });
+
+  it("avatar: tocar abre o menu com todos os avatares e escolher grava", async () => {
+    const repo = await setup();
+    await render(<ProfileScreen onBack={() => undefined} />);
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Trocar avatar" })));
+    expect(await screen.findAllByRole("radio", { name: /^Avatar \d+$/ })).toHaveLength(24);
+    expect(screen.getByRole("radio", { name: "Avatar 1" }).props.accessibilityState.selected).toBe(true);
+    await act(async () => fireEvent.press(screen.getByRole("radio", { name: "Avatar 5" })));
+    await waitFor(async () => expect((await repo.get())?.avatarSeed).toBe("lembra-5"));
+  });
 });

@@ -302,7 +302,10 @@
     },
     "reminders": "Lembretes",
     "dailyReminder": "Lembrete diário",
-    "avatar": "Avatar",
+    "avatarChange": "Trocar avatar",
+    "avatarPick": "Escolha seu avatar",
+    "avatarClose": "Fechar",
+    "avatarOption": "Avatar {{n}}",
     "glassNav": "Menu de baixo em vidro (liquid glass)",
     "appearance": "Aparência",
     "themes": {

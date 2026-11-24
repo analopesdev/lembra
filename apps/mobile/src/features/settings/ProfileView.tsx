@@ -1,9 +1,15 @@
 import { ChevronLeft, Minus, Plus } from "lucide-react-native";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import { MINUTE_OPTIONS, type DailyMinutes, type ThemePreference } from "@/domain/settings/settings";
-import { Avatar, Card, Icon, Num, Tag, Text, Toggle } from "@/shared/ui";
+import {
+  AVATAR_SEEDS,
+  MINUTE_OPTIONS,
+  type DailyMinutes,
+  type ThemePreference,
+} from "@/domain/settings/settings";
+import { Avatar, Card, Icon, Num, Tag, Sheet, Text, Toggle } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -19,6 +25,7 @@ type Props = {
   glassNav: boolean;
   onGlassNav: (v: boolean) => void;
   avatarSeed: string;
+  onAvatarSeed: (seed: string) => void;
   retainedCount: number;
   version: string;
   onBack: () => void;
@@ -69,6 +76,7 @@ function SoonRow({ label }: { label: string }) {
 export function ProfileView(p: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
+  const [picking, setPicking] = useState(false);
   const chip = (on: boolean) => ({
     backgroundColor: on ? t.primary : t.surface,
     borderColor: on ? t.primary : t.border,
@@ -91,7 +99,13 @@ export function ProfileView(p: Props) {
       </View>
 
       <Card style={styles.account}>
-        <Avatar seed={p.avatarSeed} size={52} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={tr("profile.avatarChange")}
+          onPress={() => setPicking(true)}
+        >
+          <Avatar seed={p.avatarSeed} size={52} />
+        </Pressable>
         <View style={styles.flex}>
           <Text variant="subtitulo">{tr("profile.guest")}</Text>
           <Text variant="label" tone="textMuted" style={styles.hint}>
@@ -99,11 +113,6 @@ export function ProfileView(p: Props) {
           </Text>
         </View>
       </Card>
-
-      <Section title={tr("profile.avatar")} />
-      <View style={styles.avatarPreview}>
-        <Avatar seed={p.avatarSeed} size={96} />
-      </View>
 
       <View style={[styles.stat, { backgroundColor: t.surface, borderColor: t.border }]}>
         <Num size={28}>{p.retainedCount}</Num>
@@ -241,6 +250,29 @@ export function ProfileView(p: Props) {
       <Text variant="legenda" tone="textMuted" style={styles.version}>
         {tr("profile.version", { version: p.version })}
       </Text>
+      <Sheet visible={picking} onClose={() => setPicking(false)} closeLabel={tr("profile.avatarClose")}>
+        <Text variant="subtitulo">{tr("profile.avatarPick")}</Text>
+        <View accessibilityRole="radiogroup" style={styles.avatarGrid}>
+          {AVATAR_SEEDS.map((seed) => {
+            const on = seed === (p.avatarSeed === "" ? AVATAR_SEEDS[0] : p.avatarSeed);
+            return (
+              <Pressable
+                key={seed}
+                accessibilityRole="radio"
+                accessibilityLabel={tr("profile.avatarOption", { n: AVATAR_SEEDS.indexOf(seed) + 1 })}
+                accessibilityState={{ selected: on }}
+                onPress={() => {
+                  p.onAvatarSeed(seed);
+                  setPicking(false);
+                }}
+                style={[styles.avatarOption, { borderColor: on ? t.primary : "transparent" }]}
+              >
+                <Avatar seed={seed} size={52} />
+              </Pressable>
+            );
+          })}
+        </View>
+      </Sheet>
     </ScrollView>
   );
 }
@@ -261,7 +293,8 @@ const styles = StyleSheet.create({
   title: { flex: 1, textAlign: "center", fontSize: 20 },
   spacer: { width: 40 },
   account: { flexDirection: "row", alignItems: "center", gap: 14, padding: space.lg },
-  avatarPreview: { alignSelf: "flex-start" },
+  avatarGrid: { flexDirection: "row", flexWrap: "wrap", gap: space.sm, justifyContent: "center" },
+  avatarOption: { padding: 2, borderWidth: 2, borderRadius: 32 },
   hint: { fontWeight: "400" },
   stat: { borderRadius: 18, borderWidth: 1, padding: space.lg, gap: 4, alignItems: "flex-start" },
   section: { fontWeight: "700", letterSpacing: 0.72, textTransform: "uppercase", marginTop: space.md },

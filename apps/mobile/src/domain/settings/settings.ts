@@ -4,6 +4,7 @@ export type DailyMinutes = (typeof MINUTE_OPTIONS)[number];
 export type ThemePreference = "auto" | "light" | "dark";
 export const MIN_NEW_CARDS = 1;
 export const MAX_NEW_CARDS = 50;
+export const AVATAR_SEEDS = Array.from({ length: 24 }, (_, i) => (i === 0 ? "lembra" : `lembra-${i + 1}`));
 export const DEFAULT_NEW_CARDS_PER_DAY = 5;
 
 export interface Settings {
