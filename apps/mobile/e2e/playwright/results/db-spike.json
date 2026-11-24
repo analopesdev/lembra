@@ -5,153 +5,153 @@
   },
   "contract": {
     "phase": "contract",
-    "passed": 28,
+    "passed": 34,
     "failed": [],
-    "pageToReadyMs": 8444
+    "pageToReadyMs": 11587
   },
   "seed": {
     "phase": "seed",
     "cards": 10000,
-    "openMs": 249.9,
-    "seedCardsMs": 5539.9,
-    "seedStatesMs": 75128.9,
-    "pageToReadyMs": 81083
+    "openMs": 179.2,
+    "seedCardsMs": 5538.6,
+    "seedStatesMs": 74593.5,
+    "pageToReadyMs": 80631
   },
   "runs": [
     {
       "phase": "today",
       "active": 9800,
-      "openMs": 127.9,
-      "firstCallMs": 5,
-      "todayQueryColdMs": 267.2,
-      "todayQueryWarmMs": 42.8,
-      "computeMs": 7.8,
-      "todayReadyMs": 408,
-      "pageToTodayMs": 560.7,
+      "openMs": 32.1,
+      "firstCallMs": 5.3,
+      "todayQueryColdMs": 368.5,
+      "todayQueryWarmMs": 64,
+      "computeMs": 5.4,
+      "todayReadyMs": 411.4,
+      "pageToTodayMs": 845.2,
       "today": {
         "retained": 6752,
         "due": 2407,
         "top": 30
       },
-      "fullListColdMs": 1711.7,
-      "fullListWarmMs": 146.9,
-      "reactiveLatencyMedianMs": 115.5,
-      "reactiveLatencyMaxMs": 150.3,
+      "fullListColdMs": 1658.8,
+      "fullListWarmMs": 173.6,
+      "reactiveLatencyMedianMs": 123.5,
+      "reactiveLatencyMaxMs": 147.4,
       "crudMedianMs": {
-        "insert": 90.5,
-        "update": 61.6,
-        "get": 3.8,
-        "softDelete": 97
+        "insert": 88.9,
+        "update": 68.2,
+        "get": 4.1,
+        "softDelete": 105
       },
-      "pageToReadyMs": 8866
+      "pageToReadyMs": 9263
     },
     {
       "phase": "today",
       "active": 9810,
-      "openMs": 121.3,
-      "firstCallMs": 2.8,
-      "todayQueryColdMs": 235.8,
-      "todayQueryWarmMs": 34.5,
-      "computeMs": 5.7,
-      "todayReadyMs": 365.6,
-      "pageToTodayMs": 592.3,
+      "openMs": 15.7,
+      "firstCallMs": 1.4,
+      "todayQueryColdMs": 153.4,
+      "todayQueryWarmMs": 27.4,
+      "computeMs": 2.2,
+      "todayReadyMs": 172.8,
+      "pageToTodayMs": 533.3,
       "today": {
         "retained": 6752,
         "due": 2417,
         "top": 30
       },
-      "fullListColdMs": 1378.5,
-      "fullListWarmMs": 183.1,
-      "reactiveLatencyMedianMs": 118.6,
-      "reactiveLatencyMaxMs": 149.8,
+      "fullListColdMs": 1467.3,
+      "fullListWarmMs": 177.6,
+      "reactiveLatencyMedianMs": 100.6,
+      "reactiveLatencyMaxMs": 116.9,
       "crudMedianMs": {
-        "insert": 80.5,
-        "update": 67.3,
-        "get": 4.3,
-        "softDelete": 95.8
+        "insert": 83.6,
+        "update": 62.5,
+        "get": 4.1,
+        "softDelete": 81.1
       },
-      "pageToReadyMs": 8410
+      "pageToReadyMs": 8027
     },
     {
       "phase": "today",
       "active": 9810,
-      "openMs": 126.5,
-      "firstCallMs": 2.3,
-      "todayQueryColdMs": 238.7,
-      "todayQueryWarmMs": 30.2,
-      "computeMs": 3.4,
-      "todayReadyMs": 371,
-      "pageToTodayMs": 507.8,
+      "openMs": 32.6,
+      "firstCallMs": 5.5,
+      "todayQueryColdMs": 234.9,
+      "todayQueryWarmMs": 38,
+      "computeMs": 6.5,
+      "todayReadyMs": 279.6,
+      "pageToTodayMs": 622.7,
       "today": {
         "retained": 6752,
         "due": 2417,
         "top": 30
       },
-      "fullListColdMs": 1617.6,
-      "fullListWarmMs": 171,
-      "reactiveLatencyMedianMs": 122.6,
-      "reactiveLatencyMaxMs": 127.5,
+      "fullListColdMs": 1386.6,
+      "fullListWarmMs": 179.7,
+      "reactiveLatencyMedianMs": 87.5,
+      "reactiveLatencyMaxMs": 103.5,
       "crudMedianMs": {
-        "insert": 84.9,
-        "update": 72.3,
-        "get": 5.7,
-        "softDelete": 94.6
+        "insert": 74.4,
+        "update": 57.7,
+        "get": 5.1,
+        "softDelete": 76.4
       },
-      "pageToReadyMs": 8747
+      "pageToReadyMs": 7833
     },
     {
       "phase": "today",
       "active": 9810,
-      "openMs": 128.1,
-      "firstCallMs": 2,
-      "todayQueryColdMs": 238.3,
-      "todayQueryWarmMs": 33.7,
-      "computeMs": 3,
-      "todayReadyMs": 371.5,
-      "pageToTodayMs": 642,
-      "today": {
-        "retained": 6752,
-        "due": 2417,
-        "top": 30
-      },
-      "fullListColdMs": 1543,
-      "fullListWarmMs": 203.6,
-      "reactiveLatencyMedianMs": 68.2,
-      "reactiveLatencyMaxMs": 110.2,
-      "crudMedianMs": {
-        "insert": 70.2,
-        "update": 61.6,
-        "get": 4.3,
-        "softDelete": 82.6
-      },
-      "pageToReadyMs": 7952
-    },
-    {
-      "phase": "today",
-      "active": 9810,
-      "openMs": 139.8,
-      "firstCallMs": 2.4,
-      "todayQueryColdMs": 217.3,
-      "todayQueryWarmMs": 28.9,
+      "openMs": 15.1,
+      "firstCallMs": 2.1,
+      "todayQueryColdMs": 215.9,
+      "todayQueryWarmMs": 21.9,
       "computeMs": 2.1,
-      "todayReadyMs": 361.5,
-      "pageToTodayMs": 533.1,
+      "todayReadyMs": 235.4,
+      "pageToTodayMs": 518.1,
       "today": {
         "retained": 6752,
         "due": 2417,
         "top": 30
       },
-      "fullListColdMs": 1426.2,
-      "fullListWarmMs": 186.3,
-      "reactiveLatencyMedianMs": 91.1,
-      "reactiveLatencyMaxMs": 101.5,
+      "fullListColdMs": 1419,
+      "fullListWarmMs": 308.4,
+      "reactiveLatencyMedianMs": 83.4,
+      "reactiveLatencyMaxMs": 103.9,
       "crudMedianMs": {
-        "insert": 71.2,
-        "update": 51.5,
-        "get": 3.3,
-        "softDelete": 67.4
+        "insert": 73.8,
+        "update": 59.3,
+        "get": 4.4,
+        "softDelete": 86.9
       },
-      "pageToReadyMs": 7319
+      "pageToReadyMs": 7869
+    },
+    {
+      "phase": "today",
+      "active": 9810,
+      "openMs": 16.6,
+      "firstCallMs": 2.7,
+      "todayQueryColdMs": 230.9,
+      "todayQueryWarmMs": 29.1,
+      "computeMs": 2.1,
+      "todayReadyMs": 252.4,
+      "pageToTodayMs": 558.8,
+      "today": {
+        "retained": 6752,
+        "due": 2417,
+        "top": 30
+      },
+      "fullListColdMs": 1560.9,
+      "fullListWarmMs": 128.3,
+      "reactiveLatencyMedianMs": 91.6,
+      "reactiveLatencyMaxMs": 112.4,
+      "crudMedianMs": {
+        "insert": 79.6,
+        "update": 58.8,
+        "get": 4.2,
+        "softDelete": 77.4
+      },
+      "pageToReadyMs": 7807
     }
   ]
 }

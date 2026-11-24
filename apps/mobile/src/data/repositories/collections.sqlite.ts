@@ -51,6 +51,11 @@ export class SqliteCollectionsRepository implements CollectionsRepository {
     await this.write({ ...toCollection(row), deletedAt: now, updatedAt: now }, "delete");
   }
 
+  async listAll(): Promise<readonly Collection[]> {
+    const rows = await this.db.select().from(collections).where(isNull(collections.deletedAt));
+    return rows.map(toCollection);
+  }
+
   watchAll(): Subscribable<readonly Collection[]> {
     return {
       subscribe: (onValue, onError) => {

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
+import { getContainer } from "@/data/container";
 import { runContract, runProbe, runSeed, runToday } from "./run";
 
 type Phase = "contract" | "seed" | "today" | "probe";
@@ -10,14 +11,14 @@ export function DbSpikeScreen({ phase, n }: { phase: Phase; n: number }) {
   const [result, setResult] = useState<string>("executando…");
 
   useEffect(() => {
-    const job =
-      phase === "contract"
-        ? runContract()
-        : phase === "seed"
-          ? runSeed(n)
-          : phase === "probe"
-            ? runProbe()
-            : runToday();
+    const run = async (): Promise<object> => {
+      await getContainer();
+      if (phase === "contract") return runContract();
+      if (phase === "seed") return runSeed(n);
+      if (phase === "probe") return runProbe();
+      return runToday();
+    };
+    const job = run();
     job
       .then((r) => {
         const out = { phase, ...r, pageToReadyMs: Math.round(performance.now()) };

@@ -485,4 +485,71 @@ export const cardsContract: readonly ContractCase[] = [
       eq(deletes.length, 2, "um delete por card");
     },
   },
+  {
+    name: "listAll devolve os cards não excluídos de todos os status",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      await repo.saveMany([
+        makeCard(1),
+        makeCard(2, { status: "suspended" }),
+        makeCard(3, { status: "draft" }),
+        makeCard(4),
+      ]);
+      await repo.softDelete(makeCard(4).id);
+      const all = await repo.listAll();
+      eq(
+        all.map((c) => [c.id, c.status]).sort(),
+        [
+          [makeCard(1).id, "active"],
+          [makeCard(2).id, "suspended"],
+          [makeCard(3).id, "draft"],
+        ].sort(),
+        "cards",
+      );
+    },
+  },
+  {
+    name: "importReviews insere só o que falta, enfileira no outbox e o rebuild reproduz o estado incremental",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const DAY = 86_400_000;
+      await repo.save(makeCard(1));
+      await repo.recordReview({ id: "a", cardId: makeCard(1).id, at: T0, rating: 3 });
+      await repo.recordReview({
+        id: "b",
+        cardId: makeCard(1).id,
+        at: new Date(T0.getTime() + 2 * DAY),
+        rating: 1,
+        retention: 0.95,
+      });
+      const expectedState = await repo.getState(makeCard(1).id);
+      const records = await repo.listAllReviews();
+      eq(records.length, 2, "dois registros");
+      const outboxBefore = (await repo.pendingOutbox()).length;
+      eq(await repo.importReviews(records), 0, "já existem: nada novo");
+      eq((await repo.pendingOutbox()).length, outboxBefore, "outbox intacto");
+      eq(
+        await repo.importReviews([
+          {
+            id: "c",
+            cardId: makeCard(1).id,
+            at: new Date(T0.getTime() + 2 * DAY + 600_000),
+            rating: 3,
+            retention: null,
+            kind: "in_session_retry",
+          },
+        ]),
+        1,
+        "um novo",
+      );
+      eq((await repo.pendingOutbox()).length, outboxBefore + 1, "uma entrada no outbox");
+      await repo.rebuildStates();
+      eq(
+        await repo.getState(makeCard(1).id),
+        expectedState,
+        "retry não muda o estado; rebuild bate com o incremental",
+      );
+      eq((await repo.listAllReviews()).length, 3, "três no histórico");
+    },
+  },
 ];

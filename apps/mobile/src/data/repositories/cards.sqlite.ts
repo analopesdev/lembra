@@ -21,6 +21,7 @@ import type {
   CardsRepository,
   OutboxEntry,
   ReviewInput,
+  ReviewRecord,
   Subscribable,
   TodaySummary,
 } from "./cards";
@@ -201,6 +202,73 @@ export class SqliteCardsRepository implements CardsRepository {
     return rows.length;
   }
 
+  async listAll(): Promise<readonly Card[]> {
+    const rows = await this.db.select().from(cards).where(isNull(cards.deletedAt));
+    return rows.map(toCard);
+  }
+
+  async listAllReviews(): Promise<readonly ReviewRecord[]> {
+    const rows = await this.db.select().from(reviewLogs);
+    return rows.map((r) => ({
+      id: r.id,
+      cardId: r.cardId,
+      at: r.at,
+      rating: r.rating,
+      retention: r.retention,
+      kind: r.kind,
+    }));
+  }
+
+  importReviews(records: readonly ReviewRecord[]): Promise<number> {
+    return this.enqueue(async () => {
+      let inserted = 0;
+      for (let i = 0; i < records.length; i += CHUNK) {
+        const part = records.slice(i, i + CHUNK);
+        const existing = new Set(
+          (
+            await this.db
+              .select({ id: reviewLogs.id })
+              .from(reviewLogs)
+              .where(
+                inArray(
+                  reviewLogs.id,
+                  part.map((r) => r.id),
+                ),
+              )
+          ).map((r) => r.id),
+        );
+        const fresh = part.filter((r) => !existing.has(r.id));
+        if (fresh.length === 0) continue;
+        const now = this.deps.clock();
+        await this.db.batch([
+          this.db.insert(reviewLogs).values(
+            fresh.map((r) => ({
+              id: r.id,
+              cardId: r.cardId,
+              at: r.at,
+              rating: r.rating,
+              retention: r.retention,
+              kind: r.kind,
+            })),
+          ),
+          this.db.insert(outbox).values(
+            fresh.map((r) => ({
+              id: this.deps.newId(),
+              entity: "review",
+              entityId: r.id,
+              op: "upsert" as const,
+              payload: "{}",
+              createdAt: now,
+            })),
+          ),
+        ]);
+        inserted += fresh.length;
+      }
+      this.bus.emit(["review_logs", "outbox"]);
+      return inserted;
+    });
+  }
+
   async getState(cardId: Id): Promise<CardState | null> {
     const rows = await this.db.select().from(cardStates).where(eq(cardStates.cardId, cardId)).limit(1);
     return rows[0] ? toState(rows[0]) : null;
@@ -368,14 +436,13 @@ export class SqliteCardsRepository implements CardsRepository {
         const withState = part.filter((c) => c.status === "active");
         const inactive = part.filter((c) => c.status !== "active").map((c) => c.id);
         if (withState.length > 0) {
-          const s = initialState(now);
           stmts.push(
             this.db
               .insert(cardStates)
               .values(
                 withState.map((c) => ({
                   cardId: c.id,
-                  ...s,
+                  ...initialState(c.createdAt),
                   isActive: c.deletedAt ? 0 : 1,
                   importance: c.importance,
                   collectionId: c.collectionId,

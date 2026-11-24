@@ -28,6 +28,10 @@ export class InMemoryCollectionsRepository implements CollectionsRepository {
     this.commit({ ...c, deletedAt: now, updatedAt: now }, "delete");
   }
 
+  async listAll(): Promise<readonly Collection[]> {
+    return this.list();
+  }
+
   watchAll(): Subscribable<readonly Collection[]> {
     return {
       subscribe: (onValue) => {

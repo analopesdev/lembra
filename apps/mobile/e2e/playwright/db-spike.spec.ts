@@ -13,7 +13,7 @@ async function result(page: Page, url: string): Promise<Record<string, any>> {
 test("spike do banco local (web)", async ({ page }) => {
   page.on("pageerror", (e) => console.log("[pageerror]", e.message));
 
-  await page.goto("/dev/db-spike?phase=contract");
+  await page.goto("/dev/feedback");
   const isolated = await page.evaluate(() => ({
     coi: self.crossOriginIsolated,
     opfs: !!navigator.storage?.getDirectory,
