@@ -125,19 +125,11 @@
       "invalid": "Use o formato DD/MM/AAAA.",
       "past": "A data da prova não pode ser no passado."
     },
-    "icons": {
-      "bone": "Osso",
-      "heart": "Coração",
-      "flask": "Frasco",
-      "help": "Pergunta",
-      "chart": "Gráfico",
-      "copy": "Cartas"
-    },
-    "tones": {
-      "tint": "Azul",
-      "collection2": "Azul claro",
-      "collection3": "Cinza"
-    },
+    "iconOption": "Ícone {{name}}",
+    "iconAndColor": "Ícone e cor",
+    "colorOption": "Cor {{n}}",
+    "pickerClose": "Fechar",
+    "pickerDone": "Pronto",
     "editTitle": "Editar coleção",
     "saveChanges": "Salvar alterações",
     "empty": "Nenhuma coleção ainda",

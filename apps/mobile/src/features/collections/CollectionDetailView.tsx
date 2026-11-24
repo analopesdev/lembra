@@ -7,7 +7,8 @@ import { Button, Card, Icon, Tag, Text } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
-import { COLLECTION_ICONS, TONE_COLORS } from "./icons";
+import { CollectionGlyph } from "./CollectionGlyph";
+import { toneColors } from "./icons";
 
 type Props = {
   collection: Collection;
@@ -25,7 +26,7 @@ type Props = {
 export function CollectionDetailView(p: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
-  const tone = TONE_COLORS[p.collection.tone];
+  const tone = toneColors(p.collection.tone, t);
   const examLine =
     p.examDaysLeft === null
       ? null
@@ -64,7 +65,7 @@ export function CollectionDetailView(p: Props) {
 
       <Card tone="tint" style={styles.summary}>
         <View style={[styles.summaryIcon, { backgroundColor: t.surface }]}>
-          <Icon icon={COLLECTION_ICONS[p.collection.icon]} size={26} color={tone.fg} />
+          <CollectionGlyph name={p.collection.icon} size={26} color={tone.fg} />
         </View>
         <View style={styles.flex}>
           <Text variant="titulo" accessibilityRole="header">

@@ -21,8 +21,8 @@ export const cards = sqliteTable(
 export const collections = sqliteTable("collections", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  icon: text("icon").$type<"bone" | "heart" | "flask" | "help" | "chart" | "copy">().notNull(),
-  tone: text("tone").$type<"tint" | "collection2" | "collection3">().notNull(),
+  icon: text("icon").notNull(),
+  tone: text("tone").notNull(),
   examDay: text("exam_day"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),

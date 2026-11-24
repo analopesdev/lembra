@@ -2,7 +2,7 @@ import { Bell, Calendar, Check, ChevronRight, Minus, Play, Zap } from "lucide-re
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import { COLLECTION_ICONS, TONE_COLORS } from "@/features/collections";
+import { CollectionGlyph, toneColors } from "@/features/collections";
 import { Avatar, Card, Icon, Num, ProgressBar, Ring, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
@@ -58,23 +58,22 @@ function WeekStrip({ week }: { week: readonly WeekDay[] }) {
 function CollectionTile({ item, onPress }: { item: CollectionCard; onPress?: () => void }) {
   const t = useTheme();
   const { t: tr } = useTranslation();
-  const tone = TONE_COLORS[item.tone];
-  const glyph = COLLECTION_ICONS[item.icon];
+  const tone = toneColors(item.tone, t);
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${item.name}, ${tr("today.dueToday", { count: item.dueToday })}`}
       onPress={onPress}
-      style={[styles.tile, { backgroundColor: t[tone.bg] }]}
+      style={[styles.tile, { backgroundColor: tone.bg }]}
     >
       <View style={[styles.tileIcon, { backgroundColor: t.surface }]}>
-        <Icon icon={glyph} size={20} color={tone.fg} />
+        <CollectionGlyph name={item.icon} size={20} color={tone.fg} />
       </View>
       <View style={styles.flex} />
       <Text variant="subtitulo" style={styles.tileName}>
         {item.name}
       </Text>
-      <Text variant="legenda" style={[styles.tileDue, { color: t[tone.fg] }]}>
+      <Text variant="legenda" style={[styles.tileDue, { color: tone.fg }]}>
         {tr("today.dueToday", { count: item.dueToday })}
       </Text>
       <ProgressBar value={item.progress} fill={tone.fg} track="surface" accessibilityLabel={item.name} />

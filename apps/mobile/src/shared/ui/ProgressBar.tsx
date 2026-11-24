@@ -3,7 +3,12 @@ import { StyleSheet, View } from "react-native";
 import { radius } from "./theme";
 import { useTheme, type Colors } from "./useTheme";
 
-type Props = { value: number; fill?: keyof Colors; track?: keyof Colors; accessibilityLabel: string };
+type Props = {
+  value: number;
+  fill?: keyof Colors | string;
+  track?: keyof Colors;
+  accessibilityLabel: string;
+};
 
 /** Barra de progresso de 6 px; `value` de 0 a 1 (fora disso é limitado). */
 export function ProgressBar({ value, fill = "button", track = "surface", accessibilityLabel }: Props) {
@@ -17,7 +22,7 @@ export function ProgressBar({ value, fill = "button", track = "surface", accessi
       accessibilityValue={{ min: 0, max: 100, now: pct }}
       style={[styles.track, { backgroundColor: t[track] }]}
     >
-      <View style={[styles.fill, { width: `${pct}%`, backgroundColor: t[fill] }]} />
+      <View style={[styles.fill, { width: `${pct}%`, backgroundColor: t[fill as keyof Colors] ?? fill }]} />
     </View>
   );
 }
