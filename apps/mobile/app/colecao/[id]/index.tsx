@@ -12,7 +12,7 @@ export default function CollectionDetailRoute() {
       onEdit={() => router.push(`/colecao/${id}/editar`)}
       onNewCard={() => router.push({ pathname: "/card/novo", params: { collectionId: id } })}
       onOpenCard={(cardId) => router.push(`/card/${cardId}`)}
-      onDeleted={() => router.replace("/colecoes")}
+      onDeleted={() => (router.canGoBack() ? router.back() : router.replace("/colecoes"))}
     />
   );
 }
