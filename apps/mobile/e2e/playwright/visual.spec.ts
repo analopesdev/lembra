@@ -12,6 +12,7 @@ const SCREENS: { name: string; route: string; ref?: string }[] = [
   { name: "adicionar", route: "/dev/adicionar" },
   { name: "colecao-nova", route: "/dev/colecao-nova" },
   { name: "card-novo", route: "/dev/card-novo" },
+  { name: "feedback", route: "/dev/feedback" },
 ];
 const THEMES = [
   { name: "claro", scheme: "light" as const },

@@ -36,9 +36,7 @@ export function Ring({ value, size = 112, stroke = 12, accessibilityLabel, child
           strokeLinecap="round"
           fill="none"
           strokeDasharray={`${c * v} ${c}`}
-          rotation={-90}
-          originX={size / 2}
-          originY={size / 2}
+          strokeDashoffset={c / 4}
         />
       </Svg>
       <View style={styles.center}>{children}</View>
