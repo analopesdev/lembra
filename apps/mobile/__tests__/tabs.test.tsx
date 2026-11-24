@@ -36,7 +36,7 @@ const resetContainer = (firstRun: boolean) => jest.requireMock("@/data/container
 beforeEach(() => resetContainer(false));
 
 const routes = {
-  "ajustes-iniciais": () => <Text>Tela de primeiros ajustes</Text>,
+  apresentacao: () => <Text>Tela de apresentação</Text>,
   "(tabs)/_layout": TabsLayout,
   "(tabs)/index": Today,
   "(tabs)/quizzes": Quizzes,
@@ -70,9 +70,9 @@ describe("navegação", () => {
     expect(screen.getByRole("button", { name: "Enviar PDF ou documento, Em breve" })).toBeTruthy();
   });
 
-  it("na primeira abertura (sem configurações) leva para Primeiros ajustes", async () => {
+  it("na primeira abertura (sem configurações) leva para a Apresentação", async () => {
     resetContainer(true);
     await renderRouter(routes);
-    expect(await screen.findByText("Tela de primeiros ajustes")).toBeTruthy();
+    expect(await screen.findByText("Tela de apresentação")).toBeTruthy();
   });
 });

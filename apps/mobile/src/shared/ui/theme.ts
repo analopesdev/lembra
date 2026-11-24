@@ -41,6 +41,9 @@ export const themes = {
     onAppleButton: "#FFFFFF",
     // Sobreposição atrás de folhas (acréscimo ao kit; o kit será atualizado para igualar).
     onDanger: "#FFFFFF",
+    introBg: "#171D25",
+    introDeco: "#293746",
+    introMuted: "#B7C6D4",
     scrim: "rgba(11, 15, 20, 0.55)",
   },
   escuro: {
@@ -73,6 +76,9 @@ export const themes = {
     appleButton: "#FFFFFF",
     onAppleButton: "#000000",
     onDanger: "#171D25",
+    introBg: "#0F141A",
+    introDeco: "#1F2A36",
+    introMuted: "#9AA8B6",
     scrim: "rgba(0, 0, 0, 0.65)",
   },
 } as const;

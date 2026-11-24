@@ -239,5 +239,30 @@
     "reminderAt": "Todo dia às {{time}}",
     "examTip": "Tem prova marcada? Você informa a data ao criar a coleção, e o Lembra ajusta o ritmo.",
     "start": "Começar"
+  },
+  "intro": {
+    "progress": "Apresentação, passo {{step}} de 3",
+    "skip": "Pular",
+    "next": "Continuar",
+    "start": "Começar",
+    "s1": {
+      "title": "Revise antes\nde esquecer.",
+      "text": "O Lembra calcula o melhor momento de rever cada card. Cada revisão faz a lembrança durar mais.",
+      "art": "Curva da memória: cada revisão devolve a lembrança ao topo, e ela passa a cair mais devagar",
+      "today": "hoje",
+      "day1": "dia 1",
+      "day4": "dia 4",
+      "day12": "dia 12"
+    },
+    "s2": {
+      "title": "Seu material\nvira cards.",
+      "text": "Envie um PDF ou cole um texto. A IA sugere os cards e você aprova antes de estudar."
+    },
+    "s3": {
+      "title": "Poucos minutos\npor dia.",
+      "text": "Diga quanto tempo tem. O Lembra monta a sessão para caber nele.",
+      "minPerDay": "min por dia",
+      "week": "Semana com 5 dias estudados"
+    }
   }
 }
