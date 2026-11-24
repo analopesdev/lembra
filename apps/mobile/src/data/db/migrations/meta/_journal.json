@@ -29,6 +29,13 @@
       "when": 1795480142367,
       "tag": "0003_cards_by_collection",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1795481752876,
+      "tag": "0004_settings",
+      "breakpoints": true
     }
   ]
 }

@@ -9,6 +9,8 @@ import type { TodaySummary } from "@/data/repositories/cards";
 import { SqliteCardsRepository } from "@/data/repositories/cards.sqlite";
 import { collectionsContract } from "@/data/repositories/collections.contract";
 import { SqliteCollectionsRepository } from "@/data/repositories/collections.sqlite";
+import { settingsContract } from "@/data/repositories/settings.contract";
+import { SqliteSettingsRepository } from "@/data/repositories/settings.sqlite";
 import { defaultParams, initialState, retrievability } from "@/domain/scheduling";
 import type { Card } from "@/domain/types";
 import { cryptoRandomBytes, uuidv7 } from "@/shared/lib/uuidv7";
@@ -78,6 +80,20 @@ export async function runContract(): Promise<ContractReport> {
       report.passed++;
     } catch (e) {
       report.failed.push({ name: `coleções: ${c.name}`, error: e instanceof Error ? e.message : String(e) });
+    } finally {
+      await close();
+      await SQLite.deleteDatabaseAsync(name);
+    }
+  }
+  for (const [i, c] of settingsContract.entries()) {
+    const name = `spike-settings-${i}.db`;
+    const { db, close } = await openDb(name);
+    const repo = new SqliteSettingsRepository(db, deps().deps);
+    try {
+      await c.run({ repo });
+      report.passed++;
+    } catch (e) {
+      report.failed.push({ name: `ajustes: ${c.name}`, error: e instanceof Error ? e.message : String(e) });
     } finally {
       await close();
       await SQLite.deleteDatabaseAsync(name);

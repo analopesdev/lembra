@@ -29,6 +29,14 @@ export const collections = sqliteTable("collections", {
   deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
 });
 
+export const settings = sqliteTable("settings", {
+  id: text("id").primaryKey(),
+  dailyMinutes: integer("daily_minutes").notNull(),
+  offWeekdays: text("off_weekdays", { mode: "json" }).$type<number[]>().notNull(),
+  goalText: text("goal_text").notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+});
+
 // Cache do estado FSRS (RN-12): pode ser apagado e recalculado do histórico.
 export const cardStates = sqliteTable(
   "card_states",

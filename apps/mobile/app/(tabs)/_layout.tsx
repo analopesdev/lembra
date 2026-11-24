@@ -1,9 +1,13 @@
 import { Tabs, useRouter } from "expo-router";
+import { useCallback } from "react";
+
+import { useFirstRun } from "@/features/onboarding";
 
 import { AppTabBar } from "@/features/navigation";
 
 export default function TabsLayout() {
   const router = useRouter();
+  useFirstRun(useCallback(() => router.replace("/ajustes-iniciais"), [router]));
   return (
     <Tabs
       screenOptions={{ headerShown: false }}

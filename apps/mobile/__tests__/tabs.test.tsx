@@ -1,6 +1,8 @@
 import { fireEvent, renderRouter, screen } from "expo-router/testing-library";
 
 import "@/shared/i18n";
+import { Text } from "react-native";
+
 import TabsLayout from "../app/(tabs)/_layout";
 import Colecoes from "../app/(tabs)/colecoes";
 import Today from "../app/(tabs)/index";
@@ -9,20 +11,32 @@ import Quizzes from "../app/(tabs)/quizzes";
 
 jest.mock("@/data/container", () => {
   const { InMemoryCardsRepository } = jest.requireActual("@/data/repositories/cards.memory");
+  const { InMemoryCollectionsRepository } = jest.requireActual("@/data/repositories/collections.memory");
+  const { InMemorySettingsRepository } = jest.requireActual("@/data/repositories/settings.memory");
+  const { defaultSettings } = jest.requireActual("@/domain/settings/settings");
   const { defaultParams } = jest.requireActual("@/domain/scheduling");
   const now = () => new Date("2026-03-10T10:00:00Z");
-  const { InMemoryCollectionsRepository } = jest.requireActual("@/data/repositories/collections.memory");
-  const deps = { clock: now, newId: () => Math.random().toString(36), fsrs: defaultParams() };
-  const collections = new InMemoryCollectionsRepository(deps);
-  const cards = new InMemoryCardsRepository({
-    clock: now,
-    newId: () => Math.random().toString(36),
-    fsrs: defaultParams(),
-  });
-  return { getContainer: () => Promise.resolve({ cards, collections, now }) };
+  let state: unknown;
+  const build = (firstRun: boolean) => {
+    const deps = { clock: now, newId: () => Math.random().toString(36), fsrs: defaultParams() };
+    const settings = new InMemorySettingsRepository(deps);
+    if (!firstRun) void settings.save(defaultSettings(now()));
+    state = {
+      cards: new InMemoryCardsRepository(deps),
+      collections: new InMemoryCollectionsRepository(deps),
+      settings,
+      now,
+    };
+  };
+  build(false);
+  return { getContainer: () => Promise.resolve(state), __reset: build };
 });
 
+const resetContainer = (firstRun: boolean) => jest.requireMock("@/data/container").__reset(firstRun);
+beforeEach(() => resetContainer(false));
+
 const routes = {
+  "ajustes-iniciais": () => <Text>Tela de primeiros ajustes</Text>,
   "(tabs)/_layout": TabsLayout,
   "(tabs)/index": Today,
   "(tabs)/quizzes": Quizzes,
@@ -54,5 +68,11 @@ describe("navegação", () => {
     expect(await screen.findByText("O que vamos adicionar?")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Criar card" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Enviar PDF ou documento, Em breve" })).toBeTruthy();
+  });
+
+  it("na primeira abertura (sem configurações) leva para Primeiros ajustes", async () => {
+    resetContainer(true);
+    await renderRouter(routes);
+    expect(await screen.findByText("Tela de primeiros ajustes")).toBeTruthy();
   });
 });

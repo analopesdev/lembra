@@ -3,18 +3,20 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { radius } from "./theme";
 import { useTheme } from "./useTheme";
 
-type Props = { value: boolean; onValueChange: (v: boolean) => void; label: string };
+type Props = { value: boolean; onValueChange: (v: boolean) => void; label: string; disabled?: boolean };
 
-export function Toggle({ value, onValueChange, label }: Props) {
+export function Toggle({ value, onValueChange, label, disabled }: Props) {
   const t = useTheme();
   return (
     <Pressable
       accessibilityRole="switch"
       accessibilityLabel={label}
-      accessibilityState={{ checked: value }}
+      accessibilityState={{ checked: value, disabled: !!disabled }}
+      disabled={disabled}
       onPress={() => onValueChange(!value)}
       style={[
         styles.track,
+        disabled && { opacity: 0.5 },
         { backgroundColor: value ? t.button : t.border, justifyContent: value ? "flex-end" : "flex-start" },
       ]}
     >

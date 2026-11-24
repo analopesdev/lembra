@@ -226,5 +226,18 @@
     "save": "Salvar",
     "loadMore": "Carregar mais",
     "close": "Fechar"
+  },
+  "onboarding": {
+    "title": "Primeiros ajustes",
+    "skip": "Pular",
+    "back": "Voltar",
+    "headline": "Oi! Quanto tempo por dia?",
+    "lead": "O Lembra monta cada sessão para caber nesse tempo. Dá para mudar depois.",
+    "minutes": "{{count}} min",
+    "minutesLabel": "{{count}} minutos por dia",
+    "reminder": "Lembrete diário",
+    "reminderAt": "Todo dia às {{time}}",
+    "examTip": "Tem prova marcada? Você informa a data ao criar a coleção, e o Lembra ajusta o ritmo.",
+    "start": "Começar"
   }
 }

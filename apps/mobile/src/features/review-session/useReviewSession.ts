@@ -15,12 +15,12 @@ import {
   summarize,
   type SessionState,
 } from "@/domain/session/review-flow";
+import { DEFAULT_DAILY_MINUTES } from "@/domain/settings/settings";
 import type { Card } from "@/domain/types";
 import { cryptoRandomBytes, uuidv7 } from "@/shared/lib/uuidv7";
 
 import type { SessionSummaryView } from "./SummaryView";
 
-const SESSION_MINUTES = 10;
 const NEW_CARDS_PER_DAY = 5;
 const CLOCK_MS = 1000;
 
@@ -64,13 +64,14 @@ export function useReviewSession(): ReviewSession {
     let cancelled = false;
     void (async () => {
       const c = await getContainer();
+      const minutes = (await c.settings.get())?.dailyMinutes ?? DEFAULT_DAILY_MINUTES;
       const summary = await readToday(c);
       if (cancelled) return;
       const ids = composeSession({
         rows: summary.dueRows,
         now: c.now(),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        minutes: SESSION_MINUTES,
+        minutes,
         params: defaultParams(),
         newCardsLeftToday: NEW_CARDS_PER_DAY,
       });
@@ -82,7 +83,7 @@ export function useReviewSession(): ReviewSession {
         setStatus("empty");
         return;
       }
-      setState(startSession(ids, c.now().getTime(), SESSION_MINUTES));
+      setState(startSession(ids, c.now().getTime(), minutes));
       setStatus("active");
     })();
     return () => {

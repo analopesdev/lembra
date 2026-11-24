@@ -3,17 +3,18 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-
 import { InMemoryCardsRepository } from "@/data/repositories/cards.memory";
 import { makeCard } from "@/data/repositories/cards.contract";
 import { InMemoryCollectionsRepository } from "@/data/repositories/collections.memory";
+import { InMemorySettingsRepository } from "@/data/repositories/settings.memory";
 import { makeCollection } from "@/data/repositories/collections.contract";
 import { defaultParams } from "@/domain/scheduling";
 import "@/shared/i18n";
 
 import { ReviewScreen } from "../ReviewScreen";
 
-const mockState: { repo: InMemoryCardsRepository | null; collections: InMemoryCollectionsRepository | null } =
-  {
-    repo: null,
-    collections: null,
-  };
+const mockState: {
+  repo: InMemoryCardsRepository | null;
+  collections: InMemoryCollectionsRepository | null;
+  settings: InMemorySettingsRepository | null;
+} = { repo: null, collections: null, settings: null };
 const NOW = new Date("2026-03-10T13:00:00Z");
 
 let mockTicks = 0;
@@ -22,6 +23,7 @@ jest.mock("@/data/container", () => ({
     Promise.resolve({
       cards: mockState.repo,
       collections: mockState.collections,
+      settings: mockState.settings,
       now: () => new Date(Date.parse("2026-03-10T13:00:00Z") + 1000 * mockTicks++),
     }),
 }));
@@ -37,6 +39,11 @@ function newRepo() {
     fsrs: defaultParams(),
   });
   mockState.repo = repo;
+  mockState.settings = new InMemorySettingsRepository({
+    clock: () => NOW,
+    newId: () => `s-${counter++}`,
+    fsrs: defaultParams(),
+  });
   mockState.collections = new InMemoryCollectionsRepository({
     clock: () => NOW,
     newId: () => `c-${counter++}`,
