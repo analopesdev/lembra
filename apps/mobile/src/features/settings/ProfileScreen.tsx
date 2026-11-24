@@ -58,6 +58,10 @@ export function ProfileScreen({ onBack }: Props) {
       }
       theme={settings.theme}
       onTheme={(v: ThemePreference) => void update({ theme: v })}
+      avatarStyle={settings.avatarStyle}
+      avatarSeed={settings.avatarSeed}
+      onAvatarStyle={(v) => void update({ avatarStyle: v })}
+      onAvatarShuffle={() => void getContainer().then((c) => update({ avatarSeed: c.newId() }))}
       retainedCount={memory}
       version={Constants.expoConfig?.version ?? "1.0.0"}
       onBack={onBack}

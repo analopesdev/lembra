@@ -302,6 +302,15 @@
     },
     "reminders": "Lembretes",
     "dailyReminder": "Lembrete diário",
+    "avatar": "Avatar",
+    "avatarShuffle": "Sortear outro avatar",
+    "avatarStyles": {
+      "thumbs": "Miniaturas",
+      "lorelei": "Lorelei",
+      "notionists": "Notionists",
+      "open-peeps": "Open Peeps",
+      "shapes": "Formas"
+    },
     "appearance": "Aparência",
     "themes": {
       "light": "Claro",

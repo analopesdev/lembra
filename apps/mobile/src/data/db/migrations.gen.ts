@@ -30,5 +30,9 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   [
     "ALTER TABLE `settings` ADD `new_cards_per_day` integer DEFAULT 5 NOT NULL;",
     "ALTER TABLE `settings` ADD `theme` text DEFAULT 'auto' NOT NULL;"
+  ],
+  [
+    "ALTER TABLE `settings` ADD `avatar_style` text DEFAULT 'thumbs' NOT NULL;",
+    "ALTER TABLE `settings` ADD `avatar_seed` text DEFAULT '' NOT NULL;"
   ]
 ];

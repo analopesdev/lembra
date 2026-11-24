@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 
 import { getContainer } from "@/data/container";
 import type { TodaySummary } from "@/data/repositories/cards";
-import { DEFAULT_DAILY_MINUTES, DEFAULT_NEW_CARDS_PER_DAY } from "@/domain/settings/settings";
+import {
+  DEFAULT_AVATAR_STYLE,
+  DEFAULT_DAILY_MINUTES,
+  DEFAULT_NEW_CARDS_PER_DAY,
+} from "@/domain/settings/settings";
 import type { Collection } from "@/domain/types";
 
 import { buildTodayModel } from "./buildModel";
@@ -12,6 +16,8 @@ const RETENTION_TARGET_PCT = 90;
 
 const EMPTY: TodayModel = {
   userName: "",
+  avatarStyle: "thumbs",
+  avatarSeed: "",
   memoryRetained: 0,
   memoryRatio: 0,
   streakDays: null,
@@ -36,6 +42,8 @@ export function useTodayModel(): TodayModel {
       let list: readonly Collection[] | null = null;
       let minutes: number | undefined;
       let newCards = DEFAULT_NEW_CARDS_PER_DAY;
+      let avatarStyle: string = DEFAULT_AVATAR_STYLE;
+      let avatarSeed = "";
       const publish = () => {
         if (!summary || !list || minutes === undefined) return;
         setModel(
@@ -46,6 +54,8 @@ export function useTodayModel(): TodayModel {
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             sessionMinutes: minutes,
             newCardsLeftToday: newCards,
+            avatarStyle,
+            avatarSeed,
             retentionTargetPct: RETENTION_TARGET_PCT,
           }),
         );
@@ -62,6 +72,8 @@ export function useTodayModel(): TodayModel {
         settings.watch().subscribe((v) => {
           minutes = v?.dailyMinutes ?? DEFAULT_DAILY_MINUTES;
           newCards = v?.newCardsPerDay ?? DEFAULT_NEW_CARDS_PER_DAY;
+          avatarStyle = v?.avatarStyle ?? DEFAULT_AVATAR_STYLE;
+          avatarSeed = v?.avatarSeed ?? "";
           publish();
         }),
       );

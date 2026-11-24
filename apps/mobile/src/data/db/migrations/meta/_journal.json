@@ -43,6 +43,13 @@
       "when": 1795482659539,
       "tag": "0005_settings_profile",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795484237186,
+      "tag": "0006_settings_avatar",
+      "breakpoints": true
     }
   ]
 }

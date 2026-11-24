@@ -1,9 +1,15 @@
-import { ChevronLeft, Minus, Plus } from "lucide-react-native";
+import { ChevronLeft, Minus, Plus, Shuffle } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import { MINUTE_OPTIONS, type DailyMinutes, type ThemePreference } from "@/domain/settings/settings";
-import { Card, Icon, Num, Tag, Text } from "@/shared/ui";
+import {
+  AVATAR_STYLES,
+  MINUTE_OPTIONS,
+  type AvatarStyle,
+  type DailyMinutes,
+  type ThemePreference,
+} from "@/domain/settings/settings";
+import { Avatar, Card, Icon, Num, Tag, Text } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -16,6 +22,10 @@ type Props = {
   onToggleWeekday: (day: number) => void;
   theme: ThemePreference;
   onTheme: (v: ThemePreference) => void;
+  avatarStyle: AvatarStyle;
+  avatarSeed: string;
+  onAvatarStyle: (v: AvatarStyle) => void;
+  onAvatarShuffle: () => void;
   retainedCount: number;
   version: string;
   onBack: () => void;
@@ -88,11 +98,7 @@ export function ProfileView(p: Props) {
       </View>
 
       <Card style={styles.account}>
-        <View style={[styles.avatar, { backgroundColor: t.tint }]}>
-          <Text variant="subtitulo" tone="onTint" style={styles.avatarText}>
-            ?
-          </Text>
-        </View>
+        <Avatar style={p.avatarStyle} seed={p.avatarSeed} size={52} />
         <View style={styles.flex}>
           <Text variant="subtitulo">{tr("profile.guest")}</Text>
           <Text variant="label" tone="textMuted" style={styles.hint}>
@@ -100,6 +106,37 @@ export function ProfileView(p: Props) {
           </Text>
         </View>
       </Card>
+
+      <Section title={tr("profile.avatar")} />
+      <View accessibilityRole="radiogroup" style={styles.row}>
+        {AVATAR_STYLES.map((s) => {
+          const on = s === p.avatarStyle;
+          return (
+            <Pressable
+              key={s}
+              accessibilityRole="radio"
+              accessibilityLabel={tr(`profile.avatarStyles.${s}`)}
+              accessibilityState={{ selected: on }}
+              onPress={() => p.onAvatarStyle(s)}
+              style={[
+                styles.avatarOption,
+                { borderColor: on ? t.primary : t.border, borderWidth: on ? 2 : 1 },
+              ]}
+            >
+              <Avatar style={s} seed={p.avatarSeed} size={52} />
+            </Pressable>
+          );
+        })}
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={tr("profile.avatarShuffle")}
+        onPress={p.onAvatarShuffle}
+        style={[styles.shuffle, { borderColor: t.border, backgroundColor: t.surface }]}
+      >
+        <Icon icon={Shuffle} size={16} strokeWidth={2} />
+        <Text variant="label">{tr("profile.avatarShuffle")}</Text>
+      </Pressable>
 
       <View style={[styles.stat, { backgroundColor: t.surface, borderColor: t.border }]}>
         <Num size={28}>{p.retainedCount}</Num>
@@ -249,8 +286,16 @@ const styles = StyleSheet.create({
   title: { flex: 1, textAlign: "center", fontSize: 20 },
   spacer: { width: 40 },
   account: { flexDirection: "row", alignItems: "center", gap: 14, padding: space.lg },
-  avatar: { width: 52, height: 52, borderRadius: 16, alignItems: "center", justifyContent: "center" },
-  avatarText: { fontWeight: "800" },
+  avatarOption: { padding: 2, borderRadius: 30 },
+  shuffle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    alignSelf: "flex-start",
+    borderWidth: 1,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
+  },
   hint: { fontWeight: "400" },
   stat: { borderRadius: 18, borderWidth: 1, padding: space.lg, gap: 4, alignItems: "flex-start" },
   section: { fontWeight: "700", letterSpacing: 0.72, textTransform: "uppercase", marginTop: space.md },

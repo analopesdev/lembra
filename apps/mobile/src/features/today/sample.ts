@@ -2,6 +2,8 @@ import type { TodayModel } from "./model";
 
 export const SAMPLE_TODAY: TodayModel = {
   userName: "Ana",
+  avatarStyle: "thumbs",
+  avatarSeed: "ana",
   memoryRetained: 342,
   memoryRatio: 0.88,
   streakDays: 14,

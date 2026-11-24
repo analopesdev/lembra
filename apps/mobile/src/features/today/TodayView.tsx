@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { COLLECTION_ICONS, TONE_COLORS } from "@/features/collections";
-import { Card, Icon, Num, ProgressBar, Ring, Text } from "@/shared/ui";
+import { Avatar, Card, Icon, Num, ProgressBar, Ring, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -92,7 +92,6 @@ export function TodayView({
 }: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
-  const initial = model.userName === "" ? "?" : model.userName.slice(0, 1).toUpperCase();
   const empty = model.dueCount === 0;
   return (
     <ScrollView style={{ backgroundColor: t.background }} contentContainerStyle={styles.content}>
@@ -101,11 +100,9 @@ export function TodayView({
           accessibilityRole="button"
           accessibilityLabel={tr("tabs.profile")}
           onPress={onOpenProfile}
-          style={[styles.avatar, { backgroundColor: t.tint }]}
+          style={styles.avatar}
         >
-          <Text variant="subtitulo" tone="onTint" style={styles.avatarText}>
-            {initial}
-          </Text>
+          <Avatar style={model.avatarStyle} seed={model.avatarSeed} size={44} />
         </Pressable>
         <View style={styles.flex}>
           <Text variant="label" tone="textMuted" style={styles.greeting}>
@@ -254,8 +251,7 @@ const styles = StyleSheet.create({
   content: { paddingTop: 56, paddingHorizontal: space.xl, paddingBottom: 120, gap: space.lg },
   flex: { flex: 1 },
   header: { flexDirection: "row", alignItems: "center", gap: space.md },
-  avatar: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center" },
-  avatarText: { fontWeight: "800" },
+  avatar: { width: 44, height: 44, borderRadius: 22 },
   greeting: { fontWeight: "400" },
   bell: {
     width: 44,
