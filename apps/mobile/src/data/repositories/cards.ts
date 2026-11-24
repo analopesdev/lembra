@@ -53,6 +53,15 @@ export interface CardListPage {
   readonly hasMore: boolean;
 }
 
+export interface ReviewRecord {
+  readonly id: Id;
+  readonly cardId: Id;
+  readonly at: Date;
+  readonly rating: Rating;
+  readonly retention: number | null;
+  readonly kind: ReviewKind;
+}
+
 export interface OutboxEntry {
   readonly id: string;
   readonly entity: "card" | "review" | "collection" | "settings";
@@ -83,6 +92,9 @@ export interface CardsRepository {
   watchToday(now: Date): Subscribable<TodaySummary>;
   watchCards(query: CardListQuery): Subscribable<CardListPage>;
   softDeleteByCollection(collectionId: Id): Promise<number>;
+  listAll(): Promise<readonly Card[]>;
+  listAllReviews(): Promise<readonly ReviewRecord[]>;
+  importReviews(records: readonly ReviewRecord[]): Promise<number>;
   recordReview(input: ReviewInput): Promise<void>;
   getState(cardId: Id): Promise<CardState | null>;
   listReviews(cardId: Id): Promise<readonly ReviewEvent[]>;

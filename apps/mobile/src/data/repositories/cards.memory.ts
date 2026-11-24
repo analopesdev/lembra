@@ -14,6 +14,7 @@ import type {
   CardsRepository,
   OutboxEntry,
   ReviewInput,
+  ReviewRecord,
   Subscribable,
   TodaySummary,
 } from "./cards";
@@ -132,6 +133,45 @@ export class InMemoryCardsRepository implements CardsRepository {
     return targets.length;
   }
 
+  async listAll(): Promise<readonly Card[]> {
+    return [...this.cards.values()].filter((c) => !c.deletedAt);
+  }
+
+  async listAllReviews(): Promise<readonly ReviewRecord[]> {
+    return [...this.reviews.entries()].flatMap(([cardId, events]) =>
+      events.map((e) => ({
+        id: e.id,
+        cardId,
+        at: e.at,
+        rating: e.rating,
+        retention: e.retention ?? null,
+        kind: e.kind ?? "review",
+      })),
+    );
+  }
+
+  async importReviews(records: readonly ReviewRecord[]): Promise<number> {
+    let inserted = 0;
+    for (const r of records) {
+      if (this.reviewIds.has(r.id)) continue;
+      const event: ReviewEvent = {
+        id: r.id,
+        at: r.at,
+        rating: r.rating,
+        kind: r.kind,
+        ...(r.retention ? { retention: r.retention } : {}),
+      };
+      this.reviews.set(r.cardId, [...(this.reviews.get(r.cardId) ?? []), event]);
+      this.reviewIds.add(r.id);
+      const id = this.deps.newId();
+      this.outbox.push({ id, entity: "review", entityId: r.id, op: "upsert", createdAt: this.deps.clock() });
+      this.outboxIds.add(id);
+      inserted++;
+    }
+    for (const l of [...this.listeners]) l();
+    return inserted;
+  }
+
   async getState(cardId: Id): Promise<CardState | null> {
     return this.states.get(cardId) ?? null;
   }
@@ -214,7 +254,7 @@ export class InMemoryCardsRepository implements CardsRepository {
     }
     for (const c of cards) {
       this.cards.set(c.id, c);
-      if (c.status === "active" && !this.states.has(c.id)) this.states.set(c.id, initialState(now));
+      if (c.status === "active" && !this.states.has(c.id)) this.states.set(c.id, initialState(c.createdAt));
     }
     for (const e of entries) {
       this.outbox.push(e);

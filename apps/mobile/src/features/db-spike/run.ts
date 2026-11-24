@@ -57,17 +57,23 @@ export async function runContract(): Promise<ContractReport> {
   const report: ContractReport = { passed: 0, failed: [] };
   for (const [i, c] of cardsContract.entries()) {
     const name = `spike-contract-${i}.db`;
-    const { db, close } = await openDb(name);
-    const d = deps();
-    const repo = new SqliteCardsRepository(db, d.deps);
+    let close: (() => Promise<void>) | null = null;
     try {
+      const opened = await openDb(name);
+      close = opened.close;
+      const d = deps();
+      const repo = new SqliteCardsRepository(opened.db, d.deps);
       await c.run({ repo, ...d.env });
       report.passed++;
     } catch (e) {
       report.failed.push({ name: c.name, error: e instanceof Error ? e.message : String(e) });
     } finally {
-      await close();
-      await SQLite.deleteDatabaseAsync(name);
+      try {
+        await close?.();
+        await SQLite.deleteDatabaseAsync(name);
+      } catch (e) {
+        report.failed.push({ name: `limpeza: ${c.name}`, error: e instanceof Error ? e.message : String(e) });
+      }
     }
   }
   for (const [i, c] of collectionsContract.entries()) {
