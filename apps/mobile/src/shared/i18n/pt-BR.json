@@ -232,7 +232,30 @@
     "reminder": "Lembrete diário",
     "reminderAt": "Todo dia às {{time}}",
     "examTip": "Tem prova marcada? Você informa a data ao criar a coleção, e o Lembra ajusta o ritmo.",
-    "start": "Começar"
+    "start": "Começar",
+    "next": "Continuar",
+    "commit": "Comprometo-me",
+    "restTitle": "Quando você quer descansar?",
+    "restLead": "Dias de folga não quebram sua sequência. Você pode escolher mais de um.",
+    "restNote": "Nesses dias o Lembra não cobra revisão, mas os cards que vencerem continuam esperando por você.",
+    "goalTitle": "Para que você está estudando?",
+    "goalLead": "Uma frase sua, para lembrar por que vale a pena continuar nos dias difíceis.",
+    "goalLabel": "Minha meta",
+    "goalPlaceholder": "Escreva a sua meta",
+    "pledgeTitle": "Seu compromisso",
+    "pledge": "{{minutes}} minutos por dia, {{rest}}, até lembrar o que importa.",
+    "restNone": "sem folga fixa",
+    "restOn": "com folga {{days}}",
+    "restDays": {
+      "1": "às segundas",
+      "2": "às terças",
+      "3": "às quartas",
+      "4": "às quintas",
+      "5": "às sextas",
+      "6": "aos sábados",
+      "7": "aos domingos"
+    },
+    "restJoin": " e "
   },
   "intro": {
     "progress": "Apresentação, passo {{step}} de 3",
