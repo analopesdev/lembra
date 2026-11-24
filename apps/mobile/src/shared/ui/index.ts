@@ -5,6 +5,7 @@ export { ConfirmSheet } from "./ConfirmSheet";
 export { EmptyState } from "./EmptyState";
 export { Icon } from "./Icon";
 export { Input } from "./Input";
+export { LogoMark } from "./LogoMark";
 export { ProgressBar } from "./ProgressBar";
 export { Ring } from "./Ring";
 export { Sheet } from "./Sheet";

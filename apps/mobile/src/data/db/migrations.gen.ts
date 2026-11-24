@@ -23,5 +23,8 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   [
     "DROP INDEX `idx_cards_collection`;",
     "CREATE INDEX `idx_cards_collection` ON `cards` (`collection_id`,`deleted_at`,`created_at`);"
+  ],
+  [
+    "CREATE TABLE `settings` (\n\t`id` text PRIMARY KEY NOT NULL,\n\t`daily_minutes` integer NOT NULL,\n\t`off_weekdays` text NOT NULL,\n\t`goal_text` text NOT NULL,\n\t`updated_at` integer NOT NULL\n);"
   ]
 ];

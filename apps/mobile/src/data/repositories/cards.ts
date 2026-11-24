@@ -55,7 +55,7 @@ export interface CardListPage {
 
 export interface OutboxEntry {
   readonly id: string;
-  readonly entity: "card" | "review" | "collection";
+  readonly entity: "card" | "review" | "collection" | "settings";
   readonly entityId: Id;
   readonly op: "upsert" | "delete";
   readonly createdAt: Date;
