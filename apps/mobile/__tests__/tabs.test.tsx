@@ -11,12 +11,15 @@ jest.mock("@/data/container", () => {
   const { InMemoryCardsRepository } = jest.requireActual("@/data/repositories/cards.memory");
   const { defaultParams } = jest.requireActual("@/domain/scheduling");
   const now = () => new Date("2026-03-10T10:00:00Z");
+  const { InMemoryCollectionsRepository } = jest.requireActual("@/data/repositories/collections.memory");
+  const deps = { clock: now, newId: () => Math.random().toString(36), fsrs: defaultParams() };
+  const collections = new InMemoryCollectionsRepository(deps);
   const cards = new InMemoryCardsRepository({
     clock: now,
     newId: () => Math.random().toString(36),
     fsrs: defaultParams(),
   });
-  return { getContainer: () => Promise.resolve({ cards, now }) };
+  return { getContainer: () => Promise.resolve({ cards, collections, now }) };
 });
 
 const routes = {

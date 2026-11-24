@@ -2,12 +2,18 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-
 
 import { InMemoryCardsRepository } from "@/data/repositories/cards.memory";
 import { makeCard } from "@/data/repositories/cards.contract";
+import { InMemoryCollectionsRepository } from "@/data/repositories/collections.memory";
+import { makeCollection } from "@/data/repositories/collections.contract";
 import { defaultParams } from "@/domain/scheduling";
 import "@/shared/i18n";
 
 import { ReviewScreen } from "../ReviewScreen";
 
-const mockState: { repo: InMemoryCardsRepository | null } = { repo: null };
+const mockState: { repo: InMemoryCardsRepository | null; collections: InMemoryCollectionsRepository | null } =
+  {
+    repo: null,
+    collections: null,
+  };
 const NOW = new Date("2026-03-10T13:00:00Z");
 
 let mockTicks = 0;
@@ -15,6 +21,7 @@ jest.mock("@/data/container", () => ({
   getContainer: () =>
     Promise.resolve({
       cards: mockState.repo,
+      collections: mockState.collections,
       now: () => new Date(Date.parse("2026-03-10T13:00:00Z") + 1000 * mockTicks++),
     }),
 }));
@@ -30,6 +37,11 @@ function newRepo() {
     fsrs: defaultParams(),
   });
   mockState.repo = repo;
+  mockState.collections = new InMemoryCollectionsRepository({
+    clock: () => NOW,
+    newId: () => `c-${counter++}`,
+    fsrs: defaultParams(),
+  });
   return repo;
 }
 
@@ -46,9 +58,11 @@ describe("ReviewScreen: sessão clássica ponta a ponta", () => {
   it("vira o card, dá a nota, grava a revisão e termina com o resumo", async () => {
     const repo = newRepo();
     await repo.saveMany([makeCard(1), makeCard(2)]);
+    await mockState.collections?.save(makeCollection(1, { id: "col-1", name: "Anatomia I" }));
     const onExit = jest.fn();
     await render(<ReviewScreen onExit={onExit} />);
     expect(await screen.findByText("frente 1")).toBeTruthy();
+    expect(await screen.findByText("Anatomia I")).toBeTruthy();
     await press("Mostrar resposta");
     expect(await screen.findByText("verso 1")).toBeTruthy();
     await press("Bom");

@@ -5,8 +5,7 @@ export interface WeekDay {
   readonly status: WeekDayStatus;
 }
 
-export type CollectionTone = "tint" | "collection2" | "collection3";
-export type CollectionIcon = "bone" | "heart" | "flask";
+import type { CollectionIconName, CollectionTone } from "@/domain/types";
 
 export interface CollectionCard {
   readonly id: string;
@@ -14,13 +13,13 @@ export interface CollectionCard {
   readonly dueToday: number;
   readonly progress: number;
   readonly tone: CollectionTone;
-  readonly icon: CollectionIcon;
+  readonly icon: CollectionIconName;
 }
 
 export interface ExamBanner {
   readonly name: string;
   readonly daysLeft: number;
-  readonly readinessPct: number;
+  readonly readinessPct: number | null;
 }
 
 export interface TodayModel {

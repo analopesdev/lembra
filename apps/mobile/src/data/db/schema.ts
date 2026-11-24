@@ -49,12 +49,22 @@ export const cardStates = sqliteTable(
     // importance repete cards.importance para a tela Hoje não tocar a tabela larga (front/back).
     isActive: integer("is_active").notNull().default(0),
     importance: integer("importance").$type<1 | 2 | 3>().notNull().default(2),
+    collectionId: text("collection_id"),
     retainedUntil: integer("retained_until", { mode: "timestamp_ms" }),
   },
   (t) => [
     // Cobre a consulta dos vencidos da tela Hoje: só o índice é lido (menos páginas a frio no OPFS).
-    index("idx_states_active_due").on(t.isActive, t.due, t.cardId, t.importance, t.stability, t.lastReview),
+    index("idx_states_active_due").on(
+      t.isActive,
+      t.due,
+      t.cardId,
+      t.importance,
+      t.collectionId,
+      t.stability,
+      t.lastReview,
+    ),
     index("idx_states_active_retained").on(t.isActive, t.retainedUntil),
+    index("idx_states_collection").on(t.isActive, t.collectionId, t.retainedUntil),
   ],
 );
 

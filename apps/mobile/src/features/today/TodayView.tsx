@@ -1,31 +1,13 @@
-import {
-  Bell,
-  Bone,
-  Calendar,
-  Check,
-  ChevronRight,
-  FlaskConical,
-  Heart,
-  Minus,
-  Play,
-  Zap,
-} from "lucide-react-native";
+import { Bell, Calendar, Check, ChevronRight, Minus, Play, Zap } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import { COLLECTION_ICONS, TONE_COLORS } from "@/features/collections";
 import { Card, Icon, Num, ProgressBar, Ring, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
-import { useTheme, type Colors } from "@/shared/ui/useTheme";
+import { useTheme } from "@/shared/ui/useTheme";
 
-import type { CollectionCard, CollectionIcon, CollectionTone, TodayModel, WeekDay } from "./model";
-
-const TONE: Record<CollectionTone, { bg: keyof Colors; fg: keyof Colors }> = {
-  tint: { bg: "tint", fg: "onTint" },
-  collection2: { bg: "collection2", fg: "onCollection2" },
-  collection3: { bg: "collection3", fg: "onCollection3" },
-};
-
-const ICON = { bone: Bone, heart: Heart, flask: FlaskConical } as const;
+import type { CollectionCard, TodayModel, WeekDay } from "./model";
 
 type Props = {
   model: TodayModel;
@@ -75,8 +57,8 @@ function WeekStrip({ week }: { week: readonly WeekDay[] }) {
 function CollectionTile({ item, onPress }: { item: CollectionCard; onPress?: () => void }) {
   const t = useTheme();
   const { t: tr } = useTranslation();
-  const tone = TONE[item.tone];
-  const glyph = ICON[item.icon as CollectionIcon];
+  const tone = TONE_COLORS[item.tone];
+  const glyph = COLLECTION_ICONS[item.icon];
   return (
     <Pressable
       accessibilityRole="button"
@@ -202,6 +184,12 @@ export function TodayView({
         </View>
       </Pressable>
 
+      {!empty && model.caughtUpInDays !== null ? (
+        <Text variant="legenda" tone="textMuted" style={styles.caughtUp}>
+          {tr("today.caughtUpIn", { days: model.caughtUpInDays })}
+        </Text>
+      ) : null}
+
       {model.collections.length > 0 ? (
         <>
           <View style={styles.sectionHead}>
@@ -241,7 +229,9 @@ export function TodayView({
               {tr("today.exam", { name: model.exam.name })}
             </Text>
             <Text variant="legenda" tone="textMuted">
-              {tr("today.examLine", { days: model.exam.daysLeft, readiness: model.exam.readinessPct })}
+              {model.exam.readinessPct === null
+                ? tr("today.examLineShort", { count: model.exam.daysLeft })
+                : tr("today.examLine", { days: model.exam.daysLeft, readiness: model.exam.readinessPct })}
             </Text>
           </View>
           <Icon icon={ChevronRight} size={20} color="textMuted" />
@@ -302,6 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sessionSub: { opacity: 0.85 },
+  caughtUp: { textAlign: "center" },
   pill: { paddingVertical: 7, paddingHorizontal: 12, borderRadius: radius.pill },
   pillNum: { fontWeight: "600", lineHeight: 16 },
   sectionHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },

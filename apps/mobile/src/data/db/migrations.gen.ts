@@ -12,5 +12,12 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   ],
   [
     "CREATE TABLE `collections` (\n\t`id` text PRIMARY KEY NOT NULL,\n\t`name` text NOT NULL,\n\t`icon` text NOT NULL,\n\t`tone` text NOT NULL,\n\t`exam_day` text,\n\t`created_at` integer NOT NULL,\n\t`updated_at` integer NOT NULL,\n\t`deleted_at` integer\n);"
+  ],
+  [
+    "DROP INDEX `idx_states_active_due`;",
+    "ALTER TABLE `card_states` ADD `collection_id` text;",
+    "UPDATE `card_states` SET `collection_id` = (SELECT `collection_id` FROM `cards` WHERE `cards`.`id` = `card_states`.`card_id`);",
+    "CREATE INDEX `idx_states_collection` ON `card_states` (`is_active`,`collection_id`,`retained_until`);",
+    "CREATE INDEX `idx_states_active_due` ON `card_states` (`is_active`,`due`,`card_id`,`importance`,`collection_id`,`stability`,`last_review`);"
   ]
 ];

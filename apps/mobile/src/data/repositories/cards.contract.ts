@@ -365,4 +365,44 @@ export const cardsContract: readonly ContractCase[] = [
       eq(today.retainedCount >= 1, true, "retained_until reconstruído");
     },
   },
+  {
+    name: "watchToday agrupa por coleção (ativos, retidos) e os vencidos trazem a coleção",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      await repo.saveMany([
+        makeCard(1, { collectionId: "col-a" }),
+        makeCard(2, { collectionId: "col-a" }),
+        makeCard(3, { collectionId: "col-b" }),
+        makeCard(4, { collectionId: "col-b", status: "suspended" }),
+      ]);
+      await repo.recordReview({ id: "r1", cardId: makeCard(1).id, at: T0, rating: 3 });
+      const today = await nextValue(repo.watchToday(T0), (v) => v.activeCount === 3 && v.retainedCount === 1);
+      const stats = Object.fromEntries(
+        today.byCollection.map((c) => [c.collectionId, [c.active, c.retained]]),
+      );
+      eq(stats, { "col-a": [2, 1], "col-b": [1, 0] }, "por coleção");
+      eq(
+        today.dueRows.map((r) => [r.id, r.collectionId]).sort(),
+        [
+          [makeCard(2).id, "col-a"],
+          [makeCard(3).id, "col-b"],
+        ],
+        "vencidos com coleção",
+      );
+    },
+  },
+  {
+    name: "mover o card de coleção atualiza o agrupamento da tela Hoje",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      await repo.saveMany([makeCard(1, { collectionId: "col-a" }), makeCard(2, { collectionId: "col-a" })]);
+      await repo.save(makeCard(2, { collectionId: "col-b", updatedAt: new Date(T0.getTime() + 1000) }));
+      const today = await nextValue(repo.watchToday(T0), (v) => v.byCollection.length === 2);
+      eq(
+        Object.fromEntries(today.byCollection.map((c) => [c.collectionId, c.active])),
+        { "col-a": 1, "col-b": 1 },
+        "agrupamento depois da mudança",
+      );
+    },
+  },
 ];

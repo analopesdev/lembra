@@ -68,7 +68,7 @@ describe("cache de card_states (ADR-0032)", () => {
   });
 
   it("propriedade: campos denormalizados incrementais == rebuild do zero", () => {
-    const card = { status: "active" as const, deletedAt: null, importance: 2 as const };
+    const card = { status: "active" as const, deletedAt: null, importance: 2 as const, collectionId: "c1" };
     fc.assert(
       fc.property(historyArb, (h) => {
         let s = initialState(START);
@@ -97,19 +97,20 @@ describe("cache de card_states (ADR-0032)", () => {
     ["problemático", { status: "problematic", deletedAt: null }, 0],
     ["ativo mas excluído", { status: "active", deletedAt: START }, 0],
   ] as const)("is_active: %s", (_n, c, want) => {
-    expect(cacheRow({ ...c, importance: 2 }, initialState(START)).isActive).toBe(want);
+    expect(cacheRow({ ...c, importance: 2, collectionId: "c1" }, initialState(START)).isActive).toBe(want);
   });
 
   it("retained_until = última revisão + S dias; card novo não tem", () => {
-    const card = { status: "active" as const, deletedAt: null, importance: 3 as const };
+    const card = { status: "active" as const, deletedAt: null, importance: 3 as const, collectionId: "c1" };
     expect(cacheRow(card, initialState(START)).retainedUntil).toBeNull();
     const s = applyReview(initialState(START), { id: "a", at: START, rating: 3 }, params);
     expect(cacheRow(card, s).retainedUntil).toBe(START.getTime() + s.stability * DAY);
     expect(cacheRow(card, s).importance).toBe(3);
+    expect(cacheRow(card, s).collectionId).toBe("c1");
   });
 
   it("rebuild após reotimizar os parâmetros muda S e retained_until (por isso o job é obrigatório)", () => {
-    const card = { status: "active" as const, deletedAt: null, importance: 2 as const };
+    const card = { status: "active" as const, deletedAt: null, importance: 2 as const, collectionId: "c1" };
     const h: ReviewEvent[] = [
       { id: "a", at: START, rating: 3 },
       { id: "b", at: new Date(START.getTime() + 3 * DAY), rating: 3 },

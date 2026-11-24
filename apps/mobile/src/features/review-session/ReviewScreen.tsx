@@ -26,7 +26,7 @@ export function ReviewScreen({ onExit }: Props) {
   return (
     <ReviewView
       card={{
-        collectionName: session.card.collectionId,
+        collectionName: session.collectionName,
         position: session.position,
         front: session.card.front,
         back: session.card.back,
