@@ -16,6 +16,7 @@ describe("settings", () => {
       theme: "auto",
       avatarStyle: "thumbs",
       avatarSeed: "",
+      glassNav: false,
       offWeekdays: [],
       goalText: "",
       updatedAt: now,

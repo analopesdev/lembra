@@ -36,6 +36,7 @@ export const settings = sqliteTable("settings", {
   theme: text("theme").notNull().default("auto"),
   avatarStyle: text("avatar_style").notNull().default("thumbs"),
   avatarSeed: text("avatar_seed").notNull().default(""),
+  glassNav: integer("glass_nav").notNull().default(0),
   offWeekdays: text("off_weekdays", { mode: "json" }).$type<number[]>().notNull(),
   goalText: text("goal_text").notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),

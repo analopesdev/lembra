@@ -58,6 +58,8 @@ export function ProfileScreen({ onBack }: Props) {
       }
       theme={settings.theme}
       onTheme={(v: ThemePreference) => void update({ theme: v })}
+      glassNav={settings.glassNav}
+      onGlassNav={(v) => void update({ glassNav: v })}
       avatarStyle={settings.avatarStyle}
       avatarSeed={settings.avatarSeed}
       onAvatarStyle={(v) => void update({ avatarStyle: v })}

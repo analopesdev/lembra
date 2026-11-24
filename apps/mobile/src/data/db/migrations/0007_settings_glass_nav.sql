@@ -1,0 +1,1 @@
+ALTER TABLE `settings` ADD `glass_nav` integer DEFAULT 0 NOT NULL;

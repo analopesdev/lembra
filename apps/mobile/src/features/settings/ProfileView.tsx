@@ -9,7 +9,7 @@ import {
   type DailyMinutes,
   type ThemePreference,
 } from "@/domain/settings/settings";
-import { Avatar, Card, Icon, Num, Tag, Text } from "@/shared/ui";
+import { Avatar, Card, Icon, Num, Tag, Text, Toggle } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -22,6 +22,8 @@ type Props = {
   onToggleWeekday: (day: number) => void;
   theme: ThemePreference;
   onTheme: (v: ThemePreference) => void;
+  glassNav: boolean;
+  onGlassNav: (v: boolean) => void;
   avatarStyle: AvatarStyle;
   avatarSeed: string;
   onAvatarStyle: (v: AvatarStyle) => void;
@@ -249,6 +251,13 @@ export function ProfileView(p: Props) {
         })}
       </View>
 
+      <View style={styles.toggleRow}>
+        <Text variant="corpo" style={styles.flex}>
+          {tr("profile.glassNav")}
+        </Text>
+        <Toggle value={p.glassNav} onValueChange={p.onGlassNav} label={tr("profile.glassNav")} />
+      </View>
+
       <Section title={tr("profile.security")} />
       <SoonRow label={tr(SOON_ROWS.faceId)} />
 
@@ -274,6 +283,7 @@ export function ProfileView(p: Props) {
 const styles = StyleSheet.create({
   content: { paddingTop: 56, paddingHorizontal: space.xl, paddingBottom: 48, gap: space.md },
   flex: { flex: 1 },
+  toggleRow: { flexDirection: "row", alignItems: "center", gap: space.md },
   header: { flexDirection: "row", alignItems: "center", gap: space.md },
   back: {
     width: 40,

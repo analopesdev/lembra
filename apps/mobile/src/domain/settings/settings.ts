@@ -15,6 +15,7 @@ export interface Settings {
   readonly theme: ThemePreference;
   readonly avatarStyle: AvatarStyle;
   readonly avatarSeed: string;
+  readonly glassNav: boolean;
   readonly offWeekdays: readonly number[];
   readonly goalText: string;
   readonly updatedAt: Date;
@@ -29,6 +30,7 @@ export function defaultSettings(now: Date): Settings {
     theme: "auto",
     avatarStyle: DEFAULT_AVATAR_STYLE,
     avatarSeed: "",
+    glassNav: false,
     offWeekdays: [],
     goalText: "",
     updatedAt: now,

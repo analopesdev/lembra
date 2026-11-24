@@ -50,6 +50,13 @@
       "when": 1795484237186,
       "tag": "0006_settings_avatar",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1795484577363,
+      "tag": "0007_settings_glass_nav",
+      "breakpoints": true
     }
   ]
 }

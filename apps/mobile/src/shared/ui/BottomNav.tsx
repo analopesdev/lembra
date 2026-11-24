@@ -1,11 +1,14 @@
 import type { LucideIcon } from "lucide-react-native";
+import { BlurView } from "expo-blur";
 import { Plus } from "lucide-react-native";
 import { Pressable, StyleSheet, View } from "react-native";
+
+import { useGlassNav } from "@/shared/lib/glassNav";
 
 import { Icon } from "./Icon";
 import { space } from "./theme";
 import { Text } from "./Text";
-import { useTheme } from "./useTheme";
+import { useTheme, useThemeName } from "./useTheme";
 
 export interface NavItem {
   key: string;
@@ -24,6 +27,8 @@ type Props = {
 /** Barra flutuante de 68 px: aba ativa em pílula `tint` com ícone + rótulo; "+" central em `button`. */
 export function BottomNav({ items, active, onSelect, onAdd, addLabel }: Props) {
   const t = useTheme();
+  const glass = useGlassNav();
+  const dark = useThemeName() === "escuro";
   const half = Math.ceil(items.length / 2);
   const render = (item: NavItem) => {
     const on = item.key === active;
@@ -48,8 +53,18 @@ export function BottomNav({ items, active, onSelect, onAdd, addLabel }: Props) {
   return (
     <View
       accessibilityRole="tablist"
-      style={[styles.bar, { backgroundColor: t.surface, borderColor: t.border }]}
+      style={[
+        styles.bar,
+        glass ? { borderColor: t.border } : { backgroundColor: t.surface, borderColor: t.border },
+      ]}
     >
+      {glass ? (
+        <BlurView
+          intensity={60}
+          tint={dark ? "dark" : "light"}
+          style={[StyleSheet.absoluteFill, styles.glass]}
+        />
+      ) : null}
       {items.slice(0, half).map(render)}
       <Pressable
         accessibilityRole="button"
@@ -65,14 +80,16 @@ export function BottomNav({ items, active, onSelect, onAdd, addLabel }: Props) {
 }
 
 const styles = StyleSheet.create({
+  glass: { borderRadius: 34 },
   bar: {
     position: "absolute",
     left: space.lg,
     right: space.lg,
     bottom: space["2xl"],
     height: 68,
-    borderRadius: 22,
+    borderRadius: 34,
     borderWidth: 1,
+    overflow: "hidden",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -81,7 +98,7 @@ const styles = StyleSheet.create({
   tab: {
     minHeight: 44,
     minWidth: 44,
-    borderRadius: 14,
+    borderRadius: 26,
     paddingHorizontal: 14,
     paddingVertical: 10,
     flexDirection: "row",
@@ -89,5 +106,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 6,
   },
-  add: { width: 52, height: 52, borderRadius: 18, alignItems: "center", justifyContent: "center" },
+  add: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center" },
 });
