@@ -17,6 +17,8 @@ export const sample = (over: Partial<Settings> = {}): Settings => ({
   dailyMinutes: 15,
   newCardsPerDay: 12,
   theme: "dark",
+  avatarStyle: "lorelei",
+  avatarSeed: "semente-123",
   offWeekdays: [3, 7],
   goalText: "Passar na prova de anatomia",
   updatedAt: at(0),

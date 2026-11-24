@@ -2,6 +2,7 @@ import { asc, eq } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 
 import {
+  normalizeAvatarStyle,
   normalizeMinutes,
   normalizeNewCards,
   normalizeTheme,
@@ -21,6 +22,8 @@ const toSettings = (r: typeof settings.$inferSelect): Settings => ({
   dailyMinutes: normalizeMinutes(r.dailyMinutes),
   newCardsPerDay: normalizeNewCards(r.newCardsPerDay),
   theme: normalizeTheme(r.theme),
+  avatarStyle: normalizeAvatarStyle(r.avatarStyle),
+  avatarSeed: r.avatarSeed,
   offWeekdays: normalizeWeekdays(r.offWeekdays),
   goalText: r.goalText,
   updatedAt: r.updatedAt,
@@ -44,6 +47,8 @@ export class SqliteSettingsRepository implements SettingsRepository {
       dailyMinutes: value.dailyMinutes,
       newCardsPerDay: value.newCardsPerDay,
       theme: value.theme,
+      avatarStyle: value.avatarStyle,
+      avatarSeed: value.avatarSeed,
       offWeekdays: [...value.offWeekdays],
       goalText: value.goalText,
       updatedAt: value.updatedAt,

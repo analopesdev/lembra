@@ -44,6 +44,8 @@ const settings = z.object({
   dailyMinutes: z.number().int(),
   newCardsPerDay: z.number().int(),
   theme: z.enum(["auto", "light", "dark"]),
+  avatarStyle: z.string().optional(),
+  avatarSeed: z.string().optional(),
   offWeekdays: z.array(z.number().int().min(1).max(7)),
   goalText: z.string(),
   updatedAt: iso,

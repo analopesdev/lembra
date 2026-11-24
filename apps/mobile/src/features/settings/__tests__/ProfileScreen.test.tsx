@@ -22,7 +22,11 @@ jest.mock("@/data/container", () => {
   const deps = { clock: now, newId: () => Math.random().toString(36), fsrs: params() };
   const cards = new Cards(deps);
   const collections = new Collections(deps);
-  return { getContainer: () => Promise.resolve({ cards, collections, settings: mockState.settings, now }) };
+  let n = 0;
+  return {
+    getContainer: () =>
+      Promise.resolve({ cards, collections, settings: mockState.settings, now, newId: () => `seed-${n++}` }),
+  };
 });
 
 const NOW = new Date("2026-03-10T13:00:00Z");
@@ -124,5 +128,18 @@ describe("ProfileScreen", () => {
     await render(<ProfileScreen onBack={onBack} />);
     await fireEvent.press(await screen.findByRole("button", { name: "Voltar" }));
     expect(onBack).toHaveBeenCalled();
+  });
+
+  it("avatar: escolher outro estilo e sortear outro avatar grava e marca a seleção", async () => {
+    const repo = await setup();
+    await render(<ProfileScreen onBack={() => undefined} />);
+    expect((await screen.findByRole("radio", { name: "Miniaturas" })).props.accessibilityState.selected).toBe(
+      true,
+    );
+    await act(async () => fireEvent.press(screen.getByRole("radio", { name: "Lorelei" })));
+    await waitFor(async () => expect((await repo.get())?.avatarStyle).toBe("lorelei"));
+    expect(screen.getByRole("radio", { name: "Lorelei" }).props.accessibilityState.selected).toBe(true);
+    await act(async () => fireEvent.press(screen.getByRole("button", { name: "Sortear outro avatar" })));
+    await waitFor(async () => expect((await repo.get())?.avatarSeed).toMatch(/^seed-/));
   });
 });
