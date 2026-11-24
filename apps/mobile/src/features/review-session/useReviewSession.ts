@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { getContainer, type Container } from "@/data/container";
 import type { TodaySummary } from "@/data/repositories/cards";
-import { defaultParams, type Rating } from "@/domain/scheduling";
+import { defaultParams, previewIntervals, type IntervalPreview, type Rating } from "@/domain/scheduling";
 import { composeSession } from "@/domain/session/compose";
 import {
   currentCard,
@@ -31,6 +31,7 @@ export interface ReviewSession {
   collectionName: string;
   isRetry: boolean;
   position: { current: number; total: number };
+  intervals: IntervalPreview | null;
   phase: "front" | "back";
   elapsedRatio: number;
   remainingMs: number;
@@ -55,6 +56,7 @@ export function useReviewSession(reloadSignal = 0): ReviewSession {
   const [status, setStatus] = useState<ReviewStatus>("loading");
   const [card, setCard] = useState<Card | null>(null);
   const [collectionName, setCollectionName] = useState("");
+  const [intervals, setIntervals] = useState<IntervalPreview | null>(null);
   const [total, setTotal] = useState(0);
   const [now, setNow] = useState(0);
   const [memory, setMemory] = useState({ before: 0, after: 0 });
@@ -99,9 +101,20 @@ export function useReviewSession(reloadSignal = 0): ReviewSession {
     let cancelled = false;
     void container.cards.get(currentId).then(async (c) => {
       const collection = c ? await container.collections.get(c.collectionId) : null;
+      const cardState = c ? await container.cards.getState(c.id) : null;
       if (cancelled) return;
       setCard(c);
       setCollectionName(collection?.name ?? "");
+      setIntervals(
+        cardState
+          ? previewIntervals(
+              cardState,
+              container.now(),
+              defaultParams(),
+              Intl.DateTimeFormat().resolvedOptions().timeZone,
+            )
+          : null,
+      );
     });
     return () => {
       cancelled = true;
@@ -159,6 +172,7 @@ export function useReviewSession(reloadSignal = 0): ReviewSession {
     collectionName,
     isRetry: item?.retry ?? false,
     position: { current: done ? Math.min(total, done.reviewed + 1) : 0, total },
+    intervals,
     phase: state?.phase ?? "front",
     elapsedRatio: state ? elapsedRatio(state, now) : 0,
     remainingMs: state ? remainingMs(state, now) : 0,

@@ -1,9 +1,10 @@
-import { ArrowRight, Pencil, X } from "lucide-react-native";
+import { ArrowRight, Calendar, Pencil, X } from "lucide-react-native";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated, { Easing, FadeInDown, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 
-import type { Rating } from "@/domain/scheduling";
+import type { IntervalPreview, Rating } from "@/domain/scheduling";
 import { Button, Icon, Num, ProgressBar, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
@@ -20,6 +21,7 @@ export interface ReviewCardView {
 
 type Props = {
   card: ReviewCardView;
+  intervals?: IntervalPreview | null;
   phase: "front" | "back";
   elapsedRatio: number;
   remainingLabel: string;
@@ -39,6 +41,7 @@ const GRADES: { rating: Rating; key: "again" | "hard" | "good" | "easy" }[] = [
 export function ReviewView({
   card,
   phase,
+  intervals,
   elapsedRatio,
   remainingLabel,
   onClose,
@@ -49,7 +52,10 @@ export function ReviewView({
   const t = useTheme();
   const { t: tr } = useTranslation();
   const revealed = phase === "back";
+  const [selection, setSelection] = useState<{ key: string; rating: Rating }>({ key: "", rating: 3 });
   const cardKey = `${card.position.current}-${card.isRetry ? "r" : "n"}`;
+  const rating: Rating = selection.key === cardKey ? selection.rating : 3;
+  const returnsIn = intervals ? intervals[rating] : null;
   const face = [styles.card, { backgroundColor: t.surface, borderColor: t.border }];
   const chips = (
     <View style={styles.chips}>
@@ -121,15 +127,29 @@ export function ReviewView({
               </View>
             }
             back={
-              <View style={[face, { backgroundColor: t.tint, borderColor: t.tint }]}>
+              <View style={face}>
                 {chips}
                 <ScrollView contentContainerStyle={styles.body}>
-                  <Text variant="legenda" tone="onTint" style={styles.kicker}>
-                    {tr("review.answer")}
+                  <Text variant="label" tone="textMuted" numberOfLines={3}>
+                    {card.front}
                   </Text>
-                  <Text variant="subtitulo" tone="onTint" style={styles.answer}>
+                  <View style={[styles.rule, { backgroundColor: t.border }]} />
+                  <Text variant="legenda" tone="textMuted" style={styles.kicker}>
+                    {tr("review.correctAnswer")}
+                  </Text>
+                  <Text variant="subtitulo" style={styles.answer}>
                     {card.back}
                   </Text>
+                  {returnsIn !== null && !card.isRetry ? (
+                    <View style={[styles.returns, { backgroundColor: t.successTint }]}>
+                      <Icon icon={Calendar} size={14} color="success" />
+                      <Text variant="label" tone="success" style={styles.returnsText}>
+                        {returnsIn === 0
+                          ? tr("review.returnsToday")
+                          : tr("review.returnsIn", { count: returnsIn })}
+                      </Text>
+                    </View>
+                  ) : null}
                 </ScrollView>
               </View>
             }
@@ -139,32 +159,46 @@ export function ReviewView({
 
       {revealed ? (
         <Animated.View entering={FadeInDown.duration(260)} style={styles.gradeArea}>
+          <Text variant="legenda" tone="textMuted" style={styles.warning}>
+            {tr("review.gradeWarning")}
+          </Text>
           <View
             accessibilityRole="radiogroup"
             accessibilityLabel={tr("review.grades.label")}
             style={[styles.grades, { backgroundColor: t.surface, borderColor: t.border }]}
           >
-            {GRADES.map((g) => (
-              <Pressable
-                key={g.key}
-                accessibilityRole="button"
-                accessibilityLabel={tr(`review.grades.${g.key}`)}
-                onPress={() => onGrade(g.rating)}
-                style={({ pressed }) => [
-                  styles.grade,
-                  g.rating === 1 && { backgroundColor: t.dangerTint },
-                  pressed && { transform: [{ scale: 0.95 }], opacity: 0.85 },
-                ]}
-              >
-                <Text variant="label" tone={g.rating === 1 ? "danger" : "text"} style={styles.gradeText}>
-                  {tr(`review.grades.${g.key}`)}
-                </Text>
-              </Pressable>
-            ))}
+            {GRADES.map((g) => {
+              const on = g.rating === rating;
+              const again = g.rating === 1;
+              return (
+                <Pressable
+                  key={g.key}
+                  accessibilityRole="radio"
+                  accessibilityLabel={tr(`review.grades.${g.key}`)}
+                  accessibilityState={{ selected: on }}
+                  onPress={() => setSelection({ key: cardKey, rating: g.rating })}
+                  style={({ pressed }) => [
+                    styles.grade,
+                    on && { backgroundColor: again ? t.dangerTint : t.primary },
+                    pressed && { opacity: 0.85 },
+                  ]}
+                >
+                  <Text
+                    variant="label"
+                    tone={on ? (again ? "danger" : "onPrimary") : "text"}
+                    style={styles.gradeText}
+                  >
+                    {tr(`review.grades.${g.key}`)}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
-          <Text variant="legenda" tone="textMuted" style={styles.warning}>
-            {tr("review.gradeWarning")}
-          </Text>
+          <Button
+            label={tr("review.next")}
+            onPress={() => onGrade(rating)}
+            trailing={<Icon icon={ArrowRight} size={20} color="onButton" strokeWidth={2.2} />}
+          />
         </Animated.View>
       ) : (
         <Animated.View exiting={FadeOut.duration(120)}>
@@ -203,7 +237,17 @@ const styles = StyleSheet.create({
   rule: { height: 1 },
   kicker: { fontWeight: "700", letterSpacing: 0.72, textTransform: "uppercase" },
   answer: { fontSize: 21, lineHeight: 27, fontWeight: "700" },
-  gradeArea: { gap: space.sm },
+  gradeArea: { gap: space.md },
+  returns: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    alignSelf: "flex-start",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: radius.pill,
+  },
+  returnsText: { fontWeight: "700" },
   grades: { flexDirection: "row", gap: 4, padding: 4, borderRadius: 18, borderWidth: 1 },
   grade: {
     flex: 1,

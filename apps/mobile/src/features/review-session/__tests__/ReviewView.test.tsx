@@ -29,17 +29,18 @@ describe("ReviewView (modo clássico)", () => {
     expect(screen.getByText("Card 3 de 12")).toBeTruthy();
     expect(screen.getByText("8:00")).toBeTruthy();
     expect(screen.queryByText("Braquial")).toBeNull();
-    expect(screen.queryByRole("button", { name: "Bom" })).toBeNull();
+    expect(screen.queryByRole("radio", { name: "Bom" })).toBeNull();
     await fireEvent.press(screen.getByRole("button", { name: "Mostrar resposta" }));
     expect(onReveal).toHaveBeenCalled();
   });
 
-  it("no verso mostra a resposta, as 4 notas e o aviso de que só 'Errei' é erro (RF-15)", async () => {
+  it("no verso mostra a resposta correta, as 4 notas com Bom marcado e confirma com Próximo card (RF-15)", async () => {
     const onGrade = jest.fn();
     await render(
       <ReviewView
         card={card}
         phase="back"
+        intervals={{ 1: 1, 2: 4, 3: 9, 4: 21 }}
         elapsedRatio={0.5}
         remainingLabel="5:00"
         onClose={noop}
@@ -48,14 +49,21 @@ describe("ReviewView (modo clássico)", () => {
       />,
     );
     expect(screen.getByText("Braquial")).toBeTruthy();
+    expect(screen.getByText("Resposta correta")).toBeTruthy();
     expect(screen.getByText("Só “Errei” conta como erro. Difícil, Bom e Fácil são acertos.")).toBeTruthy();
-    for (const [name, rating] of [
-      ["Errei", 1],
-      ["Difícil", 2],
-      ["Bom", 3],
-      ["Fácil", 4],
+    expect(screen.getByRole("radio", { name: "Bom" }).props.accessibilityState.selected).toBe(true);
+    expect(screen.getByText("Volta em 9 dias")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Próximo card" }));
+    expect(onGrade).toHaveBeenLastCalledWith(3);
+    for (const [name, rating, text] of [
+      ["Errei", 1, "Volta em 1 dia"],
+      ["Difícil", 2, "Volta em 4 dias"],
+      ["Fácil", 4, "Volta em 21 dias"],
     ] as const) {
-      await fireEvent.press(screen.getByRole("button", { name }));
+      await fireEvent.press(screen.getByRole("radio", { name }));
+      expect(screen.getByRole("radio", { name }).props.accessibilityState.selected).toBe(true);
+      expect(screen.getByText(text)).toBeTruthy();
+      await fireEvent.press(screen.getByRole("button", { name: "Próximo card" }));
       expect(onGrade).toHaveBeenLastCalledWith(rating);
     }
     expect(screen.queryByRole("button", { name: "Mostrar resposta" })).toBeNull();

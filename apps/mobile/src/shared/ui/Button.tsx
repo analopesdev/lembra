@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   leading?: React.ReactNode;
+  trailing?: React.ReactNode;
   accessibilityLabel?: string;
 };
 
@@ -22,6 +23,7 @@ export function Button({
   disabled,
   loading,
   leading,
+  trailing,
   accessibilityLabel,
 }: Props) {
   const t = useTheme();
@@ -54,6 +56,7 @@ export function Button({
         <Text variant="subtitulo" tone={tone}>
           {label}
         </Text>
+        {trailing}
       </View>
     </Pressable>
   );

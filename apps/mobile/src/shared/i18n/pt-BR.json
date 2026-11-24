@@ -103,7 +103,12 @@
       "retries": "Repetições na sessão",
       "back": "Voltar para Hoje"
     },
-    "edit": "Editar card"
+    "edit": "Editar card",
+    "correctAnswer": "Resposta correta",
+    "next": "Próximo card",
+    "returnsIn_one": "Volta em {{count}} dia",
+    "returnsIn_other": "Volta em {{count}} dias",
+    "returnsToday": "Volta hoje"
   },
   "collection": {
     "newTitle": "Nova coleção",
