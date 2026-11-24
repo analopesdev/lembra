@@ -59,7 +59,7 @@ export function Num({ size = 32, tone = "text", style, ...rest }: NumProps) {
         {
           fontFamily: fonts.numbers.bold,
           fontSize: size,
-          lineHeight: size,
+          lineHeight: Math.ceil(size * 1.25),
           letterSpacing: size * -0.03,
           fontVariant: ["tabular-nums"],
           color: t[tone],

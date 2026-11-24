@@ -147,7 +147,13 @@
       "title": "Excluir coleção?",
       "message": "Isto exclui “{{name}}” e todos os cards dela. A ação sincroniza com seus outros aparelhos.",
       "confirm": "Excluir coleção e cards"
-    }
+    },
+    "statCollections": "coleções",
+    "statDue": "para hoje",
+    "statCards": "cards no total",
+    "cardsCount_one": "{{count}} card",
+    "cardsCount_other": "{{count}} cards",
+    "retainedLabel": "{{name}}: {{pct}}% retido"
   },
   "card": {
     "newTitle": "Novo card",

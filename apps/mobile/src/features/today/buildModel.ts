@@ -48,6 +48,8 @@ export function buildTodayModel(input: BuildTodayInput): TodayModel {
       name: c.name,
       dueToday: dueByCollection.get(c.id) ?? 0,
       progress: stats && stats.active > 0 ? stats.retained / stats.active : 0,
+      cardCount: stats?.active ?? 0,
+      examDaysLeft: c.examDay === null ? null : Math.max(-1, diffDays(today, c.examDay)),
       tone: c.tone,
       icon: c.icon,
     };
