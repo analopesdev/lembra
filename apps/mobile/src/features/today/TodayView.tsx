@@ -102,7 +102,7 @@ export function TodayView({
           onPress={onOpenProfile}
           style={styles.avatar}
         >
-          <Avatar style={model.avatarStyle} seed={model.avatarSeed} size={44} />
+          <Avatar seed={model.avatarSeed} size={44} />
         </Pressable>
         <View style={styles.flex}>
           <Text variant="label" tone="textMuted" style={styles.greeting}>

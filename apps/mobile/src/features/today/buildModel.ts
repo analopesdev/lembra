@@ -14,7 +14,6 @@ export interface BuildTodayInput {
   readonly timeZone: string;
   readonly sessionMinutes: number;
   readonly newCardsLeftToday: number;
-  readonly avatarStyle?: string;
   readonly avatarSeed?: string;
   readonly retentionTargetPct: number;
   readonly params?: FsrsParams;
@@ -64,7 +63,6 @@ export function buildTodayModel(input: BuildTodayInput): TodayModel {
 
   return {
     userName: "",
-    avatarStyle: input.avatarStyle ?? "thumbs",
     avatarSeed: input.avatarSeed ?? "",
     memoryRetained: summary.retainedCount,
     memoryRatio: summary.activeCount === 0 ? 0 : summary.retainedCount / summary.activeCount,

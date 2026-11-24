@@ -130,16 +130,12 @@ describe("ProfileScreen", () => {
     expect(onBack).toHaveBeenCalled();
   });
 
-  it("avatar: escolher outro estilo e sortear outro avatar grava e marca a seleção", async () => {
+  it("avatar: sortear outro avatar grava uma nova semente", async () => {
     const repo = await setup();
     await render(<ProfileScreen onBack={() => undefined} />);
-    expect((await screen.findByRole("radio", { name: "Miniaturas" })).props.accessibilityState.selected).toBe(
-      true,
+    await act(async () =>
+      fireEvent.press(await screen.findByRole("button", { name: "Sortear outro avatar" })),
     );
-    await act(async () => fireEvent.press(screen.getByRole("radio", { name: "Lorelei" })));
-    await waitFor(async () => expect((await repo.get())?.avatarStyle).toBe("lorelei"));
-    expect(screen.getByRole("radio", { name: "Lorelei" }).props.accessibilityState.selected).toBe(true);
-    await act(async () => fireEvent.press(screen.getByRole("button", { name: "Sortear outro avatar" })));
     await waitFor(async () => expect((await repo.get())?.avatarSeed).toMatch(/^seed-/));
   });
 

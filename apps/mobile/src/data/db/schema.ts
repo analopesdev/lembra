@@ -34,7 +34,6 @@ export const settings = sqliteTable("settings", {
   dailyMinutes: integer("daily_minutes").notNull(),
   newCardsPerDay: integer("new_cards_per_day").notNull().default(5),
   theme: text("theme").notNull().default("auto"),
-  avatarStyle: text("avatar_style").notNull().default("thumbs"),
   avatarSeed: text("avatar_seed").notNull().default(""),
   glassNav: integer("glass_nav").notNull().default(0),
   offWeekdays: text("off_weekdays", { mode: "json" }).$type<number[]>().notNull(),

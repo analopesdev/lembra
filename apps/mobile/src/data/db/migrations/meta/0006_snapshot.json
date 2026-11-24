@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7cee5139-7cb6-4199-8d96-ca28b9a78067",
+  "id": "d90ec5a9-d8e3-4089-83ac-b5fc10d2af67",
   "prevId": "e2f2c770-1073-494e-8c4d-151ec8782f38",
   "tables": {
     "card_states": {
@@ -450,14 +450,6 @@
           "autoincrement": false,
           "default": "'auto'"
         },
-        "avatar_style": {
-          "name": "avatar_style",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'thumbs'"
-        },
         "avatar_seed": {
           "name": "avatar_seed",
           "type": "text",
@@ -465,6 +457,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": "''"
+        },
+        "glass_nav": {
+          "name": "glass_nav",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "off_weekdays": {
           "name": "off_weekdays",

@@ -17,7 +17,6 @@ export const sample = (over: Partial<Settings> = {}): Settings => ({
   dailyMinutes: 15,
   newCardsPerDay: 12,
   theme: "dark",
-  avatarStyle: "lorelei",
   avatarSeed: "semente-123",
   glassNav: true,
   offWeekdays: [3, 7],

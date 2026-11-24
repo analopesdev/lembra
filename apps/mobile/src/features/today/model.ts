@@ -24,7 +24,6 @@ export interface ExamBanner {
 
 export interface TodayModel {
   readonly userName: string;
-  readonly avatarStyle: string;
   readonly avatarSeed: string;
   readonly memoryRetained: number;
   readonly memoryRatio: number;

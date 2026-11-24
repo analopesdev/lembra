@@ -2,13 +2,7 @@ import { ChevronLeft, Minus, Plus, Shuffle } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import {
-  AVATAR_STYLES,
-  MINUTE_OPTIONS,
-  type AvatarStyle,
-  type DailyMinutes,
-  type ThemePreference,
-} from "@/domain/settings/settings";
+import { MINUTE_OPTIONS, type DailyMinutes, type ThemePreference } from "@/domain/settings/settings";
 import { Avatar, Card, Icon, Num, Tag, Text, Toggle } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
@@ -24,9 +18,7 @@ type Props = {
   onTheme: (v: ThemePreference) => void;
   glassNav: boolean;
   onGlassNav: (v: boolean) => void;
-  avatarStyle: AvatarStyle;
   avatarSeed: string;
-  onAvatarStyle: (v: AvatarStyle) => void;
   onAvatarShuffle: () => void;
   retainedCount: number;
   version: string;
@@ -100,7 +92,7 @@ export function ProfileView(p: Props) {
       </View>
 
       <Card style={styles.account}>
-        <Avatar style={p.avatarStyle} seed={p.avatarSeed} size={52} />
+        <Avatar seed={p.avatarSeed} size={52} />
         <View style={styles.flex}>
           <Text variant="subtitulo">{tr("profile.guest")}</Text>
           <Text variant="label" tone="textMuted" style={styles.hint}>
@@ -110,25 +102,8 @@ export function ProfileView(p: Props) {
       </Card>
 
       <Section title={tr("profile.avatar")} />
-      <View accessibilityRole="radiogroup" style={styles.row}>
-        {AVATAR_STYLES.map((s) => {
-          const on = s === p.avatarStyle;
-          return (
-            <Pressable
-              key={s}
-              accessibilityRole="radio"
-              accessibilityLabel={tr(`profile.avatarStyles.${s}`)}
-              accessibilityState={{ selected: on }}
-              onPress={() => p.onAvatarStyle(s)}
-              style={[
-                styles.avatarOption,
-                { borderColor: on ? t.primary : t.border, borderWidth: on ? 2 : 1 },
-              ]}
-            >
-              <Avatar style={s} seed={p.avatarSeed} size={52} />
-            </Pressable>
-          );
-        })}
+      <View style={styles.avatarPreview}>
+        <Avatar seed={p.avatarSeed} size={96} />
       </View>
       <Pressable
         accessibilityRole="button"
@@ -296,7 +271,7 @@ const styles = StyleSheet.create({
   title: { flex: 1, textAlign: "center", fontSize: 20 },
   spacer: { width: 40 },
   account: { flexDirection: "row", alignItems: "center", gap: 14, padding: space.lg },
-  avatarOption: { padding: 2, borderRadius: 30 },
+  avatarPreview: { alignSelf: "flex-start" },
   shuffle: {
     flexDirection: "row",
     alignItems: "center",

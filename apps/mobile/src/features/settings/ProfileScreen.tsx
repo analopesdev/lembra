@@ -60,9 +60,7 @@ export function ProfileScreen({ onBack }: Props) {
       onTheme={(v: ThemePreference) => void update({ theme: v })}
       glassNav={settings.glassNav}
       onGlassNav={(v) => void update({ glassNav: v })}
-      avatarStyle={settings.avatarStyle}
       avatarSeed={settings.avatarSeed}
-      onAvatarStyle={(v) => void update({ avatarStyle: v })}
       onAvatarShuffle={() => void getContainer().then((c) => update({ avatarSeed: c.newId() }))}
       retainedCount={memory}
       version={Constants.expoConfig?.version ?? "1.0.0"}
