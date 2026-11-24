@@ -23,6 +23,8 @@ type Props = {
   onSave: () => void;
   onSaveAndNew: () => void;
   onClose: () => void;
+  title?: string;
+  edit?: { suspended: boolean; onToggleSuspend: () => void; onDelete: () => void };
 };
 
 const TYPES = ["basic", "reversed", "cloze", "typed"] as const;
@@ -47,7 +49,7 @@ export function NewCardView(p: Props) {
           <Icon icon={ChevronLeft} size={20} strokeWidth={2.2} />
         </Pressable>
         <Text variant="titulo" accessibilityRole="header" style={styles.title}>
-          {tr("card.newTitle")}
+          {p.title ?? tr("card.newTitle")}
         </Text>
         <Pressable
           accessibilityRole="button"
@@ -188,7 +190,34 @@ export function NewCardView(p: Props) {
           {tr("card.saved")}
         </Text>
       ) : null}
-      <Button label={tr("card.saveAndNew")} variant="secondary" onPress={p.onSaveAndNew} disabled={p.busy} />
+      {p.edit ? (
+        <>
+          {p.edit.suspended ? (
+            <Text variant="legenda" tone="textMuted" style={styles.notice}>
+              {tr("card.suspendedNote")}
+            </Text>
+          ) : null}
+          <Button
+            label={p.edit.suspended ? tr("card.unsuspend") : tr("card.suspend")}
+            variant="secondary"
+            onPress={p.edit.onToggleSuspend}
+            disabled={p.busy}
+          />
+          <Button
+            label={tr("card.delete.confirm")}
+            variant="danger"
+            onPress={p.edit.onDelete}
+            disabled={p.busy}
+          />
+        </>
+      ) : (
+        <Button
+          label={tr("card.saveAndNew")}
+          variant="secondary"
+          onPress={p.onSaveAndNew}
+          disabled={p.busy}
+        />
+      )}
     </ScrollView>
   );
 }

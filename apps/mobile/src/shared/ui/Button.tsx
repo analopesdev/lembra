@@ -8,7 +8,7 @@ type Props = {
   label: string;
   onPress?: () => void;
   /** primary = azul aço com texto escuro; secondary = contorno; ghost = só texto. */
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "ghost" | "danger";
   disabled?: boolean;
   loading?: boolean;
   leading?: React.ReactNode;
@@ -26,9 +26,16 @@ export function Button({
 }: Props) {
   const t = useTheme();
   const inactive = disabled || loading;
-  const bg = variant === "primary" ? t.button : "transparent";
+  const bg = variant === "primary" ? t.button : variant === "danger" ? t.danger : "transparent";
   const border = variant === "secondary" ? t.border : "transparent";
-  const tone = variant === "primary" ? "onButton" : variant === "ghost" ? "link" : "text";
+  const tone =
+    variant === "primary"
+      ? "onButton"
+      : variant === "danger"
+        ? "onDanger"
+        : variant === "ghost"
+          ? "link"
+          : "text";
   return (
     <Pressable
       accessibilityRole="button"

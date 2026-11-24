@@ -10,6 +10,9 @@ import {
 import { Sora_500Medium, Sora_600SemiBold, Sora_700Bold } from "@expo-google-fonts/sora";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { enableScreens } from "react-native-screens";
+
+enableScreens(true);
 
 export default function RootLayout() {
   // Manrope para texto e Sora (tabular-nums) para números de dados (DESIGN.md).

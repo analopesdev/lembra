@@ -43,6 +43,16 @@ export interface ReviewInput {
   readonly kind?: ReviewKind;
 }
 
+export interface CardListQuery {
+  readonly collectionId: Id;
+  readonly limit: number;
+}
+
+export interface CardListPage {
+  readonly items: readonly Card[];
+  readonly hasMore: boolean;
+}
+
 export interface OutboxEntry {
   readonly id: string;
   readonly entity: "card" | "review" | "collection";
@@ -71,6 +81,8 @@ export interface CardsRepository {
   watchActive(): Subscribable<readonly CardWithState[]>;
   /** Tela Hoje sem varrer a base inteira: custo proporcional aos vencidos, não ao total de cards. */
   watchToday(now: Date): Subscribable<TodaySummary>;
+  watchCards(query: CardListQuery): Subscribable<CardListPage>;
+  softDeleteByCollection(collectionId: Id): Promise<number>;
   recordReview(input: ReviewInput): Promise<void>;
   getState(cardId: Id): Promise<CardState | null>;
   listReviews(cardId: Id): Promise<readonly ReviewEvent[]>;

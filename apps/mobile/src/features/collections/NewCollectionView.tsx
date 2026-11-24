@@ -22,6 +22,8 @@ type Props = {
   nameError?: string;
   examError?: string;
   busy?: boolean;
+  title?: string;
+  submitLabel?: string;
   onSubmit: () => void;
   onBack: () => void;
 };
@@ -52,7 +54,7 @@ export function NewCollectionView(p: Props) {
           <Icon icon={ChevronLeft} size={20} strokeWidth={2.2} />
         </Pressable>
         <Text variant="titulo" accessibilityRole="header" style={styles.title}>
-          {tr("collection.newTitle")}
+          {p.title ?? tr("collection.newTitle")}
         </Text>
         <View style={styles.spacer} />
       </View>
@@ -150,7 +152,7 @@ export function NewCollectionView(p: Props) {
       />
 
       <View style={styles.flex} />
-      <Button label={tr("collection.create")} onPress={p.onSubmit} loading={p.busy} />
+      <Button label={p.submitLabel ?? tr("collection.create")} onPress={p.onSubmit} loading={p.busy} />
     </ScrollView>
   );
 }

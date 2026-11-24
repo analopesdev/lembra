@@ -135,6 +135,24 @@
       "tint": "Azul",
       "collection2": "Azul claro",
       "collection3": "Cinza"
+    },
+    "editTitle": "Editar coleção",
+    "saveChanges": "Salvar alterações",
+    "empty": "Nenhuma coleção ainda",
+    "emptyText": "Crie a primeira para organizar seus cards.",
+    "listTitle": "Coleções",
+    "detail": {
+      "newCard": "Novo card",
+      "noCards": "Nenhum card nesta coleção.",
+      "suspended": "Suspenso",
+      "cardsDue_one": "{{count}} para hoje",
+      "cardsDue_other": "{{count}} para hoje",
+      "menu": "Mais ações"
+    },
+    "delete": {
+      "title": "Excluir coleção?",
+      "message": "Isto exclui “{{name}}” e todos os cards dela. A ação sincroniza com seus outros aparelhos.",
+      "confirm": "Excluir coleção e cards"
     }
   },
   "card": {
@@ -164,7 +182,17 @@
       "back_empty": "Escreva a resposta.",
       "collection_missing": "Escolha uma coleção."
     },
-    "saved": "Card salvo"
+    "saved": "Card salvo",
+    "editTitle": "Editar card",
+    "suspend": "Suspender",
+    "unsuspend": "Reativar",
+    "suspendedNote": "Este card está suspenso e não entra nas revisões.",
+    "delete": {
+      "title": "Excluir card?",
+      "message": "O card sai das suas revisões e dos seus outros aparelhos.",
+      "confirm": "Excluir card"
+    },
+    "notFound": "Card não encontrado"
   },
   "feedback": {
     "title": "Fale com a gente",
@@ -190,5 +218,13 @@
       "too_long": "A mensagem pode ter até {{max}} caracteres.",
       "failed": "Não foi possível enviar. Tente de novo."
     }
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "save": "Salvar",
+    "loadMore": "Carregar mais",
+    "close": "Fechar"
   }
 }

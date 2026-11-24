@@ -405,4 +405,84 @@ export const cardsContract: readonly ContractCase[] = [
       );
     },
   },
+  {
+    name: "watchCards: mais novos primeiro, página com limite e hasMore, sem excluídos, de uma só coleção",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const at = (n: number) => new Date(T0.getTime() + n * 1000);
+      await repo.saveMany([
+        makeCard(1, { createdAt: at(1) }),
+        makeCard(2, { createdAt: at(2), status: "suspended" }),
+        makeCard(3, { createdAt: at(3) }),
+        makeCard(4, { createdAt: at(4) }),
+        makeCard(5, { createdAt: at(5), collectionId: "outra" }),
+      ]);
+      await repo.softDelete(makeCard(4).id);
+      const page1 = await nextValue(repo.watchCards({ collectionId: "col-1", limit: 2 }), () => true);
+      eq(
+        [page1.items.map((c) => c.id), page1.hasMore],
+        [[makeCard(3).id, makeCard(2).id], true],
+        "primeira página",
+      );
+      const all = await nextValue(repo.watchCards({ collectionId: "col-1", limit: 10 }), () => true);
+      eq(
+        [all.items.map((c) => c.id), all.hasMore],
+        [[makeCard(3).id, makeCard(2).id, makeCard(1).id], false],
+        "tudo",
+      );
+    },
+  },
+  {
+    name: "editar o card (save) atualiza o texto e a lista reativa, preservando o estado de estudo",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      await repo.save(makeCard(1));
+      await repo.recordReview({ id: "r1", cardId: makeCard(1).id, at: T0, rating: 3 });
+      const before = await repo.getState(makeCard(1).id);
+      await repo.save(
+        makeCard(1, { front: "Editada", importance: 3, updatedAt: new Date(T0.getTime() + 5000) }),
+      );
+      const page = await nextValue(
+        repo.watchCards({ collectionId: "col-1", limit: 5 }),
+        (v) => v.items[0]?.front === "Editada",
+      );
+      eq([page.items[0]?.back, page.items[0]?.importance], ["verso 1", 3], "campos");
+      eq(await repo.getState(makeCard(1).id), before, "estado FSRS preservado");
+    },
+  },
+  {
+    name: "suspender tira o card da revisão e reativar o devolve, sem perder o histórico",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      await repo.save(makeCard(1));
+      const due = await nextValue(repo.watchToday(T0), (v) => v.dueRows.length === 1);
+      eq(due.activeCount, 1, "ativo");
+      await repo.save(makeCard(1, { status: "suspended", updatedAt: new Date(T0.getTime() + 1000) }));
+      const off = await nextValue(repo.watchToday(T0), (v) => v.activeCount === 0);
+      eq([off.dueRows.length, off.byCollection.length], [0, 0], "fora da revisão");
+      await repo.save(makeCard(1, { status: "active", updatedAt: new Date(T0.getTime() + 2000) }));
+      const on = await nextValue(repo.watchToday(T0), (v) => v.activeCount === 1);
+      eq(on.dueRows.length, 1, "de volta");
+    },
+  },
+  {
+    name: "softDeleteByCollection exclui só os cards da coleção, tira da revisão e enfileira um delete por card",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      await repo.saveMany([makeCard(1), makeCard(2), makeCard(3, { collectionId: "outra" })]);
+      const before = (await repo.pendingOutbox()).length;
+      eq(await repo.softDeleteByCollection("col-1"), 2, "quantidade excluída");
+      eq(await repo.softDeleteByCollection("col-1"), 0, "idempotente");
+      eq([await repo.get(makeCard(1).id), await repo.get(makeCard(2).id)], [null, null], "cards ocultos");
+      eq((await repo.get(makeCard(3).id))?.collectionId, "outra", "outra coleção intacta");
+      const today = await nextValue(repo.watchToday(T0), (v) => v.activeCount === 1);
+      eq(
+        today.byCollection.map((c) => c.collectionId),
+        ["outra"],
+        "só a outra coleção ativa",
+      );
+      const deletes = (await repo.pendingOutbox()).slice(before).filter((e) => e.op === "delete");
+      eq(deletes.length, 2, "um delete por card");
+    },
+  },
 ];
