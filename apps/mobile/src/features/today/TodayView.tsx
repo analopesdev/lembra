@@ -15,6 +15,7 @@ type Props = {
   onSeeCollections?: () => void;
   onOpenCollection?: (id: string) => void;
   onOpenNotifications?: () => void;
+  onOpenProfile?: () => void;
 };
 
 function WeekStrip({ week }: { week: readonly WeekDay[] }) {
@@ -87,22 +88,30 @@ export function TodayView({
   onSeeCollections,
   onOpenCollection,
   onOpenNotifications,
+  onOpenProfile,
 }: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
-  const initial = model.userName.slice(0, 1).toUpperCase();
+  const initial = model.userName === "" ? "?" : model.userName.slice(0, 1).toUpperCase();
   const empty = model.dueCount === 0;
   return (
     <ScrollView style={{ backgroundColor: t.background }} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <View style={[styles.avatar, { backgroundColor: t.tint }]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={tr("tabs.profile")}
+          onPress={onOpenProfile}
+          style={[styles.avatar, { backgroundColor: t.tint }]}
+        >
           <Text variant="subtitulo" tone="onTint" style={styles.avatarText}>
             {initial}
           </Text>
-        </View>
+        </Pressable>
         <View style={styles.flex}>
           <Text variant="label" tone="textMuted" style={styles.greeting}>
-            {tr("today.greeting", { name: model.userName })}
+            {model.userName === ""
+              ? tr("today.greetingGuest")
+              : tr("today.greeting", { name: model.userName })}
           </Text>
           <Text variant="titulo">{tr("today.title")}</Text>
         </View>

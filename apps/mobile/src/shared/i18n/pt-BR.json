@@ -4,7 +4,8 @@
     "quizzes": "Quizzes",
     "collections": "Coleções",
     "progress": "Progresso",
-    "add": "Adicionar material"
+    "add": "Adicionar material",
+    "profile": "Perfil"
   },
   "empty": {
     "title": "Em breve",
@@ -43,7 +44,8 @@
     "exam": "Prova de {{name}}",
     "examLine": "Em {{days}} dias · prontidão {{readiness}}%",
     "examLineShort_one": "Em {{count}} dia",
-    "examLineShort_other": "Em {{count}} dias"
+    "examLineShort_other": "Em {{count}} dias",
+    "greetingGuest": "Olá"
   },
   "add": {
     "title": "O que vamos adicionar?",
@@ -264,5 +266,60 @@
       "minPerDay": "min por dia",
       "week": "Semana com 5 dias estudados"
     }
+  },
+  "profile": {
+    "title": "Perfil",
+    "back": "Voltar",
+    "guest": "Visitante",
+    "guestHint": "Seus dados ficam só neste aparelho por enquanto.",
+    "retainedStat": "cards retidos",
+    "study": "Estudo",
+    "minutes": "Tempo por dia",
+    "memoryGoal": "Meta de memória",
+    "memoryGoalHint": "Quanto você quer lembrar na hora da revisão",
+    "newCards": "Cards novos por dia",
+    "newCardsMore": "Mais um card novo por dia",
+    "newCardsLess": "Um card novo a menos por dia",
+    "offDays": "Folgas planejadas",
+    "offDaysHint": "Dias em que a sequência não cobra estudo",
+    "days": {
+      "1": "Segunda",
+      "2": "Terça",
+      "3": "Quarta",
+      "4": "Quinta",
+      "5": "Sexta",
+      "6": "Sábado",
+      "7": "Domingo"
+    },
+    "daysShort": {
+      "1": "S",
+      "2": "T",
+      "3": "Q",
+      "4": "Q",
+      "5": "S",
+      "6": "S",
+      "7": "D"
+    },
+    "reminders": "Lembretes",
+    "dailyReminder": "Lembrete diário",
+    "appearance": "Aparência",
+    "themes": {
+      "light": "Claro",
+      "dark": "Escuro",
+      "auto": "Automático"
+    },
+    "security": "Segurança",
+    "faceId": "Desbloquear com Face ID",
+    "help": "Ajuda",
+    "feedback": "Enviar sugestão ou reclamação",
+    "reportProblem": "Relatar um problema",
+    "rate": "Avaliar o Lembra",
+    "account": "Conta e dados",
+    "sync": "Sincronização",
+    "export": "Exportar e backup",
+    "privacy": "Privacidade e termos",
+    "signOut": "Sair",
+    "deleteAccount": "Excluir conta",
+    "version": "Lembra {{version}}"
   }
 }
