@@ -64,7 +64,7 @@ export function MaterialToCardsArt() {
           />
         ))}
       </View>
-      <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <Svg width={28} height={28} viewBox="0 0 24 24" fill="none">
         <Path
           d="M5 12h14M13 6l6 6-6 6"
           stroke={t.accent}
@@ -95,7 +95,7 @@ export function MinutesArt() {
   return (
     <View style={styles.minutes}>
       <View style={styles.ring}>
-        <Svg width={220} height={220} viewBox="0 0 220 220" aria-hidden>
+        <Svg width={220} height={220} viewBox="0 0 220 220">
           <Circle cx={110} cy={110} r={r} fill="none" strokeWidth={14} stroke={t.introDeco} />
           <Circle
             cx={110}

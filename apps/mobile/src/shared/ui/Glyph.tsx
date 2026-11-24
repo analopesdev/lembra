@@ -1,4 +1,5 @@
 import icons from "@dicebear/styles/icons.json";
+import { View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 import type { Colors } from "./useTheme";
@@ -23,16 +24,18 @@ export function Glyph({ name, size = 24, color = "text" }: Props) {
   const t = useTheme();
   const variant = VARIANTS[name] ?? VARIANTS[DEFAULT_GLYPH];
   return (
-    <Svg width={size} height={size} viewBox="0 0 16 16" aria-hidden>
-      {variant?.elements.map((e, i) => (
-        <Path
-          key={i}
-          d={e.attributes.d}
-          fill={t[color as keyof Colors] ?? color}
-          fillRule={e.attributes["fill-rule"] === "evenodd" ? "evenodd" : "nonzero"}
-          clipRule={e.attributes["clip-rule"] === "evenodd" ? "evenodd" : "nonzero"}
-        />
-      ))}
-    </Svg>
+    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <Svg width={size} height={size} viewBox="0 0 16 16">
+        {variant?.elements.map((e, i) => (
+          <Path
+            key={i}
+            d={e.attributes.d}
+            fill={t[color as keyof Colors] ?? color}
+            fillRule={e.attributes["fill-rule"] === "evenodd" ? "evenodd" : "nonzero"}
+            clipRule={e.attributes["clip-rule"] === "evenodd" ? "evenodd" : "nonzero"}
+          />
+        ))}
+      </Svg>
+    </View>
   );
 }
