@@ -12,6 +12,8 @@ export interface CollectionCard {
   readonly name: string;
   readonly dueToday: number;
   readonly progress: number;
+  readonly cardCount: number;
+  readonly examDaysLeft: number | null;
   readonly tone: CollectionTone;
   readonly icon: CollectionIconName;
 }
