@@ -151,3 +151,40 @@ export function clozeIds(doc: ContentDoc): number[] {
   visit(doc.content);
   return [...ids].sort((a, b) => a - b);
 }
+
+const CLOZE_SYNTAX = /\{\{([^{}]+)\}\}/g;
+
+export function clozeDocFromSyntax(value: string): ContentDoc | null {
+  let nextId = 1;
+  let found = 0;
+  const content = value.split("\n").map((line) => {
+    const nodes: z.infer<typeof inline>[] = [];
+    let last = 0;
+    for (const m of line.matchAll(CLOZE_SYNTAX)) {
+      const start = m.index ?? 0;
+      if (start > last) nodes.push({ type: "text", text: line.slice(last, start) });
+      nodes.push({
+        type: "cloze",
+        attrs: { id: nextId++ },
+        content: [{ type: "text", text: (m[1] ?? "").trim() }],
+      });
+      found++;
+      last = start + m[0].length;
+    }
+    if (last < line.length) nodes.push({ type: "text", text: line.slice(last) });
+    return { type: "paragraph" as const, ...(nodes.length === 0 ? {} : { content: nodes }) };
+  });
+  return found === 0 ? null : { type: "doc", v: CONTENT_SCHEMA_VERSION, content };
+}
+
+export function clozeSyntaxFromDoc(doc: ContentDoc): string {
+  return doc.content
+    .map((b) =>
+      b.type === "paragraph"
+        ? (b.content ?? [])
+            .map((n) => (n.type === "cloze" ? `{{${n.content.map((t) => t.text).join("")}}}` : inlineText(n)))
+            .join("")
+        : blockText(b),
+    )
+    .join("\n");
+}

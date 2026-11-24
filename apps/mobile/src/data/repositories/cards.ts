@@ -92,6 +92,7 @@ export interface CardsRepository {
   watchToday(now: Date): Subscribable<TodaySummary>;
   watchCards(query: CardListQuery): Subscribable<CardListPage>;
   softDeleteByCollection(collectionId: Id): Promise<number>;
+  getByPair(mainId: Id): Promise<Card | null>;
   listAll(): Promise<readonly Card[]>;
   listAllReviews(): Promise<readonly ReviewRecord[]>;
   importReviews(records: readonly ReviewRecord[]): Promise<number>;

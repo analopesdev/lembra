@@ -4,6 +4,7 @@ import { makeCard } from "@/data/repositories/cards.contract";
 import { InMemoryCardsRepository } from "@/data/repositories/cards.memory";
 import { InMemoryCollectionsRepository } from "@/data/repositories/collections.memory";
 import { makeCollection } from "@/data/repositories/collections.contract";
+import { reversedCompanion } from "@/domain/card/kind";
 import { defaultParams } from "@/domain/scheduling";
 import "@/shared/i18n";
 
@@ -73,6 +74,7 @@ describe("NewCardScreen", () => {
     await render(<NewCardScreen onDone={onDone} onClose={() => undefined} />);
     await fireEvent.changeText(await screen.findByLabelText("Frente (pergunta)"), "P");
     await fireEvent.changeText(screen.getByLabelText("Verso (resposta)"), "R");
+    await fireEvent.press(await screen.findByRole("button", { name: "Coleção: Anatomia I" }));
     await fireEvent.press(await screen.findByRole("radio", { name: "Fisiologia" }));
     await fireEvent.press(screen.getByRole("radio", { name: "Alta" }));
     await press("Salvar");
@@ -83,7 +85,7 @@ describe("NewCardScreen", () => {
   it("frente ou verso vazios mostram erro e não salvam", async () => {
     const { cards, onDone } = await setup();
     await render(<NewCardScreen onDone={onDone} onClose={() => undefined} />);
-    await screen.findByRole("radio", { name: "Anatomia I" });
+    await screen.findByRole("button", { name: "Coleção: Anatomia I" });
     await press("Salvar");
     expect(await screen.findByText("Escreva a pergunta.")).toBeTruthy();
     expect(screen.getByText("Escreva a resposta.")).toBeTruthy();
@@ -122,13 +124,66 @@ describe("NewCardScreen", () => {
     expect(await cards.pendingOutbox()).toHaveLength(0);
   });
 
-  it("só o tipo Básico está disponível; os demais ficam Em breve", async () => {
+  it("os quatro tipos estão disponíveis e Básico vem marcado", async () => {
     await setup();
     await render(<NewCardScreen onDone={() => undefined} onClose={() => undefined} />);
     expect(screen.getByRole("radio", { name: "Básico" }).props.accessibilityState.selected).toBe(true);
-    expect(screen.getByRole("radio", { name: "Lacuna, Em breve" }).props.accessibilityState.disabled).toBe(
-      true,
+    for (const name of ["Invertido", "Lacuna", "Digitar"]) {
+      expect(screen.getByRole("radio", { name }).props.accessibilityState.disabled).not.toBe(true);
+    }
+  });
+
+  it("Digitar salva um card do tipo digitar", async () => {
+    const { cards, onDone } = await setup();
+    await render(<NewCardScreen onDone={onDone} onClose={() => undefined} />);
+    await fireEvent.press(await screen.findByRole("radio", { name: "Digitar" }));
+    await fireEvent.changeText(screen.getByLabelText("Frente (pergunta)"), "P");
+    await fireEvent.changeText(screen.getByLabelText("Verso (resposta)"), "R");
+    await press("Salvar");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect(await cards.get("card-0")).toMatchObject({ kind: "type", direction: "forward", pairId: null });
+  });
+
+  it("Invertido salva dois cards: o principal e o do sentido contrário, ligados", async () => {
+    const { cards, onDone } = await setup();
+    await render(<NewCardScreen onDone={onDone} onClose={() => undefined} />);
+    await fireEvent.press(await screen.findByRole("radio", { name: "Invertido" }));
+    await fireEvent.changeText(screen.getByLabelText("Frente (pergunta)"), "Braquial");
+    await fireEvent.changeText(screen.getByLabelText("Verso (resposta)"), "Principal flexor");
+    await press("Salvar");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    const main = await cards.get("card-0");
+    const companion = await cards.getByPair("card-0");
+    expect(main).toMatchObject({ kind: "reversed", direction: "forward", front: "Braquial" });
+    expect(companion).toMatchObject({
+      kind: "reversed",
+      direction: "reverse",
+      pairId: "card-0",
+      front: "Principal flexor",
+      back: "Braquial",
+    });
+    expect((await cards.pendingOutbox()).filter((e) => e.entity === "card")).toHaveLength(2);
+  });
+
+  it("Lacuna: esconde o verso, exige {{ }} e salva a frase com a lacuna escondida na frente", async () => {
+    const { cards, onDone } = await setup();
+    await render(<NewCardScreen onDone={onDone} onClose={() => undefined} />);
+    await fireEvent.press(await screen.findByRole("radio", { name: "Lacuna" }));
+    expect(screen.queryByLabelText("Verso (resposta)")).toBeNull();
+    await fireEvent.changeText(screen.getByLabelText("Frase com lacunas"), "sem marca");
+    await press("Salvar");
+    expect(await screen.findByText("Marque pelo menos uma lacuna entre chaves duplas.")).toBeTruthy();
+    await fireEvent.changeText(
+      screen.getByLabelText("Frase com lacunas"),
+      "O nervo {{musculocutâneo}} inerva o bíceps.",
     );
+    await press("Salvar");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect(await cards.get("card-0")).toMatchObject({
+      kind: "cloze",
+      front: "O nervo [...] inerva o bíceps.",
+      back: "O nervo musculocutâneo inerva o bíceps.",
+    });
   });
 });
 
@@ -199,5 +254,54 @@ describe("NewCardScreen: edição", () => {
     await waitFor(() => expect(onDone).toHaveBeenCalled());
     expect(await cards.get("card-edit")).toBeNull();
     expect((await cards.pendingOutbox()).at(-1)).toMatchObject({ entityId: "card-edit", op: "delete" });
+  });
+});
+
+describe("NewCardScreen: card invertido na edição", () => {
+  const prepareReversed = async () => {
+    const ctx = await setup();
+    const main = makeCard(1, {
+      id: "main",
+      kind: "reversed",
+      front: "Braquial",
+      back: "Flexor",
+      collectionId: makeCollection(1).id,
+    });
+    await ctx.cards.saveMany([main, reversedCompanion(main, "comp")]);
+    return ctx;
+  };
+
+  it("editar o principal atualiza o companheiro; abrir o companheiro edita o principal", async () => {
+    const { cards, onDone } = await prepareReversed();
+    await render(<NewCardScreen cardId="comp" onDone={onDone} onClose={() => undefined} />);
+    await waitFor(() => expect(screen.getByLabelText("Frente (pergunta)").props.value).toBe("Braquial"));
+    await fireEvent.changeText(screen.getByLabelText("Frente (pergunta)"), "Bíceps braquial");
+    await press("Salvar");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect((await cards.get("main"))?.front).toBe("Bíceps braquial");
+    expect(await cards.get("comp")).toMatchObject({ back: "Bíceps braquial", front: "Flexor" });
+  });
+
+  it("excluir o principal exclui o companheiro; suspender acompanha", async () => {
+    const { cards } = await prepareReversed();
+    await render(<NewCardScreen cardId="main" onDone={() => undefined} onClose={() => undefined} />);
+    await press("Suspender");
+    await waitFor(async () => expect((await cards.get("comp"))?.status).toBe("suspended"));
+    await press("Excluir card");
+    await act(async () =>
+      fireEvent.press((await screen.findAllByRole("button", { name: "Excluir card" }))[1]!),
+    );
+    await waitFor(async () => expect(await cards.get("main")).toBeNull());
+    expect(await cards.get("comp")).toBeNull();
+  });
+
+  it("trocar de Invertido para Básico exclui o companheiro", async () => {
+    const { cards, onDone } = await prepareReversed();
+    await render(<NewCardScreen cardId="main" onDone={onDone} onClose={() => undefined} />);
+    await fireEvent.press(await screen.findByRole("radio", { name: "Básico" }));
+    await press("Salvar");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect(await cards.get("comp")).toBeNull();
+    expect((await cards.get("main"))?.kind).toBe("basic");
   });
 });

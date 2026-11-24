@@ -180,7 +180,7 @@
       "basic": "Básico",
       "reversed": "Invertido",
       "cloze": "Lacuna",
-      "typed": "Digitar"
+      "type": "Digitar"
     },
     "front": "Frente (pergunta)",
     "back": "Verso (resposta)",
@@ -196,7 +196,8 @@
     "errors": {
       "front_empty": "Escreva a pergunta.",
       "back_empty": "Escreva a resposta.",
-      "collection_missing": "Escolha uma coleção."
+      "collection_missing": "Escolha uma coleção.",
+      "cloze_missing": "Marque pelo menos uma lacuna entre chaves duplas."
     },
     "saved": "Card salvo",
     "editTitle": "Editar card",
@@ -208,7 +209,15 @@
       "message": "O card sai das suas revisões e dos seus outros aparelhos.",
       "confirm": "Excluir card"
     },
-    "notFound": "Card não encontrado"
+    "notFound": "Card não encontrado",
+    "typeHints": {
+      "basic": "Pergunta na frente e resposta no verso.",
+      "reversed": "Cria dois cards: um em cada sentido, cada um com seu agendamento.",
+      "cloze": "Uma frase com lacunas para completar.",
+      "type": "Você digita a resposta antes de ver o verso."
+    },
+    "clozeFront": "Frase com lacunas",
+    "clozeHint": "Marque cada lacuna entre chaves duplas, por exemplo {{example}}."
   },
   "feedback": {
     "title": "Fale com a gente",

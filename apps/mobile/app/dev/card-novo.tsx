@@ -21,6 +21,8 @@ export default function NewCardPreview() {
   return (
     <View style={{ flex: 1, backgroundColor: t.background, width: 390, height: 844, overflow: "hidden" }}>
       <NewCardView
+        kind="basic"
+        onKind={() => undefined}
         front="Qual músculo é o principal flexor do cotovelo?"
         onFront={noop}
         back="Braquial"

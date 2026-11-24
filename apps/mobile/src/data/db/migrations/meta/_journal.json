@@ -64,6 +64,13 @@
       "when": 1795562087734,
       "tag": "0008_card_content_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1795562257807,
+      "tag": "0009_card_pair_index",
+      "breakpoints": true
     }
   ]
 }

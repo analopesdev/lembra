@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import { getContainer } from "@/data/container";
 import { validateCardDraft } from "@/domain/card/card";
-import type { Card, Collection, Importance } from "@/domain/types";
+import { clozeSyntaxFromDoc, parseContent } from "@/domain/card/content";
+import { reversedCompanion, syncCompanion } from "@/domain/card/kind";
+import type { Card, CardKind, Collection, Importance } from "@/domain/types";
 import { ConfirmSheet } from "@/shared/ui";
 
 import { NewCardView } from "./NewCardView";
@@ -13,6 +15,7 @@ type Props = { onDone: () => void; onClose: () => void; initialCollectionId?: st
 export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: Props) {
   const { t } = useTranslation();
   const [original, setOriginal] = useState<Card | null>(null);
+  const [kind, setKind] = useState<CardKind>("basic");
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [collections, setCollections] = useState<readonly Collection[]>([]);
@@ -30,12 +33,17 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
     void getContainer().then(async (c) => {
       if (cancelled) return;
       if (cardId) {
-        const found = await c.cards.get(cardId);
+        let found = await c.cards.get(cardId);
+        if (found && found.direction === "reverse" && found.pairId) {
+          found = (await c.cards.get(found.pairId)) ?? found;
+        }
         if (cancelled) return;
         if (found) {
           setOriginal(found);
-          setFront(found.front);
-          setBack(found.back);
+          setKind(found.kind);
+          const doc = found.kind === "cloze" ? parseContent(found.frontDoc) : null;
+          setFront(doc?.ok ? clozeSyntaxFromDoc(doc.doc) : found.front);
+          setBack(found.kind === "cloze" ? "" : found.back);
           setCollectionId(found.collectionId);
           setImportance(found.importance);
         }
@@ -52,10 +60,14 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
   }, [cardId]);
 
   const persist = async (): Promise<boolean> => {
-    const result = validateCardDraft({ front, back, collectionId, importance });
+    const result = validateCardDraft({ front, back, collectionId, importance, kind });
     if (!result.ok) {
       setErrors({
-        front: result.errors.includes("front_empty") ? t("card.errors.front_empty") : undefined,
+        front: result.errors.includes("front_empty")
+          ? t("card.errors.front_empty")
+          : result.errors.includes("cloze_missing")
+            ? t("card.errors.cloze_missing")
+            : undefined,
         back: result.errors.includes("back_empty") ? t("card.errors.back_empty") : undefined,
         collection: result.errors.includes("collection_missing")
           ? t("card.errors.collection_missing")
@@ -69,23 +81,32 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
     try {
       const c = await getContainer();
       const now = c.now();
-      await c.cards.save({
+      const main: Card = {
         id: original?.id ?? c.newId(),
         collectionId: result.collectionId,
         front: result.front,
         back: result.back,
-        frontDoc: original?.frontDoc ?? null,
-        backDoc: original?.backDoc ?? null,
-        kind: original?.kind ?? "basic",
-        direction: original?.direction ?? "forward",
-        pairId: original?.pairId ?? null,
+        frontDoc: result.frontDoc,
+        backDoc: null,
+        kind: result.kind,
+        direction: "forward",
+        pairId: null,
         tags: original?.tags ?? [],
         importance: result.importance,
         status: original?.status ?? "active",
         createdAt: original?.createdAt ?? now,
         updatedAt: now,
         deletedAt: null,
-      });
+      };
+      const existing = original ? await c.cards.getByPair(original.id) : null;
+      if (result.kind === "reversed") {
+        const companion = existing ? syncCompanion(main, existing) : reversedCompanion(main, c.newId());
+        await c.cards.saveMany([main, companion]);
+      } else if (existing) {
+        await c.cards.saveMany([main, { ...existing, deletedAt: now, updatedAt: now }]);
+      } else {
+        await c.cards.save(main);
+      }
       return true;
     } finally {
       setBusy(false);
@@ -102,7 +123,8 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
         status: original.status === "suspended" ? "active" : "suspended",
         updatedAt: c.now(),
       };
-      await c.cards.save(next);
+      const existing = await c.cards.getByPair(original.id);
+      await c.cards.saveMany(existing ? [next, syncCompanion(next, existing)] : [next]);
       setOriginal(next);
     } finally {
       setBusy(false);
@@ -114,6 +136,8 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
     setBusy(true);
     try {
       const c = await getContainer();
+      const existing = await c.cards.getByPair(original.id);
+      if (existing) await c.cards.softDelete(existing.id);
       await c.cards.softDelete(original.id);
       setConfirmingDelete(false);
       onDone();
@@ -125,6 +149,8 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
   return (
     <>
       <NewCardView
+        kind={kind}
+        onKind={setKind}
         front={front}
         onFront={setFront}
         back={back}

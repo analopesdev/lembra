@@ -207,6 +207,15 @@ export class SqliteCardsRepository implements CardsRepository {
     return rows.length;
   }
 
+  async getByPair(mainId: Id): Promise<Card | null> {
+    const [row] = await this.db
+      .select()
+      .from(cards)
+      .where(and(eq(cards.pairId, mainId), isNull(cards.deletedAt)))
+      .limit(1);
+    return row ? toCard(row) : null;
+  }
+
   async listAll(): Promise<readonly Card[]> {
     const rows = await this.db.select().from(cards).where(isNull(cards.deletedAt));
     return rows.map(toCard);
