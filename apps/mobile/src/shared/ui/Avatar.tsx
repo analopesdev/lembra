@@ -1,4 +1,4 @@
-import { Avatar as DiceAvatar } from "@dicebear/core";
+import { Avatar as DiceAvatar, Style } from "@dicebear/core";
 import cameo from "@dicebear/styles/cameo.json";
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
@@ -6,10 +6,12 @@ import { SvgXml } from "react-native-svg";
 
 import { useTheme } from "./useTheme";
 
+const style = new Style(cameo);
+
 export const FALLBACK_SEED = "lembra";
 
 export function avatarSvg(seed: string): string {
-  return new DiceAvatar(cameo, { seed: seed === "" ? FALLBACK_SEED : seed }).toString();
+  return new DiceAvatar(style, { seed: seed === "" ? FALLBACK_SEED : seed }).toString();
 }
 
 type Props = { seed: string; size: number };

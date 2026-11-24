@@ -13,12 +13,15 @@ import {
 import { useTodayModel } from "@/features/today";
 
 import { ProfileView } from "./ProfileView";
+import { useBackupActions } from "./useBackupActions";
 
 type Props = { onBack: () => void };
 
 export function ProfileScreen({ onBack }: Props) {
   const [settings, setSettings] = useState<Settings | null>(null);
-  const memory = useTodayModel().memoryRetained;
+  const today = useTodayModel();
+  const memory = today.memoryRetained;
+  const backup = useBackupActions();
 
   useEffect(() => {
     let cancelled = false;
@@ -62,7 +65,15 @@ export function ProfileScreen({ onBack }: Props) {
       onGlassNav={(v) => void update({ glassNav: v })}
       avatarSeed={settings.avatarSeed}
       onAvatarSeed={(v) => void update({ avatarSeed: v })}
+      backup={{
+        busy: backup.busy,
+        message: backup.message,
+        onExportJson: () => void backup.exportJson(),
+        onExportCsv: () => void backup.exportCsv(),
+        onImport: () => void backup.importJson(),
+      }}
       retainedCount={memory}
+      streakDays={today.streakDays}
       version={Constants.expoConfig?.version ?? "1.0.0"}
       onBack={onBack}
     />

@@ -47,6 +47,7 @@ describe("ProfileScreen", () => {
   it("mostra os valores atuais e troca o tempo por dia, persistindo", async () => {
     const repo = await setup();
     await render(<ProfileScreen onBack={() => undefined} />);
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Tempo por dia" })));
     expect(
       (await screen.findByRole("radio", { name: "10 minutos por dia" })).props.accessibilityState.selected,
     ).toBe(true);
@@ -60,7 +61,9 @@ describe("ProfileScreen", () => {
   it("cards novos por dia: sobe e desce, respeitando 1 a 50", async () => {
     const repo = await setup();
     await render(<ProfileScreen onBack={() => undefined} />);
-    await screen.findByText("Cards novos por dia");
+    await act(async () =>
+      fireEvent.press(await screen.findByRole("button", { name: "Cards novos por dia" })),
+    );
     await act(async () => fireEvent.press(screen.getByRole("button", { name: "Mais um card novo por dia" })));
     await waitFor(async () => expect((await repo.get())?.newCardsPerDay).toBe(6));
     for (let i = 0; i < 7; i++)
@@ -73,7 +76,7 @@ describe("ProfileScreen", () => {
   it("folgas planejadas: marca e desmarca dias e mantém a ordem", async () => {
     const repo = await setup();
     await render(<ProfileScreen onBack={() => undefined} />);
-    await screen.findByText("Folgas planejadas");
+    await act(async () => fireEvent.press(await screen.findByRole("button", { name: "Folgas planejadas" })));
     await act(async () => fireEvent.press(screen.getByRole("checkbox", { name: "Domingo" })));
     await act(async () => fireEvent.press(screen.getByRole("checkbox", { name: "Quarta" })));
     await waitFor(async () => expect((await repo.get())?.offWeekdays).toEqual([3, 7]));
@@ -109,10 +112,10 @@ describe("ProfileScreen", () => {
   it("itens que dependem de conta, servidor ou recursos nativos aparecem como Em breve e desabilitados", async () => {
     await setup();
     await render(<ProfileScreen onBack={() => undefined} />);
-    await screen.findByText("Cards novos por dia");
+    await screen.findByText("Estudo");
     for (const name of [
       "Sincronização",
-      "Exportar e backup",
+      "Sair",
       "Excluir conta",
       "Desbloquear com Face ID",
       "Lembrete diário",
