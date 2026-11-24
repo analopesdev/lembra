@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const REF = resolve(__dirname, "../../../../docs/lembra-design-kit/referencia");
@@ -13,6 +13,9 @@ const SCREENS: { name: string; route: string; ref?: string }[] = [
   { name: "colecao-nova", route: "/dev/colecao-nova" },
   { name: "card-novo", route: "/dev/card-novo" },
   { name: "feedback", route: "/dev/feedback" },
+  { name: "apresentacao-1", route: "/dev/apresentacao?step=1" },
+  { name: "apresentacao-2", route: "/dev/apresentacao?step=2" },
+  { name: "apresentacao-3", route: "/dev/apresentacao?step=3" },
 ];
 const THEMES = [
   { name: "claro", scheme: "light" as const },
@@ -35,7 +38,7 @@ for (const screen of SCREENS) {
       await app.waitForTimeout(1200);
       const appShot = await app.screenshot();
       writeFileSync(`${OUT}/${screen.name}-${theme.name}-app.png`, appShot);
-      if (!screen.ref) {
+      if (!screen.ref || !existsSync(`${REF}/${screen.ref}-${theme.name}.html`)) {
         writeFileSync(`${OUT}/${screen.name}-${theme.name}.png`, appShot);
         await ctx.close();
         return;

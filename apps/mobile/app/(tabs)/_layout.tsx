@@ -7,7 +7,7 @@ import { AppTabBar } from "@/features/navigation";
 
 export default function TabsLayout() {
   const router = useRouter();
-  useFirstRun(useCallback(() => router.replace("/ajustes-iniciais"), [router]));
+  useFirstRun(useCallback(() => router.replace("/apresentacao"), [router]));
   return (
     <Tabs
       screenOptions={{ headerShown: false }}

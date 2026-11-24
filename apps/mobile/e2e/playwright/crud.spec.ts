@@ -7,6 +7,10 @@ test("CRUD de coleções e cards pela interface, com o SQLite real", async ({ pa
   page.on("pageerror", (e) => errors.push(e.message));
 
   await page.goto("/");
+  await expect(page.getByText(/Revise antes/)).toBeVisible();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByRole("button", { name: "Começar" }).click();
   await expect(page.getByRole("heading", { name: "Primeiros ajustes" })).toBeVisible();
   await page.getByRole("radio", { name: "15 minutos por dia" }).click();
   await page.getByRole("button", { name: "Começar" }).click();
