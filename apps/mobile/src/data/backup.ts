@@ -1,7 +1,6 @@
 import { BACKUP_FORMAT, BACKUP_VERSION, type BackupFile } from "@/domain/backup/backup";
 import {
   normalizeMinutes,
-  normalizeAvatarStyle,
   normalizeNewCards,
   normalizeTheme,
   normalizeWeekdays,
@@ -46,8 +45,8 @@ export async function createBackup(d: BackupDeps): Promise<BackupFile> {
           dailyMinutes: settings.dailyMinutes,
           newCardsPerDay: settings.newCardsPerDay,
           theme: settings.theme,
-          avatarStyle: settings.avatarStyle,
           avatarSeed: settings.avatarSeed,
+          glassNav: settings.glassNav,
           offWeekdays: [...settings.offWeekdays],
           goalText: settings.goalText,
           updatedAt: iso(settings.updatedAt),
@@ -137,8 +136,8 @@ export async function restoreBackup(d: BackupDeps, file: BackupFile): Promise<Re
         dailyMinutes: normalizeMinutes(file.settings.dailyMinutes),
         newCardsPerDay: normalizeNewCards(file.settings.newCardsPerDay),
         theme: normalizeTheme(file.settings.theme),
-        avatarStyle: normalizeAvatarStyle(file.settings.avatarStyle ?? ""),
         avatarSeed: file.settings.avatarSeed ?? "",
+        glassNav: file.settings.glassNav ?? false,
         offWeekdays: normalizeWeekdays(file.settings.offWeekdays),
         goalText: file.settings.goalText,
         updatedAt: incomingAt,

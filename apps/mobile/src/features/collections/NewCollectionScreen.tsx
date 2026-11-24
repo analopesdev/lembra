@@ -6,6 +6,7 @@ import { formatExamDate, maskExamDate, parseExamDate, validateName } from "@/dom
 import { diffDays, studyDayOf } from "@/domain/study-day/study-day";
 import type { Collection, CollectionIconName, CollectionTone } from "@/domain/types";
 
+import { DEFAULT_COLLECTION_ICON, DEFAULT_COLLECTION_TONE } from "./icons";
 import { NewCollectionView } from "./NewCollectionView";
 
 type Props = { onDone: () => void; onBack: () => void; collectionId?: string };
@@ -16,8 +17,8 @@ export function NewCollectionScreen({ onDone, onBack, collectionId }: Props) {
   const { t } = useTranslation();
   const [original, setOriginal] = useState<Collection | null>(null);
   const [name, setName] = useState("");
-  const [icon, setIcon] = useState<CollectionIconName>("bone");
-  const [tone, setTone] = useState<CollectionTone>("tint");
+  const [icon, setIcon] = useState<CollectionIconName>(DEFAULT_COLLECTION_ICON);
+  const [tone, setTone] = useState<CollectionTone>(DEFAULT_COLLECTION_TONE);
   const [exam, setExam] = useState("");
   const [nameError, setNameError] = useState<string | undefined>();
   const [examError, setExamError] = useState<string | undefined>();

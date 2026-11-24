@@ -22,7 +22,9 @@ test("CRUD de coleções e cards pela interface, com o SQLite real", async ({ pa
 
   await page.getByRole("button", { name: "Nova coleção" }).last().click();
   await page.getByLabel("Nome").fill("Anatomia I");
-  await page.getByRole("radio", { name: "Frasco" }).click();
+  await page.getByRole("button", { name: "Ícone e cor" }).click();
+  await page.getByRole("radio", { name: "Ícone droplet" }).click();
+  await page.getByRole("button", { name: "Pronto" }).click();
   await page.getByLabel("Data da prova (opcional)").fill("04122099");
   await page.getByRole("button", { name: "Criar coleção" }).click();
 

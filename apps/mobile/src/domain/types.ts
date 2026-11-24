@@ -25,8 +25,8 @@ export interface CardWithState {
   readonly state: CardState;
 }
 
-export type CollectionTone = "tint" | "collection2" | "collection3";
-export type CollectionIconName = "bone" | "heart" | "flask" | "help" | "chart" | "copy";
+export type CollectionTone = string;
+export type CollectionIconName = string;
 
 export interface Collection {
   readonly id: Id;

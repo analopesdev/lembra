@@ -1,13 +1,15 @@
-import { Check, ChevronLeft } from "lucide-react-native";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react-native";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import type { CollectionIconName, CollectionTone } from "@/domain/types";
-import { Button, Card, Icon, Input, Text } from "@/shared/ui";
+import { Button, Card, Icon, Input, Sheet, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
-import { COLLECTION_ICONS, ICON_ORDER, TONE_COLORS, TONE_ORDER } from "./icons";
+import { CollectionGlyph } from "./CollectionGlyph";
+import { ICON_ORDER, TONE_ORDER, resolveCollectionIcon, toneColors } from "./icons";
 
 type Props = {
   name: string;
@@ -31,7 +33,8 @@ type Props = {
 export function NewCollectionView(p: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
-  const tone = TONE_COLORS[p.tone];
+  const tone = toneColors(p.tone, t);
+  const [picking, setPicking] = useState(false);
   const examLine =
     p.examDaysLeft === null
       ? null
@@ -60,8 +63,8 @@ export function NewCollectionView(p: Props) {
       </View>
 
       <Card tone="tint" style={styles.preview}>
-        <View style={[styles.previewIcon, { backgroundColor: t.surface }]}>
-          <Icon icon={COLLECTION_ICONS[p.icon]} size={26} color={tone.fg} />
+        <View style={[styles.previewIcon, { backgroundColor: tone.bg }]}>
+          <CollectionGlyph name={p.icon} size={26} color={tone.fg} />
         </View>
         <View style={styles.previewText}>
           <Text variant="subtitulo" style={styles.previewName} numberOfLines={1}>
@@ -84,62 +87,73 @@ export function NewCollectionView(p: Props) {
         maxLength={80}
       />
 
-      <View style={styles.group}>
-        <Text variant="label">{tr("collection.icon")}</Text>
-        <View accessibilityRole="radiogroup" style={styles.row}>
-          {ICON_ORDER.map((name) => {
-            const on = name === p.icon;
-            return (
-              <Pressable
-                key={name}
-                accessibilityRole="radio"
-                accessibilityLabel={tr(`collection.icons.${name}`)}
-                accessibilityState={{ selected: on }}
-                onPress={() => p.onIcon(name)}
-                style={[
-                  styles.iconBtn,
-                  {
-                    backgroundColor: on ? t.tint : t.surface,
-                    borderColor: on ? t.button : t.border,
-                    borderWidth: on ? 2 : 1,
-                  },
-                ]}
-              >
-                <Icon icon={COLLECTION_ICONS[name]} size={22} color={on ? "onTint" : "textMuted"} />
-              </Pressable>
-            );
-          })}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={tr("collection.iconAndColor")}
+        onPress={() => setPicking(true)}
+        style={[styles.pickRow, { borderColor: t.border, backgroundColor: t.surface }]}
+      >
+        <View style={[styles.pickIcon, { backgroundColor: tone.bg }]}>
+          <CollectionGlyph name={p.icon} size={22} color={tone.fg} />
         </View>
-      </View>
+        <Text variant="corpo" style={styles.flex}>
+          {tr("collection.iconAndColor")}
+        </Text>
+        <Icon icon={ChevronRight} size={18} color="textMuted" />
+      </Pressable>
 
-      <View style={styles.group}>
-        <Text variant="label">{tr("collection.color")}</Text>
+      <Sheet visible={picking} onClose={() => setPicking(false)} closeLabel={tr("collection.pickerClose")}>
+        <Text variant="subtitulo">{tr("collection.color")}</Text>
         <View accessibilityRole="radiogroup" style={styles.swatches}>
-          {TONE_ORDER.map((name) => {
+          {TONE_ORDER.map((name, i) => {
             const on = name === p.tone;
-            const c = TONE_COLORS[name];
+            const c = toneColors(name, t);
             return (
               <Pressable
                 key={name}
                 accessibilityRole="radio"
-                accessibilityLabel={tr(`collection.tones.${name}`)}
+                accessibilityLabel={tr("collection.colorOption", { n: i + 1 })}
                 accessibilityState={{ selected: on }}
                 onPress={() => p.onTone(name)}
                 style={[
                   styles.swatch,
-                  {
-                    backgroundColor: t[c.bg],
-                    borderColor: on ? t.button : t.border,
-                    borderWidth: on ? 2 : 1,
-                  },
+                  { backgroundColor: c.bg, borderColor: on ? t.button : t.border, borderWidth: on ? 2 : 1 },
                 ]}
               >
-                {on ? <Icon icon={Check} size={18} strokeWidth={3} color={c.fg} /> : null}
+                {on ? <Check size={16} strokeWidth={3} color={c.fg} aria-hidden /> : null}
               </Pressable>
             );
           })}
         </View>
-      </View>
+        <Text variant="subtitulo">{tr("collection.icon")}</Text>
+        <ScrollView nestedScrollEnabled style={styles.iconScroll}>
+          <View accessibilityRole="radiogroup" style={styles.iconGridInner}>
+            {ICON_ORDER.map((name) => {
+              const on = name === resolveCollectionIcon(p.icon);
+              return (
+                <Pressable
+                  key={name}
+                  accessibilityRole="radio"
+                  accessibilityLabel={tr("collection.iconOption", { name })}
+                  accessibilityState={{ selected: on }}
+                  onPress={() => p.onIcon(name)}
+                  style={[
+                    styles.iconBtn,
+                    {
+                      backgroundColor: on ? tone.bg : t.surface,
+                      borderColor: on ? t.button : t.border,
+                      borderWidth: on ? 2 : 1,
+                    },
+                  ]}
+                >
+                  <CollectionGlyph name={name} size={22} color={on ? tone.fg : "text"} />
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+        <Button label={tr("collection.pickerDone")} onPress={() => setPicking(false)} />
+      </Sheet>
 
       <Input
         label={tr("collection.exam")}
@@ -184,7 +198,19 @@ const styles = StyleSheet.create({
   examLine: { fontWeight: "400" },
   group: { gap: space.sm },
   row: { flexDirection: "row", gap: space.sm },
-  iconBtn: { flex: 1, height: 52, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  iconScroll: { maxHeight: 220 },
+  pickRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.md,
+    borderWidth: 1,
+    padding: space.md,
+    borderRadius: radius.md,
+  },
+  pickIcon: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
+  iconGrid: { paddingBottom: space.xs },
+  iconGridInner: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
+  iconBtn: { width: 52, height: 52, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
   swatches: { flexDirection: "row", gap: 10 },
   swatch: { width: 52, height: 52, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
 });

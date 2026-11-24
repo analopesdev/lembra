@@ -32,7 +32,10 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
     "ALTER TABLE `settings` ADD `theme` text DEFAULT 'auto' NOT NULL;"
   ],
   [
-    "ALTER TABLE `settings` ADD `avatar_style` text DEFAULT 'thumbs' NOT NULL;",
-    "ALTER TABLE `settings` ADD `avatar_seed` text DEFAULT '' NOT NULL;"
+    "ALTER TABLE `settings` ADD `avatar_seed` text DEFAULT '' NOT NULL;",
+    "ALTER TABLE `settings` ADD `glass_nav` integer DEFAULT 0 NOT NULL;"
+  ],
+  [
+    "SELECT 1;"
   ]
 ];

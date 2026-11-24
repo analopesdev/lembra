@@ -47,8 +47,10 @@ describe("NewCollectionScreen", () => {
     const { repo, onDone } = setup();
     await render(<NewCollectionScreen onDone={onDone} onBack={() => undefined} />);
     await fireEvent.changeText(screen.getByLabelText("Nome"), "  Anatomia   I ");
-    await fireEvent.press(screen.getByRole("radio", { name: "Frasco" }));
-    await fireEvent.press(screen.getByRole("radio", { name: "Azul claro" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Ícone e cor" }));
+    await fireEvent.press(await screen.findByRole("radio", { name: "Ícone droplet" }));
+    await fireEvent.press(screen.getByRole("radio", { name: "Cor 4" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Pronto" }));
     await fireEvent.changeText(screen.getByLabelText("Data da prova (opcional)"), "04122026");
     expect(screen.getByLabelText("Data da prova (opcional)").props.value).toBe("04/12/2026");
     expect(screen.getByText(/Prova em \d+ dias/)).toBeTruthy();
@@ -57,8 +59,8 @@ describe("NewCollectionScreen", () => {
     const saved = await repo.get("col-0");
     expect(saved).toMatchObject({
       name: "Anatomia I",
-      icon: "flask",
-      tone: "collection2",
+      icon: "droplet",
+      tone: "#cecbfb",
       examDay: "2026-12-04",
       deletedAt: null,
     });

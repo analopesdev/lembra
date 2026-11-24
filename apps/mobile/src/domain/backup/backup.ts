@@ -9,8 +9,8 @@ const id = z.string().min(1);
 const collection = z.object({
   id,
   name: z.string(),
-  icon: z.enum(["bone", "heart", "flask", "help", "chart", "copy"]),
-  tone: z.enum(["tint", "collection2", "collection3"]),
+  icon: z.string().min(1),
+  tone: z.string().min(1),
   examDay: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -44,8 +44,8 @@ const settings = z.object({
   dailyMinutes: z.number().int(),
   newCardsPerDay: z.number().int(),
   theme: z.enum(["auto", "light", "dark"]),
-  avatarStyle: z.string().optional(),
   avatarSeed: z.string().optional(),
+  glassNav: z.boolean().optional(),
   offWeekdays: z.array(z.number().int().min(1).max(7)),
   goalText: z.string(),
   updatedAt: iso,

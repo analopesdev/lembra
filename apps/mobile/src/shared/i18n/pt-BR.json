@@ -125,19 +125,11 @@
       "invalid": "Use o formato DD/MM/AAAA.",
       "past": "A data da prova não pode ser no passado."
     },
-    "icons": {
-      "bone": "Osso",
-      "heart": "Coração",
-      "flask": "Frasco",
-      "help": "Pergunta",
-      "chart": "Gráfico",
-      "copy": "Cartas"
-    },
-    "tones": {
-      "tint": "Azul",
-      "collection2": "Azul claro",
-      "collection3": "Cinza"
-    },
+    "iconOption": "Ícone {{name}}",
+    "iconAndColor": "Ícone e cor",
+    "colorOption": "Cor {{n}}",
+    "pickerClose": "Fechar",
+    "pickerDone": "Pronto",
     "editTitle": "Editar coleção",
     "saveChanges": "Salvar alterações",
     "empty": "Nenhuma coleção ainda",
@@ -302,15 +294,11 @@
     },
     "reminders": "Lembretes",
     "dailyReminder": "Lembrete diário",
-    "avatar": "Avatar",
-    "avatarShuffle": "Sortear outro avatar",
-    "avatarStyles": {
-      "thumbs": "Miniaturas",
-      "lorelei": "Lorelei",
-      "notionists": "Notionists",
-      "open-peeps": "Open Peeps",
-      "shapes": "Formas"
-    },
+    "avatarChange": "Trocar avatar",
+    "avatarPick": "Escolha seu avatar",
+    "avatarClose": "Fechar",
+    "avatarOption": "Avatar {{n}}",
+    "glassNav": "Menu de baixo em vidro (liquid glass)",
     "appearance": "Aparência",
     "themes": {
       "light": "Claro",

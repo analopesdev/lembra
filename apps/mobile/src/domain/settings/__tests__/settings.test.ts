@@ -1,6 +1,5 @@
 import {
   defaultSettings,
-  normalizeAvatarStyle,
   normalizeMinutes,
   normalizeNewCards,
   normalizeTheme,
@@ -14,8 +13,8 @@ describe("settings", () => {
       dailyMinutes: 10,
       newCardsPerDay: 5,
       theme: "auto",
-      avatarStyle: "thumbs",
       avatarSeed: "",
+      glassNav: false,
       offWeekdays: [],
       goalText: "",
       updatedAt: now,
@@ -51,11 +50,4 @@ describe("settings", () => {
     ["auto", "auto"],
     ["qualquer", "auto"],
   ])("normalizeTheme(%s) = %s", (v, want) => expect(normalizeTheme(v)).toBe(want));
-
-  it.each([
-    ["lorelei", "lorelei"],
-    ["shapes", "shapes"],
-    ["bottts", "thumbs"],
-    ["", "thumbs"],
-  ])("normalizeAvatarStyle(%s) = %s", (v, want) => expect(normalizeAvatarStyle(v)).toBe(want));
 });

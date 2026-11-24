@@ -4,6 +4,7 @@ export { Button } from "./Button";
 export { Card } from "./Card";
 export { ConfirmSheet } from "./ConfirmSheet";
 export { EmptyState } from "./EmptyState";
+export { DEFAULT_GLYPH, GLYPH_BACKGROUNDS, GLYPH_INK, GLYPH_NAMES, Glyph } from "./Glyph";
 export { Icon } from "./Icon";
 export { Input } from "./Input";
 export { LogoMark } from "./LogoMark";

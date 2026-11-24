@@ -1,15 +1,15 @@
-import { ChevronLeft, Minus, Plus, Shuffle } from "lucide-react-native";
+import { ChevronLeft, Minus, Plus } from "lucide-react-native";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import {
-  AVATAR_STYLES,
+  AVATAR_SEEDS,
   MINUTE_OPTIONS,
-  type AvatarStyle,
   type DailyMinutes,
   type ThemePreference,
 } from "@/domain/settings/settings";
-import { Avatar, Card, Icon, Num, Tag, Text } from "@/shared/ui";
+import { Avatar, Card, Icon, Num, Tag, Sheet, Text, Toggle } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -22,10 +22,10 @@ type Props = {
   onToggleWeekday: (day: number) => void;
   theme: ThemePreference;
   onTheme: (v: ThemePreference) => void;
-  avatarStyle: AvatarStyle;
+  glassNav: boolean;
+  onGlassNav: (v: boolean) => void;
   avatarSeed: string;
-  onAvatarStyle: (v: AvatarStyle) => void;
-  onAvatarShuffle: () => void;
+  onAvatarSeed: (seed: string) => void;
   retainedCount: number;
   version: string;
   onBack: () => void;
@@ -76,6 +76,7 @@ function SoonRow({ label }: { label: string }) {
 export function ProfileView(p: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
+  const [picking, setPicking] = useState(false);
   const chip = (on: boolean) => ({
     backgroundColor: on ? t.primary : t.surface,
     borderColor: on ? t.primary : t.border,
@@ -98,7 +99,13 @@ export function ProfileView(p: Props) {
       </View>
 
       <Card style={styles.account}>
-        <Avatar style={p.avatarStyle} seed={p.avatarSeed} size={52} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={tr("profile.avatarChange")}
+          onPress={() => setPicking(true)}
+        >
+          <Avatar seed={p.avatarSeed} size={52} />
+        </Pressable>
         <View style={styles.flex}>
           <Text variant="subtitulo">{tr("profile.guest")}</Text>
           <Text variant="label" tone="textMuted" style={styles.hint}>
@@ -106,37 +113,6 @@ export function ProfileView(p: Props) {
           </Text>
         </View>
       </Card>
-
-      <Section title={tr("profile.avatar")} />
-      <View accessibilityRole="radiogroup" style={styles.row}>
-        {AVATAR_STYLES.map((s) => {
-          const on = s === p.avatarStyle;
-          return (
-            <Pressable
-              key={s}
-              accessibilityRole="radio"
-              accessibilityLabel={tr(`profile.avatarStyles.${s}`)}
-              accessibilityState={{ selected: on }}
-              onPress={() => p.onAvatarStyle(s)}
-              style={[
-                styles.avatarOption,
-                { borderColor: on ? t.primary : t.border, borderWidth: on ? 2 : 1 },
-              ]}
-            >
-              <Avatar style={s} seed={p.avatarSeed} size={52} />
-            </Pressable>
-          );
-        })}
-      </View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={tr("profile.avatarShuffle")}
-        onPress={p.onAvatarShuffle}
-        style={[styles.shuffle, { borderColor: t.border, backgroundColor: t.surface }]}
-      >
-        <Icon icon={Shuffle} size={16} strokeWidth={2} />
-        <Text variant="label">{tr("profile.avatarShuffle")}</Text>
-      </Pressable>
 
       <View style={[styles.stat, { backgroundColor: t.surface, borderColor: t.border }]}>
         <Num size={28}>{p.retainedCount}</Num>
@@ -249,6 +225,13 @@ export function ProfileView(p: Props) {
         })}
       </View>
 
+      <View style={styles.toggleRow}>
+        <Text variant="corpo" style={styles.flex}>
+          {tr("profile.glassNav")}
+        </Text>
+        <Toggle value={p.glassNav} onValueChange={p.onGlassNav} label={tr("profile.glassNav")} />
+      </View>
+
       <Section title={tr("profile.security")} />
       <SoonRow label={tr(SOON_ROWS.faceId)} />
 
@@ -267,6 +250,29 @@ export function ProfileView(p: Props) {
       <Text variant="legenda" tone="textMuted" style={styles.version}>
         {tr("profile.version", { version: p.version })}
       </Text>
+      <Sheet visible={picking} onClose={() => setPicking(false)} closeLabel={tr("profile.avatarClose")}>
+        <Text variant="subtitulo">{tr("profile.avatarPick")}</Text>
+        <View accessibilityRole="radiogroup" style={styles.avatarGrid}>
+          {AVATAR_SEEDS.map((seed) => {
+            const on = seed === (p.avatarSeed === "" ? AVATAR_SEEDS[0] : p.avatarSeed);
+            return (
+              <Pressable
+                key={seed}
+                accessibilityRole="radio"
+                accessibilityLabel={tr("profile.avatarOption", { n: AVATAR_SEEDS.indexOf(seed) + 1 })}
+                accessibilityState={{ selected: on }}
+                onPress={() => {
+                  p.onAvatarSeed(seed);
+                  setPicking(false);
+                }}
+                style={[styles.avatarOption, { borderColor: on ? t.primary : "transparent" }]}
+              >
+                <Avatar seed={seed} size={52} />
+              </Pressable>
+            );
+          })}
+        </View>
+      </Sheet>
     </ScrollView>
   );
 }
@@ -274,6 +280,7 @@ export function ProfileView(p: Props) {
 const styles = StyleSheet.create({
   content: { paddingTop: 56, paddingHorizontal: space.xl, paddingBottom: 48, gap: space.md },
   flex: { flex: 1 },
+  toggleRow: { flexDirection: "row", alignItems: "center", gap: space.md },
   header: { flexDirection: "row", alignItems: "center", gap: space.md },
   back: {
     width: 40,
@@ -286,16 +293,8 @@ const styles = StyleSheet.create({
   title: { flex: 1, textAlign: "center", fontSize: 20 },
   spacer: { width: 40 },
   account: { flexDirection: "row", alignItems: "center", gap: 14, padding: space.lg },
-  avatarOption: { padding: 2, borderRadius: 30 },
-  shuffle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: space.sm,
-    alignSelf: "flex-start",
-    borderWidth: 1,
-    paddingHorizontal: space.md,
-    paddingVertical: space.sm,
-  },
+  avatarGrid: { flexDirection: "row", flexWrap: "wrap", gap: space.sm, justifyContent: "center" },
+  avatarOption: { padding: 2, borderWidth: 2, borderRadius: 32 },
   hint: { fontWeight: "400" },
   stat: { borderRadius: 18, borderWidth: 1, padding: space.lg, gap: 4, alignItems: "flex-start" },
   section: { fontWeight: "700", letterSpacing: 0.72, textTransform: "uppercase", marginTop: space.md },

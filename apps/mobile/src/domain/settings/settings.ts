@@ -2,19 +2,17 @@ export const MINUTE_OPTIONS = [5, 10, 15, 20] as const;
 export type DailyMinutes = (typeof MINUTE_OPTIONS)[number];
 
 export type ThemePreference = "auto" | "light" | "dark";
-export const AVATAR_STYLES = ["thumbs", "lorelei", "notionists", "open-peeps", "shapes"] as const;
-export type AvatarStyle = (typeof AVATAR_STYLES)[number];
-export const DEFAULT_AVATAR_STYLE: AvatarStyle = "thumbs";
 export const MIN_NEW_CARDS = 1;
 export const MAX_NEW_CARDS = 50;
+export const AVATAR_SEEDS = Array.from({ length: 24 }, (_, i) => (i === 0 ? "lembra" : `lembra-${i + 1}`));
 export const DEFAULT_NEW_CARDS_PER_DAY = 5;
 
 export interface Settings {
   readonly dailyMinutes: DailyMinutes;
   readonly newCardsPerDay: number;
   readonly theme: ThemePreference;
-  readonly avatarStyle: AvatarStyle;
   readonly avatarSeed: string;
+  readonly glassNav: boolean;
   readonly offWeekdays: readonly number[];
   readonly goalText: string;
   readonly updatedAt: Date;
@@ -27,8 +25,8 @@ export function defaultSettings(now: Date): Settings {
     dailyMinutes: DEFAULT_DAILY_MINUTES,
     newCardsPerDay: DEFAULT_NEW_CARDS_PER_DAY,
     theme: "auto",
-    avatarStyle: DEFAULT_AVATAR_STYLE,
     avatarSeed: "",
+    glassNav: false,
     offWeekdays: [],
     goalText: "",
     updatedAt: now,
@@ -52,8 +50,4 @@ export function normalizeNewCards(value: number): number {
 
 export function normalizeTheme(value: string): ThemePreference {
   return value === "light" || value === "dark" ? value : "auto";
-}
-
-export function normalizeAvatarStyle(value: string): AvatarStyle {
-  return (AVATAR_STYLES as readonly string[]).includes(value) ? (value as AvatarStyle) : DEFAULT_AVATAR_STYLE;
 }

@@ -7,7 +7,8 @@ import { Button, Icon, ProgressBar, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
-import { COLLECTION_ICONS, TONE_COLORS } from "./icons";
+import { CollectionGlyph } from "./CollectionGlyph";
+import { toneColors } from "./icons";
 
 type Props = {
   collections: readonly CollectionCard[];
@@ -44,21 +45,21 @@ export function CollectionsListView({ collections, onOpen, onCreate }: Props) {
         </View>
       ) : (
         collections.map((c) => {
-          const tone = TONE_COLORS[c.tone];
+          const tone = toneColors(c.tone, t);
           return (
             <Pressable
               key={c.id}
               accessibilityRole="button"
               accessibilityLabel={`${c.name}, ${tr("collection.detail.cardsDue", { count: c.dueToday })}`}
               onPress={() => onOpen(c.id)}
-              style={[styles.row, { backgroundColor: t[tone.bg] }]}
+              style={[styles.row, { backgroundColor: tone.bg }]}
             >
-              <View style={[styles.rowIcon, { backgroundColor: t.surface }]}>
-                <Icon icon={COLLECTION_ICONS[c.icon]} size={22} color={tone.fg} />
+              <View style={[styles.rowIcon, { backgroundColor: tone.well }]}>
+                <CollectionGlyph name={c.icon} size={22} color={tone.fg} />
               </View>
               <View style={styles.rowText}>
                 <Text variant="subtitulo">{c.name}</Text>
-                <Text variant="legenda" style={[styles.due, { color: t[tone.fg] }]}>
+                <Text variant="legenda" style={[styles.due, { color: tone.fg }]}>
                   {tr("collection.detail.cardsDue", { count: c.dueToday })}
                 </Text>
                 <ProgressBar value={c.progress} fill={tone.fg} track="surface" accessibilityLabel={c.name} />
