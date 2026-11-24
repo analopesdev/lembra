@@ -1,13 +1,17 @@
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronDown, ChevronLeft } from "lucide-react-native";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import type { Collection, Importance } from "@/domain/types";
-import { Button, Icon, Input, Tag, Text } from "@/shared/ui";
+import { CollectionGlyph } from "@/features/collections";
+import type { CardKind, Collection, Importance } from "@/domain/types";
+import { Button, Icon, Input, Sheet, Text } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
 type Props = {
+  kind: CardKind;
+  onKind: (v: CardKind) => void;
   front: string;
   onFront: (v: string) => void;
   back: string;
@@ -27,12 +31,14 @@ type Props = {
   edit?: { suspended: boolean; onToggleSuspend: () => void; onDelete: () => void };
 };
 
-const TYPES = ["basic", "reversed", "cloze", "typed"] as const;
+const TYPES = ["basic", "reversed", "cloze", "type"] as const;
 const LEVELS: Importance[] = [1, 2, 3];
 
 export function NewCardView(p: Props) {
   const t = useTheme();
   const { t: tr } = useTranslation();
+  const [picking, setPicking] = useState(false);
+  const selected = p.collections.find((c) => c.id === p.collectionId);
   return (
     <ScrollView
       style={{ backgroundColor: t.background }}
@@ -68,23 +74,17 @@ export function NewCardView(p: Props) {
         <Text variant="label">{tr("card.type")}</Text>
         <View accessibilityRole="radiogroup" style={styles.row}>
           {TYPES.map((type) => {
-            const on = type === "basic";
+            const on = type === p.kind;
             return (
               <Pressable
                 key={type}
                 accessibilityRole="radio"
-                accessibilityLabel={
-                  on ? tr(`card.types.${type}`) : `${tr(`card.types.${type}`)}, ${tr("add.soon")}`
-                }
-                accessibilityState={{ selected: on, disabled: !on }}
-                disabled={!on}
+                accessibilityLabel={tr(`card.types.${type}`)}
+                accessibilityState={{ selected: on }}
+                onPress={() => p.onKind(type)}
                 style={[
                   styles.chip,
-                  {
-                    backgroundColor: on ? t.primary : t.surface,
-                    borderColor: on ? t.primary : t.border,
-                    opacity: on ? 1 : 0.55,
-                  },
+                  { backgroundColor: on ? t.primary : t.surface, borderColor: on ? t.primary : t.border },
                 ]}
               >
                 <Text variant="label" tone={on ? "onPrimary" : "text"} style={styles.chipText}>
@@ -94,23 +94,28 @@ export function NewCardView(p: Props) {
             );
           })}
         </View>
-        <Tag label={tr("add.soon")} />
+        <Text variant="legenda" tone="textMuted">
+          {tr(`card.typeHints.${p.kind}`)}
+        </Text>
       </View>
 
       <Input
-        label={tr("card.front")}
+        label={p.kind === "cloze" ? tr("card.clozeFront") : tr("card.front")}
         value={p.front}
         onChangeText={p.onFront}
         minLines={4}
+        hint={p.kind === "cloze" ? tr("card.clozeHint", { example: "{{musculocutâneo}}" }) : undefined}
         error={p.errors.front}
       />
-      <Input
-        label={tr("card.back")}
-        value={p.back}
-        onChangeText={p.onBack}
-        minLines={3}
-        error={p.errors.back}
-      />
+      {p.kind === "cloze" ? null : (
+        <Input
+          label={tr("card.back")}
+          value={p.back}
+          onChangeText={p.onBack}
+          minLines={3}
+          error={p.errors.back}
+        />
+      )}
 
       <View style={styles.group}>
         <Text variant="label">{tr("card.collection")}</Text>
@@ -119,32 +124,18 @@ export function NewCardView(p: Props) {
             {tr("card.noCollection")}
           </Text>
         ) : (
-          <View accessibilityRole="radiogroup" style={styles.wrapRow}>
-            {p.collections.map((c) => {
-              const on = c.id === p.collectionId;
-              return (
-                <Pressable
-                  key={c.id}
-                  accessibilityRole="radio"
-                  accessibilityLabel={c.name}
-                  accessibilityState={{ selected: on }}
-                  onPress={() => p.onCollection(c.id)}
-                  style={[
-                    styles.collectionChip,
-                    {
-                      backgroundColor: on ? t.tint : t.surface,
-                      borderColor: on ? t.button : t.border,
-                      borderWidth: on ? 2 : 1,
-                    },
-                  ]}
-                >
-                  <Text variant="label" tone={on ? "onTint" : "text"} style={styles.chipText}>
-                    {c.name}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${tr("card.collection")}: ${selected?.name ?? ""}`}
+            onPress={() => setPicking(true)}
+            style={[styles.select, { backgroundColor: t.surface, borderColor: t.border }]}
+          >
+            {selected ? <CollectionGlyph name={selected.icon} size={18} color="text" /> : null}
+            <Text variant="corpo" style={styles.selectText}>
+              {selected?.name ?? ""}
+            </Text>
+            <Icon icon={ChevronDown} size={18} color="textMuted" />
+          </Pressable>
         )}
         {p.errors.collection ? (
           <Text variant="legenda" tone="danger" accessibilityRole="alert">
@@ -152,6 +143,36 @@ export function NewCardView(p: Props) {
           </Text>
         ) : null}
       </View>
+
+      <Sheet visible={picking} onClose={() => setPicking(false)} closeLabel={tr("common.close")}>
+        <Text variant="subtitulo">{tr("card.collection")}</Text>
+        <View accessibilityRole="radiogroup" style={styles.pickList}>
+          {p.collections.map((c) => {
+            const on = c.id === p.collectionId;
+            return (
+              <Pressable
+                key={c.id}
+                accessibilityRole="radio"
+                accessibilityLabel={c.name}
+                accessibilityState={{ selected: on }}
+                onPress={() => {
+                  p.onCollection(c.id);
+                  setPicking(false);
+                }}
+                style={[
+                  styles.pickRow,
+                  { backgroundColor: on ? t.tint : t.surface, borderColor: on ? t.button : t.border },
+                ]}
+              >
+                <CollectionGlyph name={c.icon} size={18} color={on ? "onTint" : "text"} />
+                <Text variant="corpo" tone={on ? "onTint" : "text"} style={styles.selectText}>
+                  {c.name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </Sheet>
 
       <View style={styles.group}>
         <View style={styles.labelRow}>
@@ -223,6 +244,26 @@ export function NewCardView(p: Props) {
 }
 
 const styles = StyleSheet.create({
+  select: {
+    minHeight: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.md,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  selectText: { flex: 1 },
+  pickList: { gap: space.sm },
+  pickRow: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.md,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
   content: { flexGrow: 1, paddingTop: 56, paddingHorizontal: space.xl, paddingBottom: 28, gap: 18 },
   flex: { flex: 1 },
   header: { flexDirection: "row", alignItems: "center", gap: space.md },

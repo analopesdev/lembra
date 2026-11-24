@@ -582,4 +582,17 @@ export const cardsContract: readonly ContractCase[] = [
       eq((await repo.get(companion.id))?.pairId, main.id, "par preservado");
     },
   },
+  {
+    name: "getByPair acha o companheiro do invertido e ignora o excluído",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const main = makeCard(1, { kind: "reversed" });
+      const companion = makeCard(2, { kind: "reversed", direction: "reverse", pairId: main.id });
+      await repo.saveMany([main, companion]);
+      eq((await repo.getByPair(main.id))?.id, companion.id, "companheiro");
+      eq(await repo.getByPair("nao-existe"), null, "sem par");
+      await repo.softDelete(companion.id);
+      eq(await repo.getByPair(main.id), null, "excluído não aparece");
+    },
+  },
 ];

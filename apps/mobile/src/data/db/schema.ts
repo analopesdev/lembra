@@ -20,7 +20,10 @@ export const cards = sqliteTable(
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
     deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
   },
-  (t) => [index("idx_cards_collection").on(t.collectionId, t.deletedAt, t.createdAt)],
+  (t) => [
+    index("idx_cards_collection").on(t.collectionId, t.deletedAt, t.createdAt),
+    index("idx_cards_pair").on(t.pairId),
+  ],
 );
 
 export const collections = sqliteTable("collections", {

@@ -1,5 +1,7 @@
 import {
+  clozeDocFromSyntax,
   clozeIds,
+  clozeSyntaxFromDoc,
   fromPlainText,
   isEmptyContent,
   mediaIds,
@@ -102,5 +104,19 @@ describe("conteúdo rico (ADR-0017)", () => {
     };
     expect(clozeIds(doc)).toEqual([1, 2, 3]);
     expect(toPlainText(doc)).toBe("O úmeroulnade novo\nx");
+  });
+});
+
+describe("sintaxe de lacuna {{ }}", () => {
+  it("converte para lacunas numeradas e volta para a mesma sintaxe", () => {
+    const text = "O nervo {{musculocutâneo}} inerva o {{bíceps}}.\nOutra linha {{x}}";
+    const doc = clozeDocFromSyntax(text);
+    expect(doc && clozeIds(doc)).toEqual([1, 2, 3]);
+    expect(doc && clozeSyntaxFromDoc(doc)).toBe(text);
+  });
+
+  it("sem lacuna devolve nulo; chaves vazias ou soltas não contam", () => {
+    expect(clozeDocFromSyntax("texto comum")).toBeNull();
+    expect(clozeDocFromSyntax("vazio {{}} e {{ solto")).toBeNull();
   });
 });

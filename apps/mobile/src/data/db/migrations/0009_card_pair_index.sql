@@ -1,0 +1,1 @@
+CREATE INDEX `idx_cards_pair` ON `cards` (`pair_id`);

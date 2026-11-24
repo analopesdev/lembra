@@ -133,6 +133,10 @@ export class InMemoryCardsRepository implements CardsRepository {
     return targets.length;
   }
 
+  async getByPair(mainId: Id): Promise<Card | null> {
+    return [...this.cards.values()].find((c) => c.pairId === mainId && !c.deletedAt) ?? null;
+  }
+
   async listAll(): Promise<readonly Card[]> {
     return [...this.cards.values()].filter((c) => !c.deletedAt);
   }
