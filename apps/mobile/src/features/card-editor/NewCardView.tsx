@@ -3,13 +3,22 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import type { ContentDoc } from "@/domain/card/content";
 import { CollectionGlyph } from "@/features/collections";
 import type { CardKind, Collection, Importance } from "@/domain/types";
 import { Button, Icon, Input, Sheet, Text } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
+import { RichEditor } from "./RichEditor";
+import type { RichValue } from "./richTypes";
 import { useTheme } from "@/shared/ui/useTheme";
 
 type Props = {
+  editorsReady: boolean;
+  editorKey: number;
+  frontInit: { doc: ContentDoc | null; text: string };
+  backInit: { doc: ContentDoc | null; text: string };
+  onFrontRich: (v: RichValue) => void;
+  onBackRich: (v: RichValue) => void;
   kind: CardKind;
   onKind: (v: CardKind) => void;
   front: string;
@@ -99,23 +108,37 @@ export function NewCardView(p: Props) {
         </Text>
       </View>
 
-      <Input
-        label={p.kind === "cloze" ? tr("card.clozeFront") : tr("card.front")}
-        value={p.front}
-        onChangeText={p.onFront}
-        minLines={4}
-        hint={p.kind === "cloze" ? tr("card.clozeHint", { example: "{{musculocutâneo}}" }) : undefined}
-        error={p.errors.front}
-      />
-      {p.kind === "cloze" ? null : (
+      {p.kind === "cloze" ? (
         <Input
-          label={tr("card.back")}
-          value={p.back}
-          onChangeText={p.onBack}
-          minLines={3}
-          error={p.errors.back}
+          label={tr("card.clozeFront")}
+          value={p.front}
+          onChangeText={p.onFront}
+          minLines={4}
+          hint={tr("card.clozeHint", { example: "{{musculocutâneo}}" })}
+          error={p.errors.front}
         />
-      )}
+      ) : p.editorsReady ? (
+        <>
+          <RichEditor
+            key={`front-${p.editorKey}`}
+            label={tr("card.front")}
+            initialDoc={p.frontInit.doc}
+            initialText={p.frontInit.text}
+            onChange={p.onFrontRich}
+            error={p.errors.front}
+            minHeight={110}
+          />
+          <RichEditor
+            key={`back-${p.editorKey}`}
+            label={tr("card.back")}
+            initialDoc={p.backInit.doc}
+            initialText={p.backInit.text}
+            onChange={p.onBackRich}
+            error={p.errors.back}
+            minHeight={80}
+          />
+        </>
+      ) : null}
 
       <View style={styles.group}>
         <Text variant="label">{tr("card.collection")}</Text>

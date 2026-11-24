@@ -217,7 +217,15 @@
       "type": "Você digita a resposta antes de ver o verso."
     },
     "clozeFront": "Frase com lacunas",
-    "clozeHint": "Marque cada lacuna entre chaves duplas, por exemplo {{example}}."
+    "clozeHint": "Marque cada lacuna entre chaves duplas, por exemplo {{example}}.",
+    "tools": {
+      "bold": "Negrito",
+      "italic": "Itálico",
+      "list": "Lista",
+      "math": "Fórmula",
+      "image": "Imagem",
+      "audio": "Áudio"
+    }
   },
   "feedback": {
     "title": "Fale com a gente",

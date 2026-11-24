@@ -1,14 +1,21 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getContainer } from "@/data/container";
 import { validateCardDraft } from "@/domain/card/card";
-import { clozeSyntaxFromDoc, parseContent } from "@/domain/card/content";
+import {
+  clozeSyntaxFromDoc,
+  hasFormatting,
+  parseContent,
+  serializeContent,
+  type ContentDoc,
+} from "@/domain/card/content";
 import { reversedCompanion, syncCompanion } from "@/domain/card/kind";
 import type { Card, CardKind, Collection, Importance } from "@/domain/types";
 import { ConfirmSheet } from "@/shared/ui";
 
 import { NewCardView } from "./NewCardView";
+import type { RichValue } from "./richTypes";
 
 type Props = { onDone: () => void; onClose: () => void; initialCollectionId?: string; cardId?: string };
 
@@ -18,6 +25,17 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
   const [kind, setKind] = useState<CardKind>("basic");
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
+  const [frontRich, setFrontRich] = useState<ContentDoc | null>(null);
+  const [backRich, setBackRich] = useState<ContentDoc | null>(null);
+  const [init, setInit] = useState<{
+    front: { doc: ContentDoc | null; text: string };
+    back: { doc: ContentDoc | null; text: string };
+  }>({
+    front: { doc: null, text: "" },
+    back: { doc: null, text: "" },
+  });
+  const [editorsReady, setEditorsReady] = useState(cardId === undefined);
+  const [editorKey, setEditorKey] = useState(0);
   const [collections, setCollections] = useState<readonly Collection[]>([]);
   const [collectionId, setCollectionId] = useState<string | null>(initialCollectionId ?? null);
   const [importance, setImportance] = useState<Importance>(2);
@@ -44,6 +62,15 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
           const doc = found.kind === "cloze" ? parseContent(found.frontDoc) : null;
           setFront(doc?.ok ? clozeSyntaxFromDoc(doc.doc) : found.front);
           setBack(found.kind === "cloze" ? "" : found.back);
+          const fd = found.kind === "cloze" ? null : parseContent(found.frontDoc);
+          const bd = found.kind === "cloze" ? null : parseContent(found.backDoc);
+          setInit({
+            front: { doc: fd?.ok ? fd.doc : null, text: found.front },
+            back: { doc: bd?.ok ? bd.doc : null, text: found.back },
+          });
+          setFrontRich(fd?.ok ? fd.doc : null);
+          setBackRich(bd?.ok ? bd.doc : null);
+          setEditorsReady(true);
           setCollectionId(found.collectionId);
           setImportance(found.importance);
         }
@@ -86,8 +113,13 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
         collectionId: result.collectionId,
         front: result.front,
         back: result.back,
-        frontDoc: result.frontDoc,
-        backDoc: null,
+        frontDoc:
+          result.frontDoc ??
+          (result.kind !== "cloze" && frontRich && hasFormatting(frontRich)
+            ? serializeContent(frontRich)
+            : null),
+        backDoc:
+          result.kind !== "cloze" && backRich && hasFormatting(backRich) ? serializeContent(backRich) : null,
         kind: result.kind,
         direction: "forward",
         pairId: null,
@@ -146,9 +178,24 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
     }
   };
 
+  const onFrontRich = useCallback((v: RichValue) => {
+    setFront(v.text);
+    setFrontRich(v.doc);
+  }, []);
+  const onBackRich = useCallback((v: RichValue) => {
+    setBack(v.text);
+    setBackRich(v.doc);
+  }, []);
+
   return (
     <>
       <NewCardView
+        editorsReady={editorsReady}
+        editorKey={editorKey}
+        frontInit={init.front}
+        backInit={init.back}
+        onFrontRich={onFrontRich}
+        onBackRich={onBackRich}
         kind={kind}
         onKind={setKind}
         front={front}
@@ -179,6 +226,10 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
             if (!ok) return;
             setFront("");
             setBack("");
+            setFrontRich(null);
+            setBackRich(null);
+            setInit({ front: { doc: null, text: "" }, back: { doc: null, text: "" } });
+            setEditorKey((k) => k + 1);
             setSaved(true);
           })
         }

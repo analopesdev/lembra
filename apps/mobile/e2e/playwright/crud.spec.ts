@@ -36,8 +36,9 @@ test("CRUD de coleções e cards pela interface, com o SQLite real", async ({ pa
   await expect(page.getByText("Nenhum card nesta coleção.")).toBeVisible();
 
   await page.getByRole("button", { name: "Novo card" }).first().click();
-  await page.getByLabel("Frente (pergunta)").fill("Qual o principal flexor do cotovelo?");
-  await page.getByLabel("Verso (resposta)").fill("Braquial");
+  const editor = (n: number) => page.locator(".ProseMirror").nth(n);
+  await editor(0).fill("Qual o principal flexor do cotovelo?");
+  await editor(1).fill("Braquial");
   await page.getByRole("radio", { name: "Alta" }).click();
   await page.getByRole("button", { name: "Salvar", exact: true }).click();
 
@@ -45,8 +46,8 @@ test("CRUD de coleções e cards pela interface, com o SQLite real", async ({ pa
 
   await page.getByRole("button", { name: "Qual o principal flexor do cotovelo?" }).click();
   await expect(page.getByRole("heading", { name: "Editar card" })).toBeVisible();
-  await expect(page.getByLabel("Verso (resposta)")).toHaveValue("Braquial");
-  await page.getByLabel("Frente (pergunta)").fill("Qual músculo flexiona o cotovelo?");
+  await expect(editor(1)).toHaveText("Braquial");
+  await editor(0).fill("Qual músculo flexiona o cotovelo?");
   await page.getByRole("button", { name: "Suspender" }).click();
   await expect(page.getByText("Este card está suspenso e não entra nas revisões.")).toBeVisible();
   await page.getByRole("button", { name: "Salvar", exact: true }).click();

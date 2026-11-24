@@ -10,6 +10,51 @@ import "@/shared/i18n";
 
 import { NewCardScreen } from "../NewCardScreen";
 
+jest.mock("../RichEditor", () => {
+  const { Text, TextInput } = jest.requireActual("react-native");
+  const React = jest.requireActual("react");
+  const content = jest.requireActual("@/domain/card/content");
+  return {
+    RichEditor: ({
+      label,
+      initialText,
+      onChange,
+      error,
+    }: {
+      label: string;
+      initialText: string;
+      onChange: (v: unknown) => void;
+      error?: string;
+    }) => {
+      const [value, setValue] = React.useState(initialText);
+      return React.createElement(
+        React.Fragment,
+        null,
+        React.createElement(TextInput, {
+          accessibilityLabel: label,
+          value,
+          onChangeText: (x: string) => {
+            setValue(x);
+            const bold = x.startsWith("**");
+            const text = bold ? x.slice(2) : x;
+            const doc = bold
+              ? {
+                  type: "doc",
+                  v: 1,
+                  content: [
+                    { type: "paragraph", content: [{ type: "text", text, marks: [{ type: "bold" }] }] },
+                  ],
+                }
+              : content.fromPlainText(text);
+            onChange({ text, doc });
+          },
+        }),
+        error ? React.createElement(Text, null, error) : null,
+      );
+    },
+  };
+});
+
 const mockState: {
   cards: InMemoryCardsRepository | null;
   collections: InMemoryCollectionsRepository | null;
@@ -131,6 +176,18 @@ describe("NewCardScreen", () => {
     for (const name of ["Invertido", "Lacuna", "Digitar"]) {
       expect(screen.getByRole("radio", { name }).props.accessibilityState.disabled).not.toBe(true);
     }
+  });
+
+  it("texto formatado guarda o conteúdo rico junto do texto simples; texto puro não guarda", async () => {
+    const { cards, onDone } = await setup();
+    await render(<NewCardScreen onDone={onDone} onClose={() => undefined} />);
+    await fireEvent.changeText(await screen.findByLabelText("Frente (pergunta)"), "**Flexor");
+    await fireEvent.changeText(screen.getByLabelText("Verso (resposta)"), "Braquial");
+    await press("Salvar");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    const saved = await cards.get("card-0");
+    expect(saved).toMatchObject({ front: "Flexor", back: "Braquial", backDoc: null });
+    expect(saved?.frontDoc).toContain('"bold"');
   });
 
   it("Digitar salva um card do tipo digitar", async () => {

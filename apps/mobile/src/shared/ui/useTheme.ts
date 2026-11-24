@@ -8,7 +8,7 @@ export type Colors = Record<keyof ThemeColors, string>;
 
 const subscribe = () => () => undefined;
 
-function useHydrated(): boolean {
+export function useHydrated(): boolean {
   return useSyncExternalStore(
     subscribe,
     () => true,

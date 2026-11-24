@@ -2,6 +2,9 @@ import {
   clozeDocFromSyntax,
   clozeIds,
   clozeSyntaxFromDoc,
+  fromEditorJson,
+  hasFormatting,
+  toEditorJson,
   fromPlainText,
   isEmptyContent,
   mediaIds,
@@ -118,5 +121,94 @@ describe("sintaxe de lacuna {{ }}", () => {
   it("sem lacuna devolve nulo; chaves vazias ou soltas não contam", () => {
     expect(clozeDocFromSyntax("texto comum")).toBeNull();
     expect(clozeDocFromSyntax("vazio {{}} e {{ solto")).toBeNull();
+  });
+});
+
+describe("ponte com o editor (TipTap)", () => {
+  const editorJson = {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        attrs: { textAlign: null },
+        content: [
+          { type: "text", text: "Qual o " },
+          { type: "text", text: "flexor", marks: [{ type: "bold" }, { type: "link", attrs: { href: "x" } }] },
+          {
+            type: "text",
+            text: " ?",
+            marks: [{ type: "textStyle", attrs: { color: "#c00" } }, { type: "strike" }],
+          },
+        ],
+      },
+      {
+        type: "bulletList",
+        content: [
+          {
+            type: "listItem",
+            content: [
+              { type: "paragraph", content: [{ type: "text", text: "a", marks: [{ type: "italic" }] }] },
+            ],
+          },
+        ],
+      },
+      { type: "horizontalRule" },
+    ],
+  };
+
+  it("mantém negrito, itálico, cor e lista; descarta marcas e nós que não suportamos", () => {
+    const doc = fromEditorJson(editorJson);
+    expect(doc).toEqual({
+      type: "doc",
+      v: 1,
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Qual o " },
+            { type: "text", text: "flexor", marks: [{ type: "bold" }] },
+            { type: "text", text: " ?", marks: [{ type: "color", attrs: { color: "#c00" } }] },
+          ],
+        },
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                { type: "paragraph", content: [{ type: "text", text: "a", marks: [{ type: "italic" }] }] },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("ida e volta: toEditorJson e fromEditorJson devolvem o mesmo documento", () => {
+    const doc = fromEditorJson(editorJson);
+    expect(doc && fromEditorJson(toEditorJson(doc))).toEqual(doc);
+  });
+
+  it("entrada inválida ou vazia vira nulo ou parágrafo vazio", () => {
+    expect(fromEditorJson(null)).toBeNull();
+    expect(fromEditorJson({ type: "texto" })).toBeNull();
+    expect(fromEditorJson({ type: "doc", content: [] })).toEqual({
+      type: "doc",
+      v: 1,
+      content: [{ type: "paragraph" }],
+    });
+  });
+
+  it("hasFormatting: só texto puro não conta; marca ou lista contam", () => {
+    expect(hasFormatting(fromPlainText("oi\nlinha 2"))).toBe(false);
+    expect(hasFormatting(fromEditorJson(editorJson)!)).toBe(true);
+    expect(
+      hasFormatting({
+        type: "doc",
+        v: 1,
+        content: [{ type: "paragraph", content: [{ type: "text", text: "x", marks: [{ type: "bold" }] }] }],
+      }),
+    ).toBe(true);
   });
 });

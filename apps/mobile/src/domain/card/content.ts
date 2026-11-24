@@ -188,3 +188,106 @@ export function clozeSyntaxFromDoc(doc: ContentDoc): string {
     )
     .join("\n");
 }
+
+type Loose = { type?: unknown; text?: unknown; marks?: unknown; content?: unknown; attrs?: unknown };
+
+const KNOWN_MARKS = new Set(["bold", "italic", "code", "highlight"]);
+
+function cleanMarks(raw: unknown): z.infer<typeof mark>[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: z.infer<typeof mark>[] = [];
+  for (const m of raw as Loose[]) {
+    if (typeof m.type === "string" && KNOWN_MARKS.has(m.type))
+      out.push({ type: m.type } as z.infer<typeof mark>);
+    else if (m.type === "textStyle") {
+      const color = (m.attrs as { color?: unknown } | undefined)?.color;
+      if (typeof color === "string" && color !== "") out.push({ type: "color", attrs: { color } });
+    }
+  }
+  return out.length === 0 ? undefined : out;
+}
+
+function cleanInline(raw: unknown): z.infer<typeof text>[] {
+  if (!Array.isArray(raw)) return [];
+  const out: z.infer<typeof text>[] = [];
+  for (const n of raw as Loose[]) {
+    if (n.type === "text" && typeof n.text === "string" && n.text !== "") {
+      const marks = cleanMarks(n.marks);
+      out.push({ type: "text", text: n.text, ...(marks ? { marks } : {}) });
+    } else if (n.type === "hardBreak") {
+      out.push({ type: "text", text: "\n" });
+    }
+  }
+  return out;
+}
+
+function cleanParagraph(raw: Loose): z.infer<typeof paragraph> {
+  const content = cleanInline(raw.content);
+  return { type: "paragraph", ...(content.length === 0 ? {} : { content }) };
+}
+
+function cleanBlocks(raw: unknown): Block[] {
+  if (!Array.isArray(raw)) return [];
+  const out: Block[] = [];
+  for (const n of raw as Loose[]) {
+    if (n.type === "paragraph" || n.type === "heading") out.push(cleanParagraph(n));
+    else if (n.type === "bulletList" || n.type === "orderedList") {
+      const items = (Array.isArray(n.content) ? (n.content as Loose[]) : [])
+        .filter((i) => i.type === "listItem")
+        .map((i) => {
+          const paragraphs = (Array.isArray(i.content) ? (i.content as Loose[]) : [])
+            .filter((p) => p.type === "paragraph")
+            .map(cleanParagraph);
+          return {
+            type: "listItem" as const,
+            content: paragraphs.length === 0 ? [{ type: "paragraph" as const }] : paragraphs,
+          };
+        });
+      if (items.length > 0) out.push({ type: n.type, content: items });
+    } else if (n.type === "codeBlock") {
+      const content = cleanInline(n.content);
+      out.push({ type: "code", ...(content.length === 0 ? {} : { content }) });
+    }
+  }
+  return out;
+}
+
+export function fromEditorJson(raw: unknown): ContentDoc | null {
+  const root = raw as Loose | null;
+  if (!root || root.type !== "doc") return null;
+  const blocks = cleanBlocks(root.content);
+  const doc: ContentDoc = {
+    type: "doc",
+    v: CONTENT_SCHEMA_VERSION,
+    content: blocks.length === 0 ? [{ type: "paragraph" }] : blocks,
+  };
+  const parsed = contentDoc.safeParse(doc);
+  return parsed.success ? parsed.data : null;
+}
+
+export function toEditorJson(doc: ContentDoc): { type: "doc"; content: unknown[] } {
+  const content = doc.content.map((b) => {
+    if (b.type !== "paragraph") return b;
+    return {
+      ...b,
+      content: (b.content ?? []).map((n) => {
+        if (n.type !== "text" || !n.marks) return n;
+        return {
+          ...n,
+          marks: n.marks.map((m) => (m.type === "color" ? { type: "textStyle", attrs: m.attrs } : m)),
+        };
+      }),
+    };
+  });
+  return { type: "doc", content };
+}
+
+export function hasFormatting(doc: ContentDoc): boolean {
+  const inlineHas = (nodes: readonly z.infer<typeof inline>[] | undefined) =>
+    (nodes ?? []).some((n) => (n.type === "text" ? (n.marks?.length ?? 0) > 0 : true));
+  return doc.content.some((b) => {
+    if (b.type === "bulletList" || b.type === "orderedList") return true;
+    if (b.type === "paragraph") return inlineHas(b.content);
+    return true;
+  });
+}

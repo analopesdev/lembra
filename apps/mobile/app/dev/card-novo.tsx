@@ -21,6 +21,12 @@ export default function NewCardPreview() {
   return (
     <View style={{ flex: 1, backgroundColor: t.background, width: 390, height: 844, overflow: "hidden" }}>
       <NewCardView
+        editorsReady={false}
+        editorKey={0}
+        frontInit={{ doc: null, text: "" }}
+        backInit={{ doc: null, text: "" }}
+        onFrontRich={() => undefined}
+        onBackRich={() => undefined}
         kind="basic"
         onKind={() => undefined}
         front="Qual músculo é o principal flexor do cotovelo?"
