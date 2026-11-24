@@ -1,7 +1,13 @@
 import { asc, eq } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 
-import { normalizeMinutes, normalizeWeekdays, type Settings } from "@/domain/settings/settings";
+import {
+  normalizeMinutes,
+  normalizeNewCards,
+  normalizeTheme,
+  normalizeWeekdays,
+  type Settings,
+} from "@/domain/settings/settings";
 
 import { ChangeBus } from "../db/change-bus";
 import type { AppDb } from "../db/client";
@@ -13,6 +19,8 @@ import { SETTINGS_ID } from "./settings.memory";
 
 const toSettings = (r: typeof settings.$inferSelect): Settings => ({
   dailyMinutes: normalizeMinutes(r.dailyMinutes),
+  newCardsPerDay: normalizeNewCards(r.newCardsPerDay),
+  theme: normalizeTheme(r.theme),
   offWeekdays: normalizeWeekdays(r.offWeekdays),
   goalText: r.goalText,
   updatedAt: r.updatedAt,
@@ -34,6 +42,8 @@ export class SqliteSettingsRepository implements SettingsRepository {
   async save(value: Settings): Promise<void> {
     const set = {
       dailyMinutes: value.dailyMinutes,
+      newCardsPerDay: value.newCardsPerDay,
+      theme: value.theme,
       offWeekdays: [...value.offWeekdays],
       goalText: value.goalText,
       updatedAt: value.updatedAt,

@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 
 import { getContainer } from "@/data/container";
 import type { TodaySummary } from "@/data/repositories/cards";
-import { DEFAULT_DAILY_MINUTES } from "@/domain/settings/settings";
+import { DEFAULT_DAILY_MINUTES, DEFAULT_NEW_CARDS_PER_DAY } from "@/domain/settings/settings";
 import type { Collection } from "@/domain/types";
 
 import { buildTodayModel } from "./buildModel";
 import type { TodayModel } from "./model";
 
-const NEW_CARDS_PER_DAY = 5;
 const RETENTION_TARGET_PCT = 90;
 
 const EMPTY: TodayModel = {
@@ -36,6 +35,7 @@ export function useTodayModel(): TodayModel {
       let summary: TodaySummary | null = null;
       let list: readonly Collection[] | null = null;
       let minutes: number | undefined;
+      let newCards = DEFAULT_NEW_CARDS_PER_DAY;
       const publish = () => {
         if (!summary || !list || minutes === undefined) return;
         setModel(
@@ -45,7 +45,7 @@ export function useTodayModel(): TodayModel {
             now: now(),
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             sessionMinutes: minutes,
-            newCardsLeftToday: NEW_CARDS_PER_DAY,
+            newCardsLeftToday: newCards,
             retentionTargetPct: RETENTION_TARGET_PCT,
           }),
         );
@@ -61,6 +61,7 @@ export function useTodayModel(): TodayModel {
         }),
         settings.watch().subscribe((v) => {
           minutes = v?.dailyMinutes ?? DEFAULT_DAILY_MINUTES;
+          newCards = v?.newCardsPerDay ?? DEFAULT_NEW_CARDS_PER_DAY;
           publish();
         }),
       );

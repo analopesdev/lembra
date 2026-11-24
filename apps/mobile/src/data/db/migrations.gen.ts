@@ -26,5 +26,9 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   ],
   [
     "CREATE TABLE `settings` (\n\t`id` text PRIMARY KEY NOT NULL,\n\t`daily_minutes` integer NOT NULL,\n\t`off_weekdays` text NOT NULL,\n\t`goal_text` text NOT NULL,\n\t`updated_at` integer NOT NULL\n);"
+  ],
+  [
+    "ALTER TABLE `settings` ADD `new_cards_per_day` integer DEFAULT 5 NOT NULL;",
+    "ALTER TABLE `settings` ADD `theme` text DEFAULT 'auto' NOT NULL;"
   ]
 ];
