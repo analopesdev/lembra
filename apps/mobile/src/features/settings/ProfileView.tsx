@@ -1,4 +1,4 @@
-import { ChevronLeft, Minus, Plus } from "lucide-react-native";
+import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
@@ -28,6 +28,13 @@ type Props = {
   onAvatarSeed: (seed: string) => void;
   retainedCount: number;
   version: string;
+  backup: {
+    busy: boolean;
+    message: string | null;
+    onExportJson: () => void;
+    onExportCsv: () => void;
+    onImport: () => void;
+  };
   onBack: () => void;
 };
 
@@ -41,7 +48,6 @@ const SOON_ROWS = {
   report: "profile.reportProblem",
   rate: "profile.rate",
   sync: "profile.sync",
-  export: "profile.export",
   privacy: "profile.privacy",
   signOut: "profile.signOut",
   delete: "profile.deleteAccount",
@@ -52,6 +58,28 @@ function Section({ title }: { title: string }) {
     <Text variant="legenda" tone="textMuted" accessibilityRole="header" style={styles.section}>
       {title}
     </Text>
+  );
+}
+
+function ActionRow({ label, onPress, disabled }: { label: string; onPress: () => void; disabled: boolean }) {
+  const t = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={[
+        styles.soon,
+        { borderColor: t.border, backgroundColor: t.surface, opacity: disabled ? 0.5 : 1 },
+      ]}
+    >
+      <Text variant="corpo" style={styles.flex}>
+        {label}
+      </Text>
+      <Icon icon={ChevronRight} size={18} color="textMuted" />
+    </Pressable>
   );
 }
 
@@ -242,7 +270,14 @@ export function ProfileView(p: Props) {
 
       <Section title={tr("profile.account")} />
       <SoonRow label={tr(SOON_ROWS.sync)} />
-      <SoonRow label={tr(SOON_ROWS.export)} />
+      <ActionRow label={tr("backup.exportJson")} onPress={p.backup.onExportJson} disabled={p.backup.busy} />
+      <ActionRow label={tr("backup.exportCsv")} onPress={p.backup.onExportCsv} disabled={p.backup.busy} />
+      <ActionRow label={tr("backup.import")} onPress={p.backup.onImport} disabled={p.backup.busy} />
+      {p.backup.message ? (
+        <Text variant="label" tone="textMuted" accessibilityLiveRegion="polite">
+          {p.backup.message}
+        </Text>
+      ) : null}
       <SoonRow label={tr(SOON_ROWS.privacy)} />
       <SoonRow label={tr(SOON_ROWS.signOut)} />
       <SoonRow label={tr(SOON_ROWS.delete)} />

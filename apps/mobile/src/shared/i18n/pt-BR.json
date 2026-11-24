@@ -259,6 +259,22 @@
       "week": "Semana com 5 dias estudados"
     }
   },
+  "backup": {
+    "exportJson": "Exportar backup completo (JSON)",
+    "exportCsv": "Exportar cards (CSV)",
+    "import": "Importar backup",
+    "exported": "Backup exportado: {{count}} cards.",
+    "exportedCsv": "Cards exportados: {{count}}.",
+    "restored": "Backup importado: {{collections}} coleções, {{cards}} cards e {{reviews}} revisões novas.",
+    "failed": "Não deu certo. Tente de novo.",
+    "errors": {
+      "not_json": "Esse arquivo não é um backup do Lembra.",
+      "wrong_format": "Esse arquivo não é um backup do Lembra.",
+      "newer_version": "Esse backup é de uma versão mais nova do app. Atualize o Lembra e tente de novo.",
+      "invalid": "O arquivo de backup está com dados inválidos.",
+      "broken_reference": "O arquivo de backup está incompleto ou corrompido."
+    }
+  },
   "profile": {
     "title": "Perfil",
     "back": "Voltar",
@@ -313,7 +329,6 @@
     "rate": "Avaliar o Lembra",
     "account": "Conta e dados",
     "sync": "Sincronização",
-    "export": "Exportar e backup",
     "privacy": "Privacidade e termos",
     "signOut": "Sair",
     "deleteAccount": "Excluir conta",

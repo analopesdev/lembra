@@ -112,7 +112,6 @@ describe("ProfileScreen", () => {
     await screen.findByText("Cards novos por dia");
     for (const name of [
       "Sincronização",
-      "Exportar e backup",
       "Excluir conta",
       "Desbloquear com Face ID",
       "Lembrete diário",
