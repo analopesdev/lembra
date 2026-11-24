@@ -120,7 +120,7 @@ export function NewCollectionView(p: Props) {
                   { backgroundColor: c.bg, borderColor: on ? t.button : t.border, borderWidth: on ? 2 : 1 },
                 ]}
               >
-                {on ? <Check size={16} strokeWidth={3} color={c.fg} aria-hidden /> : null}
+                {on ? <Check size={16} strokeWidth={3} color={c.fg} /> : null}
               </Pressable>
             );
           })}
