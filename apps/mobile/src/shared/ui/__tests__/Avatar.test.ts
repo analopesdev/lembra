@@ -1,6 +1,6 @@
 import { avatarSvg } from "../Avatar";
 
-describe("avatarSvg (estilo Waves)", () => {
+describe("avatarSvg (estilo Cameo)", () => {
   it("gera um SVG", () => {
     expect(avatarSvg("ana")).toMatch(/^<svg[\s\S]*<\/svg>$/);
   });
