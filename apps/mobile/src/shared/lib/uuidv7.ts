@@ -1,3 +1,5 @@
+import { getRandomBytes } from "expo-crypto";
+
 // UUIDv7 (RFC 9562): 48 bits de timestamp em ms + aleatoriedade. Tempo e fonte de bytes aleatórios
 // são injetados para tornar o gerador determinístico em testes (ADR-0009).
 export type RandomBytes = (n: number) => Uint8Array;
@@ -22,4 +24,9 @@ export function uuidv7(nowMs: number, randomBytes: RandomBytes): string {
 }
 
 /** Fonte padrão de aleatoriedade (Web Crypto, disponível em web, Hermes e Node ≥ 19). */
-export const cryptoRandomBytes: RandomBytes = (n) => globalThis.crypto.getRandomValues(new Uint8Array(n));
+export const cryptoRandomBytes: RandomBytes = (n) => {
+  const web = globalThis.crypto;
+  return typeof web?.getRandomValues === "function"
+    ? web.getRandomValues(new Uint8Array(n))
+    : getRandomBytes(n);
+};
