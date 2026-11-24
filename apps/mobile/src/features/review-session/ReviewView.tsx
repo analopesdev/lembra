@@ -9,6 +9,8 @@ import { Button, Icon, Num, ProgressBar, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
+import { ContentText } from "@/features/rich-content";
+
 import { FlipCard } from "./FlipCard";
 
 export interface ReviewCardView {
@@ -16,6 +18,8 @@ export interface ReviewCardView {
   readonly position: { current: number; total: number };
   readonly front: string;
   readonly back: string;
+  readonly frontDoc?: string | null;
+  readonly backDoc?: string | null;
   readonly isRetry: boolean;
 }
 
@@ -115,9 +119,9 @@ export function ReviewView({
               <View style={face}>
                 {chips}
                 <ScrollView contentContainerStyle={styles.body}>
-                  <Text variant="pergunta" accessibilityRole="header">
-                    {card.front}
-                  </Text>
+                  <View accessibilityRole="header">
+                    <ContentText doc={card.frontDoc ?? null} fallback={card.front} variant="pergunta" />
+                  </View>
                 </ScrollView>
                 {card.isRetry ? (
                   <Text variant="legenda" tone="textMuted">
@@ -137,9 +141,12 @@ export function ReviewView({
                   <Text variant="legenda" tone="textMuted" style={styles.kicker}>
                     {tr("review.correctAnswer")}
                   </Text>
-                  <Text variant="subtitulo" style={styles.answer}>
-                    {card.back}
-                  </Text>
+                  <ContentText
+                    doc={card.backDoc ?? null}
+                    fallback={card.back}
+                    variant="subtitulo"
+                    style={styles.answer}
+                  />
                   {returnsIn !== null && !card.isRetry ? (
                     <View style={[styles.returns, { backgroundColor: t.successTint }]}>
                       <Icon icon={Calendar} size={14} color="success" />

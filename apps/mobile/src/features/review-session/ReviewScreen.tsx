@@ -30,6 +30,8 @@ export function ReviewScreen({ onExit, onEditCard, reloadSignal }: Props) {
         collectionName: session.collectionName,
         position: session.position,
         front: card.front,
+        frontDoc: card.frontDoc,
+        backDoc: card.backDoc,
         back: card.back,
         isRetry: session.isRetry,
       }}
