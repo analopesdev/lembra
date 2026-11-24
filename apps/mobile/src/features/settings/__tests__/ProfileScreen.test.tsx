@@ -130,15 +130,6 @@ describe("ProfileScreen", () => {
     expect(onBack).toHaveBeenCalled();
   });
 
-  it("avatar: sortear outro avatar grava uma nova semente", async () => {
-    const repo = await setup();
-    await render(<ProfileScreen onBack={() => undefined} />);
-    await act(async () =>
-      fireEvent.press(await screen.findByRole("button", { name: "Sortear outro avatar" })),
-    );
-    await waitFor(async () => expect((await repo.get())?.avatarSeed).toMatch(/^seed-/));
-  });
-
   it("menu de baixo em vidro: liga e grava", async () => {
     const repo = await setup();
     await render(<ProfileScreen onBack={() => undefined} />);

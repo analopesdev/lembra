@@ -1,4 +1,4 @@
-import { ChevronLeft, Minus, Plus, Shuffle } from "lucide-react-native";
+import { ChevronLeft, Minus, Plus } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
@@ -19,7 +19,6 @@ type Props = {
   glassNav: boolean;
   onGlassNav: (v: boolean) => void;
   avatarSeed: string;
-  onAvatarShuffle: () => void;
   retainedCount: number;
   version: string;
   onBack: () => void;
@@ -105,15 +104,6 @@ export function ProfileView(p: Props) {
       <View style={styles.avatarPreview}>
         <Avatar seed={p.avatarSeed} size={96} />
       </View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={tr("profile.avatarShuffle")}
-        onPress={p.onAvatarShuffle}
-        style={[styles.shuffle, { borderColor: t.border, backgroundColor: t.surface }]}
-      >
-        <Icon icon={Shuffle} size={16} strokeWidth={2} />
-        <Text variant="label">{tr("profile.avatarShuffle")}</Text>
-      </Pressable>
 
       <View style={[styles.stat, { backgroundColor: t.surface, borderColor: t.border }]}>
         <Num size={28}>{p.retainedCount}</Num>
@@ -272,15 +262,6 @@ const styles = StyleSheet.create({
   spacer: { width: 40 },
   account: { flexDirection: "row", alignItems: "center", gap: 14, padding: space.lg },
   avatarPreview: { alignSelf: "flex-start" },
-  shuffle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: space.sm,
-    alignSelf: "flex-start",
-    borderWidth: 1,
-    paddingHorizontal: space.md,
-    paddingVertical: space.sm,
-  },
   hint: { fontWeight: "400" },
   stat: { borderRadius: 18, borderWidth: 1, padding: space.lg, gap: 4, alignItems: "flex-start" },
   section: { fontWeight: "700", letterSpacing: 0.72, textTransform: "uppercase", marginTop: space.md },
