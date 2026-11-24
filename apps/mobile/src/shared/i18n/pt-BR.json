@@ -332,6 +332,18 @@
     "privacy": "Privacidade e termos",
     "signOut": "Sair",
     "deleteAccount": "Excluir conta",
-    "version": "Lembra {{version}}"
+    "version": "Lembra {{version}}",
+    "editName": "Editar",
+    "streakStat": "dias seguidos",
+    "freeDaysStat": "folgas livres",
+    "minutesValue": "{{count}} min",
+    "noOffDays": "Nenhuma",
+    "offDaysCount": "{{count}} dias",
+    "exportSub": "Baixe seus cards e o histórico",
+    "syncSub": "Tudo salvo neste aparelho",
+    "feedbackSub": "Lemos todas e respondemos por e-mail",
+    "reminderSub": "Todo dia às 19:30",
+    "faceIdSub": "Pede seu rosto ao abrir o app. No Android, digital ou rosto.",
+    "export": "Exportar e backup"
   }
 }

@@ -49,6 +49,7 @@ const press = async (name: string) =>
 describe("Perfil: backup", () => {
   it("exporta JSON com todos os cards e avisa", async () => {
     await render(<ProfileScreen onBack={() => undefined} />);
+    await press("Exportar e backup");
     await press("Exportar backup completo (JSON)");
     await waitFor(() => expect(mockSaveText).toHaveBeenCalledTimes(1));
     const [name, text, mime] = mockSaveText.mock.calls[0] as [string, string, string];
@@ -60,6 +61,7 @@ describe("Perfil: backup", () => {
 
   it("exporta CSV dos cards", async () => {
     await render(<ProfileScreen onBack={() => undefined} />);
+    await press("Exportar e backup");
     await press("Exportar cards (CSV)");
     await waitFor(() => expect(mockSaveText).toHaveBeenCalled());
     const [name, text] = mockSaveText.mock.calls[0] as [string, string];
@@ -70,12 +72,14 @@ describe("Perfil: backup", () => {
 
   it("importa um backup válido numa base vazia", async () => {
     await render(<ProfileScreen onBack={() => undefined} />);
+    await press("Exportar e backup");
     await press("Exportar backup completo (JSON)");
     await waitFor(() => expect(mockSaveText).toHaveBeenCalled());
     const text = (mockSaveText.mock.calls[0] as [string, string])[1];
     await world.cards.softDelete(makeCard(1).id);
     await world.cards.softDelete(makeCard(2).id);
     mockPickText.mockResolvedValue(text);
+    await press("Exportar e backup");
     await press("Importar backup");
     expect(await screen.findByText(/Backup importado:/)).toBeTruthy();
   });
@@ -89,6 +93,7 @@ describe("Perfil: backup", () => {
   ])("recusa arquivo ruim com mensagem clara", async (content, message) => {
     mockPickText.mockResolvedValue(content);
     await render(<ProfileScreen onBack={() => undefined} />);
+    await press("Exportar e backup");
     await press("Importar backup");
     expect(await screen.findByText(message)).toBeTruthy();
   });
@@ -96,6 +101,7 @@ describe("Perfil: backup", () => {
   it("cancelar a escolha do arquivo não mostra nada", async () => {
     mockPickText.mockResolvedValue(null);
     await render(<ProfileScreen onBack={() => undefined} />);
+    await press("Exportar e backup");
     await press("Importar backup");
     await waitFor(() => expect(mockPickText).toHaveBeenCalled());
     expect(screen.queryByText(/Backup importado|não é um backup/)).toBeNull();
@@ -104,6 +110,7 @@ describe("Perfil: backup", () => {
   it("erro inesperado mostra mensagem genérica", async () => {
     mockPickText.mockRejectedValue(new Error("boom"));
     await render(<ProfileScreen onBack={() => undefined} />);
+    await press("Exportar e backup");
     await press("Importar backup");
     expect(await screen.findByText("Não deu certo. Tente de novo.")).toBeTruthy();
   });

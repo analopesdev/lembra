@@ -19,7 +19,8 @@ type Props = { onBack: () => void };
 
 export function ProfileScreen({ onBack }: Props) {
   const [settings, setSettings] = useState<Settings | null>(null);
-  const memory = useTodayModel().memoryRetained;
+  const today = useTodayModel();
+  const memory = today.memoryRetained;
   const backup = useBackupActions();
 
   useEffect(() => {
@@ -72,6 +73,7 @@ export function ProfileScreen({ onBack }: Props) {
         onImport: () => void backup.importJson(),
       }}
       retainedCount={memory}
+      streakDays={today.streakDays}
       version={Constants.expoConfig?.version ?? "1.0.0"}
       onBack={onBack}
     />
