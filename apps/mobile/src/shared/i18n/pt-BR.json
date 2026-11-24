@@ -41,7 +41,9 @@
     "seeAll": "Ver todas",
     "dueToday": "{{count}} para hoje",
     "exam": "Prova de {{name}}",
-    "examLine": "Em {{days}} dias · prontidão {{readiness}}%"
+    "examLine": "Em {{days}} dias · prontidão {{readiness}}%",
+    "examLineShort_one": "Em {{count}} dia",
+    "examLineShort_other": "Em {{count}} dias"
   },
   "add": {
     "title": "O que vamos adicionar?",

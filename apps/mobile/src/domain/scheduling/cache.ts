@@ -8,12 +8,14 @@ export interface CacheCard {
   readonly status: CardStatus;
   readonly deletedAt: Date | null;
   readonly importance: Importance;
+  readonly collectionId: string;
 }
 
 export interface CacheRow {
   /** Ativo e não excluído: entra na tela Hoje e no agendador. */
   readonly isActive: 0 | 1;
   readonly importance: Importance;
+  readonly collectionId: string;
   /** Última revisão + S dias: R ≥ 90% até lá (RN-06). */
   readonly retainedUntil: number | null; // ms UTC
 }
@@ -22,6 +24,7 @@ export function cacheRow(card: CacheCard, state: CardState): CacheRow {
   return {
     isActive: card.status === "active" && card.deletedAt === null ? 1 : 0,
     importance: card.importance,
+    collectionId: card.collectionId,
     retainedUntil: retainedUntilMs(state),
   };
 }

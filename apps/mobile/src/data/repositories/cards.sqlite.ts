@@ -127,7 +127,7 @@ export class SqliteCardsRepository implements CardsRepository {
   watchToday(now: Date): Subscribable<TodaySummary> {
     return this.watch(["cards", "card_states"], async () => {
       // Contagens servidas só pelos índices (is_active, retained_until); vencidos pelo índice (is_active, due).
-      const [active, retained, dueRows] = await Promise.all([
+      const [active, retained, dueRows, perCollection] = await Promise.all([
         this.db.select({ n: count() }).from(cardStates).where(eq(cardStates.isActive, 1)),
         this.db
           .select({ n: count() })
@@ -136,6 +136,7 @@ export class SqliteCardsRepository implements CardsRepository {
         this.db
           .select({
             id: cardStates.cardId,
+            collectionId: cardStates.collectionId,
             importance: cardStates.importance,
             due: cardStates.due,
             stability: cardStates.stability,
@@ -143,8 +144,26 @@ export class SqliteCardsRepository implements CardsRepository {
           })
           .from(cardStates)
           .where(and(eq(cardStates.isActive, 1), lte(cardStates.due, now))),
+        this.db
+          .select({
+            collectionId: cardStates.collectionId,
+            active: count(),
+            retained: sql<number>`coalesce(sum(case when ${cardStates.retainedUntil} >= ${now.getTime()} then 1 else 0 end), 0)`,
+          })
+          .from(cardStates)
+          .where(eq(cardStates.isActive, 1))
+          .groupBy(cardStates.collectionId),
       ]);
-      return { activeCount: active[0]?.n ?? 0, retainedCount: retained[0]?.n ?? 0, dueRows };
+      return {
+        byCollection: perCollection.flatMap((r) =>
+          r.collectionId === null
+            ? []
+            : [{ collectionId: r.collectionId, active: r.active, retained: Number(r.retained) }],
+        ),
+        activeCount: active[0]?.n ?? 0,
+        retainedCount: retained[0]?.n ?? 0,
+        dueRows,
+      };
     });
   }
 
@@ -253,6 +272,7 @@ export class SqliteCardsRepository implements CardsRepository {
       scheduledDays: state.scheduledDays,
       lastReview: state.lastReview,
       isActive: row.isActive,
+      collectionId: row.collectionId,
       importance: row.importance,
       retainedUntil: row.retainedUntil === null ? null : new Date(row.retainedUntil),
     };
@@ -323,11 +343,16 @@ export class SqliteCardsRepository implements CardsRepository {
                   ...s,
                   isActive: c.deletedAt ? 0 : 1,
                   importance: c.importance,
+                  collectionId: c.collectionId,
                 })),
               )
               .onConflictDoUpdate({
                 target: cardStates.cardId,
-                set: { isActive: sqlExcluded("is_active"), importance: sqlExcluded("importance") },
+                set: {
+                  isActive: sqlExcluded("is_active"),
+                  importance: sqlExcluded("importance"),
+                  collectionId: sqlExcluded("collection_id"),
+                },
               }),
           );
         }

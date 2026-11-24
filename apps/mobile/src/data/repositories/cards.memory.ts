@@ -75,7 +75,16 @@ export class InMemoryCardsRepository implements CardsRepository {
     return this.watch(() => {
       const act = this.active();
       const day = 86_400_000;
+      const groups = new Map<string, { active: number; retained: number }>();
+      for (const { card, state } of act) {
+        const g = groups.get(card.collectionId) ?? { active: 0, retained: 0 };
+        g.active += 1;
+        if (state.lastReview !== null && now.getTime() <= state.lastReview.getTime() + state.stability * day)
+          g.retained += 1;
+        groups.set(card.collectionId, g);
+      }
       return {
+        byCollection: [...groups.entries()].map(([collectionId, g]) => ({ collectionId, ...g })),
         activeCount: act.length,
         retainedCount: act.filter(
           ({ state }) =>
@@ -85,6 +94,7 @@ export class InMemoryCardsRepository implements CardsRepository {
           .filter(({ state }) => state.due.getTime() <= now.getTime())
           .map(({ card, state }) => ({
             id: card.id,
+            collectionId: card.collectionId,
             importance: card.importance,
             due: state.due,
             stability: state.stability,

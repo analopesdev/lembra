@@ -11,6 +11,7 @@ export interface Subscribable<T> {
 /** Colunas mínimas para a tela Hoje e a montagem da sessão (RN-01, RN-02, RN-06): sem texto do card. */
 export interface ScheduleRow {
   readonly id: Id;
+  readonly collectionId: Id | null;
   readonly importance: 1 | 2 | 3;
   readonly due: Date;
   readonly stability: number;
@@ -18,7 +19,14 @@ export interface ScheduleRow {
 }
 
 /** Entrada da tela Hoje: contagens indexadas + só os cards vencidos (não todos os ativos). */
+export interface CollectionStats {
+  readonly collectionId: Id;
+  readonly active: number;
+  readonly retained: number;
+}
+
 export interface TodaySummary {
+  readonly byCollection: readonly CollectionStats[];
   readonly activeCount: number;
   /** Cards ativos com R ≥ 90% agora (RN-06). */
   readonly retainedCount: number;

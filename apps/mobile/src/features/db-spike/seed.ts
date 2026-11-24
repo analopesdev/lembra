@@ -57,6 +57,7 @@ export async function seedCards(repo: SqliteCardsRepository, db: AppDb, n: numbe
         lastReview: new Date(now.getTime() - lastDaysAgo * DAY),
         isActive: c.status === "active" ? 1 : 0,
         importance: c.importance,
+        collectionId: c.collectionId,
         retainedUntil: new Date(now.getTime() - lastDaysAgo * DAY + stability * DAY),
       };
     });

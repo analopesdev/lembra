@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 
 import { getContainer } from "@/data/container";
+import type { TodaySummary } from "@/data/repositories/cards";
+import type { Collection } from "@/domain/types";
 
+import { buildTodayModel } from "./buildModel";
 import type { TodayModel } from "./model";
 
-const DEFAULT_SESSION_MINUTES = 10;
-const DEFAULT_RETENTION_TARGET = 90;
+const SESSION_MINUTES = 10;
+const NEW_CARDS_PER_DAY = 5;
+const RETENTION_TARGET_PCT = 90;
 
 const EMPTY: TodayModel = {
   userName: "",
@@ -13,10 +17,10 @@ const EMPTY: TodayModel = {
   memoryRatio: 0,
   streakDays: null,
   retentionPct: null,
-  retentionTargetPct: DEFAULT_RETENTION_TARGET,
+  retentionTargetPct: RETENTION_TARGET_PCT,
   week: [],
   dueCount: 0,
-  sessionMinutes: DEFAULT_SESSION_MINUTES,
+  sessionMinutes: SESSION_MINUTES,
   caughtUpInDays: null,
   collections: [],
   exam: null,
@@ -25,22 +29,40 @@ const EMPTY: TodayModel = {
 export function useTodayModel(): TodayModel {
   const [model, setModel] = useState<TodayModel>(EMPTY);
   useEffect(() => {
-    let off: (() => void) | null = null;
     let cancelled = false;
-    void getContainer().then(({ cards, now }) => {
+    const offs: (() => void)[] = [];
+    void getContainer().then(({ cards, collections, now }) => {
       if (cancelled) return;
-      off = cards.watchToday(now()).subscribe((s) =>
-        setModel({
-          ...EMPTY,
-          memoryRetained: s.retainedCount,
-          memoryRatio: s.activeCount === 0 ? 0 : s.retainedCount / s.activeCount,
-          dueCount: s.dueRows.length,
+      let summary: TodaySummary | null = null;
+      let list: readonly Collection[] | null = null;
+      const publish = () => {
+        if (!summary || !list) return;
+        setModel(
+          buildTodayModel({
+            summary,
+            collections: list,
+            now: now(),
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            sessionMinutes: SESSION_MINUTES,
+            newCardsLeftToday: NEW_CARDS_PER_DAY,
+            retentionTargetPct: RETENTION_TARGET_PCT,
+          }),
+        );
+      };
+      offs.push(
+        cards.watchToday(now()).subscribe((s) => {
+          summary = s;
+          publish();
+        }),
+        collections.watchAll().subscribe((c) => {
+          list = c;
+          publish();
         }),
       );
     });
     return () => {
       cancelled = true;
-      off?.();
+      for (const off of offs) off();
     };
   }, []);
   return model;

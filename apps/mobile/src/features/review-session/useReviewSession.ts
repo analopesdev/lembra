@@ -29,6 +29,7 @@ export type ReviewStatus = "loading" | "empty" | "active" | "finished";
 export interface ReviewSession {
   status: ReviewStatus;
   card: Card | null;
+  collectionName: string;
   isRetry: boolean;
   position: { current: number; total: number };
   phase: "front" | "back";
@@ -54,6 +55,7 @@ export function useReviewSession(): ReviewSession {
   const [state, setState] = useState<SessionState | null>(null);
   const [status, setStatus] = useState<ReviewStatus>("loading");
   const [card, setCard] = useState<Card | null>(null);
+  const [collectionName, setCollectionName] = useState("");
   const [total, setTotal] = useState(0);
   const [now, setNow] = useState(0);
   const [memory, setMemory] = useState({ before: 0, after: 0 });
@@ -94,8 +96,11 @@ export function useReviewSession(): ReviewSession {
   useEffect(() => {
     if (!container || !currentId) return;
     let cancelled = false;
-    void container.cards.get(currentId).then((c) => {
-      if (!cancelled) setCard(c);
+    void container.cards.get(currentId).then(async (c) => {
+      const collection = c ? await container.collections.get(c.collectionId) : null;
+      if (cancelled) return;
+      setCard(c);
+      setCollectionName(collection?.name ?? "");
     });
     return () => {
       cancelled = true;
@@ -150,6 +155,7 @@ export function useReviewSession(): ReviewSession {
   return {
     status,
     card: item ? card : null,
+    collectionName,
     isRetry: item?.retry ?? false,
     position: { current: done ? Math.min(total, done.reviewed + 1) : 0, total },
     phase: state?.phase ?? "front",
