@@ -26,6 +26,11 @@ export function makeCard(n: number, over: Partial<Card> = {}): Card {
     collectionId: "col-1",
     front: `frente ${n}`,
     back: `verso ${n}`,
+    frontDoc: null,
+    backDoc: null,
+    kind: "basic",
+    direction: "forward",
+    pairId: null,
     tags: ["a", "b"],
     importance: 2,
     status: "active",
@@ -550,6 +555,31 @@ export const cardsContract: readonly ContractCase[] = [
         "retry não muda o estado; rebuild bate com o incremental",
       );
       eq((await repo.listAllReviews()).length, 3, "três no histórico");
+    },
+  },
+  {
+    name: "conteúdo rico, tipo, direção e par do invertido fazem roundtrip e podem ser atualizados",
+    async run({ repo, setNow }) {
+      setNow(T0);
+      const main = makeCard(1, {
+        kind: "reversed",
+        frontDoc: '{"type":"doc","v":1,"content":[]}',
+        backDoc: null,
+      });
+      const companion = makeCard(2, {
+        kind: "reversed",
+        direction: "reverse",
+        pairId: main.id,
+        front: main.back,
+        back: main.front,
+      });
+      await repo.saveMany([main, companion]);
+      eq(await repo.get(main.id), main, "principal");
+      eq(await repo.get(companion.id), companion, "companheiro");
+      await repo.save({ ...main, frontDoc: null, kind: "basic" });
+      const back = await repo.get(main.id);
+      assert(back && back.frontDoc === null && back.kind === "basic", "atualiza tipo e conteúdo");
+      eq((await repo.get(companion.id))?.pairId, main.id, "par preservado");
     },
   },
 ];

@@ -144,4 +144,38 @@ describe("backup: exportar e restaurar (RF-45)", () => {
         settings: false,
       });
   });
+
+  it("tipo, conteúdo rico e par do invertido sobrevivem ao backup", async () => {
+    const a = world();
+    await a.collections.save(makeCollection(1, { id: "col-1" }));
+    const main = makeCard(1, { kind: "reversed", frontDoc: '{"type":"doc","v":1,"content":[]}' });
+    const companion = makeCard(2, { kind: "reversed", direction: "reverse", pairId: main.id });
+    await a.cards.saveMany([main, companion]);
+    const parsed = parseBackup(serializeBackup(await createBackup(a)));
+    if (!parsed.ok) throw new Error(parsed.error);
+    const b = world();
+    await restoreBackup(b, parsed.file);
+    expect(await b.cards.get(main.id)).toEqual(main);
+    expect(await b.cards.get(companion.id)).toEqual(companion);
+  });
+
+  it("backup antigo, sem os campos novos, restaura como card básico", async () => {
+    const a = world();
+    await a.collections.save(makeCollection(1, { id: "col-1" }));
+    await a.cards.save(makeCard(1));
+    const file = await createBackup(a);
+    const old = JSON.parse(serializeBackup(file));
+    for (const c of old.cards)
+      for (const k of ["frontDoc", "backDoc", "kind", "direction", "pairId"]) delete c[k];
+    const parsed = parseBackup(JSON.stringify(old));
+    if (!parsed.ok) throw new Error(parsed.error);
+    const b = world();
+    await restoreBackup(b, parsed.file);
+    expect(await b.cards.get(makeCard(1).id)).toMatchObject({
+      kind: "basic",
+      direction: "forward",
+      pairId: null,
+      frontDoc: null,
+    });
+  });
 });

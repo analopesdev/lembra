@@ -6,12 +6,19 @@ export type Id = string; // UUIDv7 (ADR-0009)
 
 export type CardStatus = "draft" | "active" | "suspended" | "problematic";
 export type Importance = 1 | 2 | 3;
+export type CardKind = "basic" | "reversed" | "cloze" | "type";
+export type CardDirection = "forward" | "reverse";
 
 export interface Card {
   readonly id: Id;
   readonly collectionId: Id;
   readonly front: string;
   readonly back: string;
+  readonly frontDoc: string | null;
+  readonly backDoc: string | null;
+  readonly kind: CardKind;
+  readonly direction: CardDirection;
+  readonly pairId: Id | null;
   readonly tags: readonly string[];
   readonly importance: Importance;
   readonly status: CardStatus;

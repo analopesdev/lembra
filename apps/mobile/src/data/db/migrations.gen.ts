@@ -37,5 +37,12 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   ],
   [
     "SELECT 1;"
+  ],
+  [
+    "ALTER TABLE `cards` ADD `front_doc` text;",
+    "ALTER TABLE `cards` ADD `back_doc` text;",
+    "ALTER TABLE `cards` ADD `kind` text DEFAULT 'basic' NOT NULL;",
+    "ALTER TABLE `cards` ADD `direction` text DEFAULT 'forward' NOT NULL;",
+    "ALTER TABLE `cards` ADD `pair_id` text;"
   ]
 ];
