@@ -8,6 +8,7 @@ export { ProgressBar } from "./ProgressBar";
 export { Ring } from "./Ring";
 export { Sheet } from "./Sheet";
 export { Tag } from "./Tag";
+export { Toggle } from "./Toggle";
 export { Num, Text } from "./Text";
 export { fonts, radius, space, themes, type } from "./theme";
 export { useTheme, useThemeName, type Colors } from "./useTheme";

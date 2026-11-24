@@ -163,5 +163,30 @@
       "collection_missing": "Escolha uma coleção."
     },
     "saved": "Card salvo"
+  },
+  "feedback": {
+    "title": "Fale com a gente",
+    "back": "Voltar",
+    "headline": "O que podemos melhorar?",
+    "lead": "Sugestão, problema ou reclamação: tudo chega para quem faz o app.",
+    "type": "Tipo",
+    "types": {
+      "suggestion": "Sugestão",
+      "problem": "Problema",
+      "complaint": "Reclamação"
+    },
+    "message": "Mensagem",
+    "counter": "{{count}} / {{max}}",
+    "attach": "Anexar print da tela (opcional)",
+    "device": "Incluir dados do aparelho",
+    "deviceHint": "Versão do app e sistema. Nada dos seus cards.",
+    "send": "Enviar",
+    "replyTo": "A resposta vai para {{email}}",
+    "sent": "Mensagem enviada. Obrigada!",
+    "errors": {
+      "empty": "Escreva a sua mensagem.",
+      "too_long": "A mensagem pode ter até {{max}} caracteres.",
+      "failed": "Não foi possível enviar. Tente de novo."
+    }
   }
 }
