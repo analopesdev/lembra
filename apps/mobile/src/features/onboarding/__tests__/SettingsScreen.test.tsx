@@ -24,15 +24,62 @@ const setup = () => {
   return { repo, onDone: jest.fn() };
 };
 
+const press = async (name: string) =>
+  act(async () => fireEvent.press(await screen.findByRole("button", { name })));
+
 describe("SettingsScreen (Primeiros ajustes, RF-01)", () => {
-  it("começa em 10 min; escolher 15 e Começar salva e conclui", async () => {
+  it("três passos: tempo, folga e meta; Comprometo-me salva tudo e conclui", async () => {
+    const { repo, onDone } = setup();
+    await render(<SettingsScreen onDone={onDone} />);
+    await fireEvent.press(screen.getByRole("radio", { name: "15 minutos por dia" }));
+    await press("Continuar");
+    expect(await screen.findByText("Quando você quer descansar?")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Domingo" }));
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Quarta" }));
+    await press("Continuar");
+    expect(await screen.findByText("Para que você está estudando?")).toBeTruthy();
+    await fireEvent.changeText(screen.getByLabelText("Minha meta"), "  Passar na prova  ");
+    expect(
+      screen.getByText("15 minutos por dia, com folga às quartas e aos domingos, até lembrar o que importa."),
+    ).toBeTruthy();
+    await press("Comprometo-me");
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect(await repo.get()).toMatchObject({
+      dailyMinutes: 15,
+      offWeekdays: [3, 7],
+      goalText: "Passar na prova",
+    });
+    expect((await repo.pendingOutbox()).map((e) => e.entity)).toEqual(["settings"]);
+  });
+
+  it("Voltar retorna ao passo anterior e Pular só existe no primeiro passo", async () => {
+    const { onDone } = setup();
+    await render(<SettingsScreen onDone={onDone} onBack={() => undefined} />);
+    await press("Continuar");
+    expect(screen.queryByRole("button", { name: "Pular" })).toBeNull();
+    await press("Voltar");
+    expect(await screen.findByText("Oi! Quanto tempo por dia?")).toBeTruthy();
+    expect(onDone).not.toHaveBeenCalled();
+  });
+
+  it("sem folgas, o compromisso diz que não há folga fixa", async () => {
+    setup();
+    await render(<SettingsScreen onDone={() => undefined} />);
+    await press("Continuar");
+    await press("Continuar");
+    expect(screen.getByText("10 minutos por dia, sem folga fixa, até lembrar o que importa.")).toBeTruthy();
+  });
+
+  it("começa em 10 min; escolher 15 e concluir salva", async () => {
     const { repo, onDone } = setup();
     await render(<SettingsScreen onDone={onDone} />);
     expect(screen.getByRole("radio", { name: "10 minutos por dia" }).props.accessibilityState.selected).toBe(
       true,
     );
     await fireEvent.press(screen.getByRole("radio", { name: "15 minutos por dia" }));
-    await act(async () => fireEvent.press(screen.getByRole("button", { name: "Começar" })));
+    await press("Continuar");
+    await press("Continuar");
+    await press("Comprometo-me");
     await waitFor(() => expect(onDone).toHaveBeenCalled());
     expect((await repo.get())?.dailyMinutes).toBe(15);
     expect((await repo.pendingOutbox()).map((e) => e.entity)).toEqual(["settings"]);
@@ -57,7 +104,9 @@ describe("SettingsScreen (Primeiros ajustes, RF-01)", () => {
       ).toBe(true),
     );
     await fireEvent.press(screen.getByRole("radio", { name: "5 minutos por dia" }));
-    await act(async () => fireEvent.press(screen.getByRole("button", { name: "Começar" })));
+    await press("Continuar");
+    await press("Continuar");
+    await press("Comprometo-me");
     await waitFor(() => expect(onDone).toHaveBeenCalled());
     expect(await repo.get()).toMatchObject({ dailyMinutes: 5, offWeekdays: [7], goalText: "Meta" });
   });
