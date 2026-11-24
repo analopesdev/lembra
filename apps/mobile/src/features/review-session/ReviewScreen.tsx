@@ -33,6 +33,7 @@ export function ReviewScreen({ onExit, onEditCard, reloadSignal }: Props) {
         back: card.back,
         isRetry: session.isRetry,
       }}
+      intervals={session.intervals}
       phase={session.phase}
       elapsedRatio={session.elapsedRatio}
       remainingLabel={mmss(session.remainingMs)}

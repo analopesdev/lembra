@@ -55,6 +55,11 @@ function newRepo() {
 const press = async (name: string) =>
   act(async () => fireEvent.press(await screen.findByRole("button", { name })));
 
+const pressGrade = async (name: string) => {
+  await act(async () => fireEvent.press(await screen.findByRole("radio", { name })));
+  await press("Próximo card");
+};
+
 describe("ReviewScreen: sessão clássica ponta a ponta", () => {
   it("sem cards vencidos mostra o estado vazio", async () => {
     newRepo();
@@ -72,11 +77,11 @@ describe("ReviewScreen: sessão clássica ponta a ponta", () => {
     expect(await screen.findByText("Anatomia I")).toBeTruthy();
     await press("Mostrar resposta");
     expect(await screen.findByText("verso 1")).toBeTruthy();
-    await press("Bom");
+    await pressGrade("Bom");
     await waitFor(async () => expect((await repo.getState(makeCard(1).id))?.reps).toBe(1));
     expect(await screen.findByText("frente 2")).toBeTruthy();
     await press("Mostrar resposta");
-    await press("Fácil");
+    await pressGrade("Fácil");
     expect(await screen.findByText("Sessão concluída")).toBeTruthy();
     expect(screen.getByText("Cards revisados")).toBeTruthy();
     expect(screen.getByText("Acertos")).toBeTruthy();
@@ -91,14 +96,14 @@ describe("ReviewScreen: sessão clássica ponta a ponta", () => {
     await render(<ReviewScreen onExit={() => undefined} />);
     await screen.findByText("frente 1");
     await press("Mostrar resposta");
-    await press("Errei");
+    await pressGrade("Errei");
     await screen.findByText("frente 2");
     await press("Mostrar resposta");
-    await press("Bom");
+    await pressGrade("Bom");
     expect(await screen.findByText("frente 1")).toBeTruthy();
     expect(screen.getByText("Você errou este card: ele volta no fim da sessão.")).toBeTruthy();
     await press("Mostrar resposta");
-    await press("Bom");
+    await pressGrade("Bom");
     expect(await screen.findByText("Sessão concluída")).toBeTruthy();
     const log = await repo.listReviews(makeCard(1).id);
     expect(log.map((e) => [e.rating, e.kind])).toEqual([
@@ -116,7 +121,7 @@ describe("ReviewScreen: sessão clássica ponta a ponta", () => {
     await render(<ReviewScreen onExit={() => undefined} />);
     await screen.findByText("frente 1");
     await press("Mostrar resposta");
-    await press("Difícil");
+    await pressGrade("Difícil");
     await screen.findByText("frente 2");
     await press("Encerrar sessão");
     expect(await screen.findByText("Sessão concluída")).toBeTruthy();
