@@ -13,6 +13,7 @@ bin/
 .vscode/
 .cursor/
 *.md
+!README.md
 docs
 e2e/playwright/results/
 test-results/
