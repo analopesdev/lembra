@@ -27,6 +27,14 @@ export default function NewCardPreview() {
         backInit={{ doc: null, text: "" }}
         onFrontRich={() => undefined}
         onBackRich={() => undefined}
+        frontDoc={null}
+        backDoc={null}
+        mediaUris={{}}
+        onFrontImage={noop}
+        onFrontAudio={noop}
+        onBackImage={noop}
+        onBackAudio={noop}
+        onRemoveMedia={noop}
         kind="basic"
         onKind={() => undefined}
         front="Qual músculo é o principal flexor do cotovelo?"

@@ -224,7 +224,8 @@
       "list": "Lista",
       "math": "Fórmula",
       "image": "Imagem",
-      "audio": "Áudio"
+      "audio": "Áudio",
+      "remove": "Remover {{name}}"
     }
   },
   "feedback": {

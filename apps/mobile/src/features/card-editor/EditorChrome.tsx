@@ -41,6 +41,8 @@ export function FormatToolbar({
   onBold,
   onItalic,
   onList,
+  onImage,
+  onAudio,
 }: {
   bold?: boolean;
   italic?: boolean;
@@ -48,6 +50,8 @@ export function FormatToolbar({
   onBold: () => void;
   onItalic: () => void;
   onList: () => void;
+  onImage?: () => void;
+  onAudio?: () => void;
 }) {
   const t = useTheme();
   const { t: tr } = useTranslation();
@@ -66,12 +70,16 @@ export function FormatToolbar({
         <Icon icon={Sigma} size={18} />
       </ToolButton>
       <View style={styles.flex} />
-      <ToolButton label={`${tr("card.tools.image")}, ${tr("add.soon")}`} disabled>
-        <Icon icon={ImageIcon} size={18} />
-      </ToolButton>
-      <ToolButton label={`${tr("card.tools.audio")}, ${tr("add.soon")}`} disabled>
-        <Icon icon={Mic} size={18} />
-      </ToolButton>
+      {onImage ? (
+        <ToolButton label={tr("card.tools.image")} onPress={onImage}>
+          <Icon icon={ImageIcon} size={18} />
+        </ToolButton>
+      ) : null}
+      {onAudio ? (
+        <ToolButton label={tr("card.tools.audio")} onPress={onAudio}>
+          <Icon icon={Mic} size={18} />
+        </ToolButton>
+      ) : null}
     </View>
   );
 }

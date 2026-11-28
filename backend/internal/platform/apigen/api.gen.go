@@ -14,9 +14,33 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
+
+// Defines values for CreateMediaRequestKind.
+const (
+	Audio CreateMediaRequestKind = "audio"
+	Image CreateMediaRequestKind = "image"
+	Video CreateMediaRequestKind = "video"
+)
+
+// Valid indicates whether the value is a known member of the CreateMediaRequestKind enum.
+func (e CreateMediaRequestKind) Valid() bool {
+	switch e {
+	case Audio:
+		return true
+	case Image:
+		return true
+	case Video:
+		return true
+	default:
+		return false
+	}
+}
 
 // Defines values for HealthStatus.
 const (
@@ -33,6 +57,19 @@ func (e HealthStatus) Valid() bool {
 	}
 }
 
+// CreateMediaRequest defines model for CreateMediaRequest.
+type CreateMediaRequest struct {
+	ByteSize    int64  `json:"byteSize"`
+	ContentType string `json:"contentType"`
+
+	// Id Id gerado no aparelho. Sem ele, o servidor gera um.
+	Id   *openapi_types.UUID    `json:"id,omitempty"`
+	Kind CreateMediaRequestKind `json:"kind"`
+}
+
+// CreateMediaRequestKind defines model for CreateMediaRequest.Kind.
+type CreateMediaRequestKind string
+
 // Health defines model for Health.
 type Health struct {
 	Status HealthStatus `json:"status"`
@@ -40,6 +77,21 @@ type Health struct {
 
 // HealthStatus defines model for Health.Status.
 type HealthStatus string
+
+// MediaDownload defines model for MediaDownload.
+type MediaDownload struct {
+	ExpiresAt time.Time          `json:"expiresAt"`
+	Id        openapi_types.UUID `json:"id"`
+	Url       string             `json:"url"`
+}
+
+// MediaUpload defines model for MediaUpload.
+type MediaUpload struct {
+	ExpiresAt time.Time          `json:"expiresAt"`
+	Id        openapi_types.UUID `json:"id"`
+	Key       string             `json:"key"`
+	UploadUrl string             `json:"uploadUrl"`
+}
 
 // Problem RFC 9457 problem details
 type Problem struct {
@@ -50,11 +102,20 @@ type Problem struct {
 	Type     *string `json:"type,omitempty"`
 }
 
+// CreateMediaUploadJSONRequestBody defines body for CreateMediaUpload for application/json ContentType.
+type CreateMediaUploadJSONRequestBody = CreateMediaRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// GetHealth Verifica se a API está no ar
 	// (GET /v1/health)
 	GetHealth(w http.ResponseWriter, r *http.Request)
+	// CreateMediaUpload Cria um id de mídia e uma URL assinada de envio
+	// (POST /v1/media)
+	CreateMediaUpload(w http.ResponseWriter, r *http.Request)
+	// GetMedia URL assinada de leitura
+	// (GET /v1/media/{id})
+	GetMedia(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -71,6 +132,46 @@ func (siw *ServerInterfaceWrapper) GetHealth(w http.ResponseWriter, r *http.Requ
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetHealth(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateMediaUpload operation middleware
+func (siw *ServerInterfaceWrapper) CreateMediaUpload(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateMediaUpload(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMedia operation middleware
+func (siw *ServerInterfaceWrapper) GetMedia(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMedia(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -201,6 +302,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	}
 
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/health", wrapper.GetHealth)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/media", wrapper.CreateMediaUpload)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/media/{id}", wrapper.GetMedia)
 
 	return m
 }
@@ -210,13 +313,19 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"lFLNbhMxEH4Va+DGKt5SEMW3CvETiUPEgUvVg+OdZF28thnPRqpW+zB9lr4Ysr0lIgqgnjzy/H0/M4EJ",
-	"QwwePSdQEyTT46BL+AW14z5HkUJEYou1hDWPJUI/DqBuIPyA2wb4PiIoSEzW72GeGyD8OVrCLtcsXce6",
-	"sL1DwzA3sKGwdTjkiR0mQzayDR4UfPv0Qbx/8/adiLVCdMjaugTNCaT6n6MTEA1Yn1h7g2eTRypLynrG",
-	"PVLOsWV3vqt+TP8hXPubvxOfC7pdKKPqMviKw5a0uN6soYEDUqpCtKuLVZtXh4heRwsKLlft6jILobkv",
-	"DOThQva/Ldsj5yeLpLOa6w4UfEZeTM1QUww+Vf1et21+TPCMvjTqGJ01pVXepQzi6TZy9JJwBwpeyOPx",
-	"yOVy5LKh0PvTzuvNWiQ9do8PB3RQ0js9Ov7H6sX4V8+D8HRQZzB8JArFqjQOg6Z7UPAdye6s0SKhKNIL",
-	"TPz4IHwQmuqMhJTNAHUzwUgOFPTMUUnpgtGuD4nVVXvVwnw7/woAAP//",
+	"zFVdbhs3EL4KMe1bt1q5Sdt031z3z0AKGE7dl8APo+VImnhJbsihWlXYw+QAPYUvVpArRStrHaFFGvhp",
+	"ieUM55vvm4/cQO1M6yxZCVBtINRLMpiXF55Q6FfSjNf0NlKQ9Lf1riUvTDlmthZ6xX9RWs+dNyhQAVv5",
+	"5jkUYNiyiQaqswJk3VK/RQvy0BVQOytk5be8sdkFBPFsF2mfdfqtKdSeW2FnoYJLrRbkUTtlncIWPTVL",
+	"N1GvyChqqFBOBfIr1s7nOBXNBIo9sBhZQ3Fc6o5tLkY2oX0NbHBBUABGzQ4KWLEmB7dHmV0Bnt5G9qRT",
+	"Wj7msLFiz9A+3c3eUC2p8C+EjSyPaQ2CEsMQkrs7XX+bNVYoq/iD+8M2DvVxPfqzZU/hXA501Cj0pbCh",
+	"Mc56eU5SG31zGOcZTvWRT0qJxQDYo13dtJ+6pztaj05szEhu/mvH6djhIae6v/Ju1pA5dsn1Txfqu+df",
+	"f6vaPkJpEuQmQPGAov7/uPtsELT1uDX343lsa2FpxrNk3OkPqOjzi8eHucvo5i4f1ReDl2RmHtX51WVy",
+	"K/nQEzGdnE2mqbRryWLLUMGzyXTyLBGBsswdlKuzcvnehgvK45JIwsTmpYYKfibZGjVBDa2zoefvq+k0",
+	"fbaGT0ts24brnFq+CQnE7kpNq889zaGCz8r9nVtuL9xyWyG3dyjn+dWlChj1/bsVNZC35xgb+UDprfBf",
+	"/DsIu4EawfCj9y5LFaIx6NdQwe/kec41qkAqU68oyP27fDP7HJuoNcmi2ZwujFA7eGO2Pu6ngYJ87/T6",
+	"o7E78pZ1h5MnPlJ3pO/ZR0Mw7HGE4Jvrl0qTIrti93Q0vvCcHlHFOoEz939rRkUqGlQJMIbAFjUOkA9l",
+	"Lzesuw+5KnOSzejRkJAPUL3eACc0yaBQgEWTL5jdYOzFKgYdn7iyu9v/0biHT+vj0jbEEj0+HXEfKvge",
+	"YA4jv9rpkd9wWIq0VVk2rsZm6YJUL6YvptDddv8EAAD//w==",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,

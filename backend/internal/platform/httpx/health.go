@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/analopesdev/lembra/backend/internal/modules/media/app"
 	"github.com/analopesdev/lembra/backend/internal/platform/apigen"
 )
 
 // Server implementa apigen.ServerInterface.
-type Server struct{}
+type Server struct {
+	Media    *app.Service
+	LocalDev bool
+}
 
 // GetHealth responde ao health check (GET /v1/health).
 func (Server) GetHealth(w http.ResponseWriter, _ *http.Request) {

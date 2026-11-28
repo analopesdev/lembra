@@ -7,6 +7,7 @@ export { EmptyState } from "./EmptyState";
 export { DEFAULT_GLYPH, GLYPH_BACKGROUNDS, GLYPH_INK, GLYPH_NAMES, Glyph } from "./Glyph";
 export { Icon } from "./Icon";
 export { Input } from "./Input";
+export { KeyboardScroll } from "./KeyboardScroll";
 export { LogoMark } from "./LogoMark";
 export { ProgressBar } from "./ProgressBar";
 export { Ring } from "./Ring";

@@ -13,7 +13,17 @@ import type { RichEditorProps, RichValue } from "./richTypes";
 
 export type { RichValue };
 
-function RichEditorInner({ label, initialDoc, initialText, onChange, error, minHeight = 120 }: RichEditorProps) {
+function RichEditorInner({
+  label,
+  initialDoc,
+  initialText,
+  onChange,
+  error,
+  minHeight = 120,
+  attachments,
+  onImage,
+  onAudio,
+}: RichEditorProps) {
   const t = useTheme();
   const [focused, setFocused] = useState(false);
   const [tick, setTick] = useState(0);
@@ -59,6 +69,7 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
       <View style={{ minHeight, backgroundColor: t.surface }}>
         {editor ? <EditorContent editor={editor} /> : null}
       </View>
+      {attachments}
       <FormatToolbar
         bold={!!editor?.isActive("bold")}
         italic={!!editor?.isActive("italic")}
@@ -66,6 +77,8 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
         onBold={() => editor?.chain().focus().toggleBold().run()}
         onItalic={() => editor?.chain().focus().toggleItalic().run()}
         onList={() => editor?.chain().focus().toggleBulletList().run()}
+        onImage={onImage}
+        onAudio={onAudio}
       />
     </EditorField>
   );
@@ -73,5 +86,9 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
 
 export function RichEditor(props: RichEditorProps) {
   const mounted = useHydrated();
-  return mounted ? <RichEditorInner {...props} /> : <View style={{ minHeight: (props.minHeight ?? 120) + 44 }} />;
+  return mounted ? (
+    <RichEditorInner {...props} />
+  ) : (
+    <View style={{ minHeight: (props.minHeight ?? 120) + 44 }} />
+  );
 }

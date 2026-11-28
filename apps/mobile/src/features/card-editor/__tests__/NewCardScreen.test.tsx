@@ -60,11 +60,23 @@ const mockState: {
   collections: InMemoryCollectionsRepository | null;
 } = { cards: null, collections: null };
 let mockSeq = 0;
+jest.mock("@/data/media/capture", () => ({
+  pickImage: async () => null,
+  pickAudio: async () => null,
+}));
+jest.mock("@/data/media/files", () => ({ storeLocal: async () => ({ path: "", bytes: 0 }) }));
+jest.mock("@/data/media/upload", () => ({ uploadIfPossible: async () => undefined }));
 jest.mock("@/data/container", () => ({
   getContainer: () =>
     Promise.resolve({
       cards: mockState.cards,
       collections: mockState.collections,
+      media: {
+        get: async () => null,
+        save: async () => undefined,
+        markUploaded: async () => undefined,
+        listPending: async () => [],
+      },
       now: () => new Date("2026-03-10T13:00:00Z"),
       newId: () => `card-${mockSeq++}`,
     }),

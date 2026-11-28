@@ -137,6 +137,34 @@ export function mediaIds(doc: ContentDoc): string[] {
   return ids;
 }
 
+export function retainMedia(previous: ContentDoc | null, next: ContentDoc): ContentDoc {
+  const media = (previous?.content ?? []).filter(
+    (b) => b.type === "image" || b.type === "audio" || b.type === "video",
+  );
+  const rest = next.content.filter((b) => b.type !== "image" && b.type !== "audio" && b.type !== "video");
+  return { ...next, content: [...rest, ...media] };
+}
+
+export function removeMedia(doc: ContentDoc, mediaId: string): ContentDoc {
+  return {
+    ...doc,
+    content: doc.content.filter(
+      (b) =>
+        !((b.type === "image" || b.type === "audio" || b.type === "video") && b.attrs.mediaId === mediaId),
+    ),
+  };
+}
+
+export function appendMedia(doc: ContentDoc, kind: "image" | "audio" | "video", mediaId: string): ContentDoc {
+  const block =
+    kind === "image"
+      ? { type: "image" as const, attrs: { mediaId } }
+      : kind === "audio"
+        ? { type: "audio" as const, attrs: { mediaId } }
+        : { type: "video" as const, attrs: { mediaId } };
+  return { ...doc, content: [...doc.content, block] };
+}
+
 export function clozeIds(doc: ContentDoc): number[] {
   const ids = new Set<number>();
   const visit = (nodes: readonly Block[]) => {

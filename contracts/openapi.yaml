@@ -22,6 +22,53 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+  /v1/media:
+    post:
+      operationId: createMediaUpload
+      summary: Cria um id de mídia e uma URL assinada de envio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaRequest"
+      responses:
+        "201":
+          description: URL de envio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaUpload"
+        default:
+          description: Erro
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /v1/media/{id}:
+    get:
+      operationId: getMedia
+      summary: URL assinada de leitura
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: URL de leitura
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaDownload"
+        default:
+          description: Erro
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 components:
   schemas:
     Health:
@@ -31,6 +78,51 @@ components:
         status:
           type: string
           enum: [ok]
+    CreateMediaRequest:
+      type: object
+      required: [kind, contentType, byteSize]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Id gerado no aparelho. Sem ele, o servidor gera um.
+        kind:
+          type: string
+          enum: [image, audio, video]
+        contentType:
+          type: string
+        byteSize:
+          type: integer
+          format: int64
+          minimum: 1
+    MediaUpload:
+      type: object
+      required: [id, key, uploadUrl, expiresAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        key:
+          type: string
+        uploadUrl:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
+    MediaDownload:
+      type: object
+      required: [id, url, expiresAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
     Problem:
       description: RFC 9457 problem details
       type: object

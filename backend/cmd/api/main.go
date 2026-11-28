@@ -12,9 +12,11 @@ import (
 	"time"
 
 	"github.com/analopesdev/lembra/backend/internal/kernel"
+	mediaapp "github.com/analopesdev/lembra/backend/internal/modules/media/app"
 	"github.com/analopesdev/lembra/backend/internal/platform/config"
 	"github.com/analopesdev/lembra/backend/internal/platform/httpx"
 	"github.com/analopesdev/lembra/backend/internal/platform/observ"
+	"github.com/analopesdev/lembra/backend/internal/platform/storage"
 )
 
 func main() {
@@ -32,9 +34,20 @@ func run() error {
 	logger := observ.NewLogger(os.Stdout, cfg.LogLevel)
 	slog.SetDefault(logger)
 
+	clock := kernel.SystemClock{}
+	ids := kernel.UUIDv7Generator{}
+	objects := storage.New(storage.Config{
+		Endpoint:     cfg.S3Endpoint,
+		Region:       cfg.S3Region,
+		Bucket:       cfg.S3Bucket,
+		AccessKey:    cfg.S3AccessKey,
+		SecretKey:    cfg.S3SecretKey,
+		UsePathStyle: cfg.S3PathStyle,
+	})
+	media := mediaapp.New(ids, clock, objects)
 	srv := &http.Server{
 		Addr:              cfg.HTTPAddr,
-		Handler:           httpx.NewHandler(logger, kernel.SystemClock{}, kernel.UUIDv7Generator{}),
+		Handler:           httpx.NewHandler(logger, clock, ids, media, cfg.Env, cfg.LocalUserID),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
