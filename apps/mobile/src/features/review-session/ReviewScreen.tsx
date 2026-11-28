@@ -33,6 +33,8 @@ export function ReviewScreen({ onExit, onEditCard, reloadSignal }: Props) {
         frontDoc: card.frontDoc,
         backDoc: card.backDoc,
         back: card.back,
+        kind: card.kind,
+        scheduledDays: session.scheduledDays,
         isRetry: session.isRetry,
       }}
       intervals={session.intervals}

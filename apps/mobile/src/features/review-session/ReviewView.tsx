@@ -1,11 +1,13 @@
-import { ArrowRight, Calendar, Pencil, X } from "lucide-react-native";
-import { useState } from "react";
+import { ArrowRight, Calendar, Check, CircleAlert, Pencil, X } from "lucide-react-native";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated, { Easing, FadeInDown, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 
+import { checkTypedAnswer, type AnswerCheck } from "@/domain/card/answer";
 import type { IntervalPreview, Rating } from "@/domain/scheduling";
-import { Button, Icon, Num, ProgressBar, Text } from "@/shared/ui";
+import type { CardKind } from "@/domain/types";
+import { Button, Icon, Input, KeyboardArea, Num, ProgressBar, Text } from "@/shared/ui";
 import { radius, space } from "@/shared/ui/theme";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -21,6 +23,8 @@ export interface ReviewCardView {
   readonly frontDoc?: string | null;
   readonly backDoc?: string | null;
   readonly isRetry: boolean;
+  readonly kind?: CardKind;
+  readonly scheduledDays?: number;
 }
 
 type Props = {
@@ -57,9 +61,32 @@ export function ReviewView({
   const { t: tr } = useTranslation();
   const revealed = phase === "back";
   const [selection, setSelection] = useState<{ key: string; rating: Rating }>({ key: "", rating: 3 });
+  const [typed, setTyped] = useState<{ key: string; text: string }>({ key: "", text: "" });
+  const [checked, setChecked] = useState<{ key: string; check: AnswerCheck } | null>(null);
   const cardKey = `${card.position.current}-${card.isRetry ? "r" : "n"}`;
-  const rating: Rating = selection.key === cardKey ? selection.rating : 3;
-  const returnsIn = intervals ? intervals[rating] : null;
+  const startedAt = useRef(0);
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, [cardKey]);
+  const typing = card.kind === "type";
+  const cloze = card.kind === "cloze" && !!card.frontDoc;
+  const answer = typed.key === cardKey ? typed.text : "";
+  const check = checked?.key === cardKey ? checked.check : null;
+  const fallbackRating: Rating | null = typing ? (check?.suggested ?? null) : 3;
+  const rating: Rating | null = selection.key === cardKey ? selection.rating : fallbackRating;
+  const returnsIn = intervals && rating !== null ? intervals[rating] : null;
+  const verify = () => {
+    setChecked({
+      key: cardKey,
+      check: checkTypedAnswer({
+        typed: answer,
+        expected: card.back,
+        elapsedMs: Date.now() - startedAt.current,
+        scheduledDays: card.scheduledDays ?? 0,
+      }),
+    });
+    onReveal();
+  };
   const face = [styles.card, { backgroundColor: t.surface, borderColor: t.border }];
   const chips = (
     <View style={styles.chips}>
@@ -76,7 +103,7 @@ export function ReviewView({
     </View>
   );
   return (
-    <View style={[styles.screen, { backgroundColor: t.background }]}>
+    <KeyboardArea style={[styles.screen, { backgroundColor: t.background }]}>
       <View style={styles.top}>
         <Pressable
           accessibilityRole="button"
@@ -120,8 +147,25 @@ export function ReviewView({
                 {chips}
                 <ScrollView contentContainerStyle={styles.body}>
                   <View accessibilityRole="header">
-                    <ContentText doc={card.frontDoc ?? null} fallback={card.front} variant="pergunta" />
+                    <ContentText
+                      doc={card.frontDoc ?? null}
+                      fallback={card.front}
+                      variant="pergunta"
+                      cloze="hide"
+                    />
                   </View>
+                  {typing && !revealed ? (
+                    <Input
+                      label={tr("review.typeLabel")}
+                      placeholder={tr("review.typePlaceholder")}
+                      value={answer}
+                      onChangeText={(text) => setTyped({ key: cardKey, text })}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      returnKeyType="done"
+                      onSubmitEditing={verify}
+                    />
+                  ) : null}
                 </ScrollView>
                 {card.isRetry ? (
                   <Text variant="legenda" tone="textMuted">
@@ -134,19 +178,51 @@ export function ReviewView({
               <View style={face}>
                 {chips}
                 <ScrollView contentContainerStyle={styles.body}>
-                  <Text variant="label" tone="textMuted" numberOfLines={3}>
-                    {card.front}
-                  </Text>
-                  <View style={[styles.rule, { backgroundColor: t.border }]} />
+                  {cloze ? null : (
+                    <>
+                      <Text variant="label" tone="textMuted" numberOfLines={3}>
+                        {card.front}
+                      </Text>
+                      <View style={[styles.rule, { backgroundColor: t.border }]} />
+                    </>
+                  )}
+                  {typing && check ? (
+                    <View style={styles.yours}>
+                      <Text variant="legenda" tone="textMuted" style={styles.kicker}>
+                        {tr("review.yourAnswer")}
+                      </Text>
+                      <Text variant="corpo">{answer.trim() === "" ? tr("review.noAnswer") : answer}</Text>
+                      <View style={styles.verdict}>
+                        <Icon
+                          icon={check.result === "exact" ? Check : CircleAlert}
+                          size={14}
+                          color={check.result === "exact" ? "success" : "textMuted"}
+                        />
+                        <Text variant="legenda" tone={check.result === "exact" ? "success" : "textMuted"}>
+                          {check.result === "exact" ? tr("review.exact") : tr("review.different")}
+                        </Text>
+                      </View>
+                    </View>
+                  ) : null}
                   <Text variant="legenda" tone="textMuted" style={styles.kicker}>
                     {tr("review.correctAnswer")}
                   </Text>
-                  <ContentText
-                    doc={card.backDoc ?? null}
-                    fallback={card.back}
-                    variant="subtitulo"
-                    style={styles.answer}
-                  />
+                  {cloze ? (
+                    <ContentText
+                      doc={card.frontDoc ?? null}
+                      fallback={card.back}
+                      variant="subtitulo"
+                      style={styles.answer}
+                      cloze="reveal"
+                    />
+                  ) : (
+                    <ContentText
+                      doc={card.backDoc ?? null}
+                      fallback={card.back}
+                      variant="subtitulo"
+                      style={styles.answer}
+                    />
+                  )}
                   {returnsIn !== null && !card.isRetry ? (
                     <View style={[styles.returns, { backgroundColor: t.successTint }]}>
                       <Icon icon={Calendar} size={14} color="success" />
@@ -167,7 +243,7 @@ export function ReviewView({
       {revealed ? (
         <Animated.View entering={FadeInDown.duration(260)} style={styles.gradeArea}>
           <Text variant="legenda" tone="textMuted" style={styles.warning}>
-            {tr("review.gradeWarning")}
+            {rating === null ? tr("review.pickGrade") : tr("review.gradeWarning")}
           </Text>
           <View
             accessibilityRole="radiogroup"
@@ -203,20 +279,23 @@ export function ReviewView({
           </View>
           <Button
             label={tr("review.next")}
-            onPress={() => onGrade(rating)}
+            onPress={() => {
+              if (rating !== null) onGrade(rating);
+            }}
+            disabled={rating === null}
             trailing={<Icon icon={ArrowRight} size={20} color="onButton" strokeWidth={2.2} />}
           />
         </Animated.View>
       ) : (
         <Animated.View exiting={FadeOut.duration(120)}>
           <Button
-            label={tr("review.show")}
-            onPress={onReveal}
+            label={typing ? tr("review.check") : tr("review.show")}
+            onPress={typing ? verify : onReveal}
             leading={<Icon icon={ArrowRight} size={20} color="onButton" strokeWidth={2.2} />}
           />
         </Animated.View>
       )}
-    </View>
+    </KeyboardArea>
   );
 }
 
@@ -242,6 +321,8 @@ const styles = StyleSheet.create({
   chipText: { fontWeight: "700" },
   body: { flexGrow: 1, justifyContent: "center", gap: space.lg },
   rule: { height: 1 },
+  yours: { gap: 6 },
+  verdict: { flexDirection: "row", alignItems: "center", gap: 6 },
   kicker: { fontWeight: "700", letterSpacing: 0.72, textTransform: "uppercase" },
   answer: { fontSize: 21, lineHeight: 27, fontWeight: "700" },
   gradeArea: { gap: space.md },

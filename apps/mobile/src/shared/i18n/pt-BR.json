@@ -108,7 +108,16 @@
     "next": "Próximo card",
     "returnsIn_one": "Volta em {{count}} dia",
     "returnsIn_other": "Volta em {{count}} dias",
-    "returnsToday": "Volta hoje"
+    "returnsToday": "Volta hoje",
+    "blank": "lacuna",
+    "typeLabel": "Sua resposta",
+    "typePlaceholder": "Digite antes de ver o verso",
+    "check": "Verificar",
+    "yourAnswer": "Sua resposta",
+    "noAnswer": "Sem resposta",
+    "exact": "Igual ao gabarito",
+    "different": "Diferente do gabarito: compare e escolha a nota",
+    "pickGrade": "Escolha a nota para continuar"
   },
   "collection": {
     "newTitle": "Nova coleção",

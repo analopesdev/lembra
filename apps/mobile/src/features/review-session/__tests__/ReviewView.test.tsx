@@ -1,3 +1,4 @@
+import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
 import { ReviewView } from "../ReviewView";
@@ -85,5 +86,81 @@ describe("ReviewView (modo clássico)", () => {
     expect(screen.getByText("Você errou este card: ele volta no fim da sessão.")).toBeTruthy();
     await fireEvent.press(screen.getByRole("button", { name: "Encerrar sessão" }));
     expect(onClose).toHaveBeenCalled();
+  });
+});
+
+function Harness(props: { card: Parameters<typeof ReviewView>[0]["card"]; onGrade: (r: number) => void }) {
+  const [phase, setPhase] = React.useState<"front" | "back">("front");
+  return (
+    <ReviewView
+      card={props.card}
+      phase={phase}
+      elapsedRatio={0}
+      remainingLabel="5:00"
+      onClose={noop}
+      onReveal={() => setPhase("back")}
+      onGrade={props.onGrade}
+    />
+  );
+}
+
+describe("ReviewView por tipo de card (RF-10, RF-51)", () => {
+  it("Digitar: resposta igual ao gabarito sugere Bom", async () => {
+    const onGrade = jest.fn();
+    await render(<Harness card={{ ...card, kind: "type" }} onGrade={onGrade} />);
+    expect(screen.queryByRole("button", { name: "Mostrar resposta" })).toBeNull();
+    await fireEvent.changeText(screen.getByLabelText("Sua resposta"), "braquial");
+    await fireEvent.press(screen.getByRole("button", { name: "Verificar" }));
+    expect(screen.getByText("Igual ao gabarito")).toBeTruthy();
+    expect(screen.getByRole("radio", { name: "Bom" }).props.accessibilityState.selected).toBe(true);
+    await fireEvent.press(screen.getByRole("button", { name: "Próximo card" }));
+    expect(onGrade).toHaveBeenLastCalledWith(3);
+  });
+
+  it("Digitar: resposta diferente pede a nota antes de seguir", async () => {
+    const onGrade = jest.fn();
+    await render(<Harness card={{ ...card, kind: "type" }} onGrade={onGrade} />);
+    await fireEvent.changeText(screen.getByLabelText("Sua resposta"), "bíceps");
+    await fireEvent.press(screen.getByRole("button", { name: "Verificar" }));
+    expect(screen.getByText("Diferente do gabarito: compare e escolha a nota")).toBeTruthy();
+    expect(screen.getByText("Escolha a nota para continuar")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Próximo card" }));
+    expect(onGrade).not.toHaveBeenCalled();
+    await fireEvent.press(screen.getByRole("radio", { name: "Errei" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Próximo card" }));
+    expect(onGrade).toHaveBeenLastCalledWith(1);
+  });
+
+  it("Lacuna: a frente esconde a lacuna e o verso mostra a frase completa", async () => {
+    const frontDoc = JSON.stringify({
+      type: "doc",
+      v: 1,
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "O nervo " },
+            { type: "cloze", attrs: { id: 1 }, content: [{ type: "text", text: "musculocutâneo" }] },
+            { type: "text", text: " inerva o bíceps." },
+          ],
+        },
+      ],
+    });
+    await render(
+      <Harness
+        card={{
+          ...card,
+          kind: "cloze",
+          front: "O nervo [...] inerva o bíceps.",
+          back: "O nervo musculocutâneo inerva o bíceps.",
+          frontDoc,
+        }}
+        onGrade={noop}
+      />,
+    );
+    expect(screen.queryByText("musculocutâneo")).toBeNull();
+    expect(screen.getByText(" [...] ")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Mostrar resposta" }));
+    expect(screen.getByText("musculocutâneo")).toBeTruthy();
   });
 });

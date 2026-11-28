@@ -32,6 +32,7 @@ export interface ReviewSession {
   isRetry: boolean;
   position: { current: number; total: number };
   intervals: IntervalPreview | null;
+  scheduledDays: number;
   phase: "front" | "back";
   elapsedRatio: number;
   remainingMs: number;
@@ -57,6 +58,7 @@ export function useReviewSession(reloadSignal = 0): ReviewSession {
   const [card, setCard] = useState<Card | null>(null);
   const [collectionName, setCollectionName] = useState("");
   const [intervals, setIntervals] = useState<IntervalPreview | null>(null);
+  const [scheduledDays, setScheduledDays] = useState(0);
   const [total, setTotal] = useState(0);
   const [now, setNow] = useState(0);
   const [memory, setMemory] = useState({ before: 0, after: 0 });
@@ -105,6 +107,7 @@ export function useReviewSession(reloadSignal = 0): ReviewSession {
       if (cancelled) return;
       setCard(c);
       setCollectionName(collection?.name ?? "");
+      setScheduledDays(cardState?.scheduledDays ?? 0);
       setIntervals(
         cardState
           ? previewIntervals(
@@ -173,6 +176,7 @@ export function useReviewSession(reloadSignal = 0): ReviewSession {
     isRetry: item?.retry ?? false,
     position: { current: done ? Math.min(total, done.reviewed + 1) : 0, total },
     intervals,
+    scheduledDays,
     phase: state?.phase ?? "front",
     elapsedRatio: state ? elapsedRatio(state, now) : 0,
     remainingMs: state ? remainingMs(state, now) : 0,
