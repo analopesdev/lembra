@@ -1,4 +1,12 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, type ScrollViewProps } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  type ScrollViewProps,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 
 export function KeyboardScroll({ children, ...rest }: ScrollViewProps) {
   return (
@@ -10,6 +18,23 @@ export function KeyboardScroll({ children, ...rest }: ScrollViewProps) {
       >
         {children}
       </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+export function KeyboardArea({
+  style,
+  children,
+}: {
+  style?: StyleProp<ViewStyle>;
+  children: React.ReactNode;
+}) {
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "web" ? undefined : "padding"}
+      style={[styles.flex, style]}
+    >
+      {children}
     </KeyboardAvoidingView>
   );
 }

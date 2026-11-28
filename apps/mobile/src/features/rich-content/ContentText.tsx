@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View, type TextStyle } from "react-native";
 
 import { getContainer } from "@/data/container";
 import { parseContent, type ContentDoc } from "@/domain/card/content";
+import { CLOZE_PLACEHOLDER } from "@/domain/card/kind";
 import { Text, type Variant } from "@/shared/ui";
 import { useTheme } from "@/shared/ui/useTheme";
 
@@ -11,12 +13,26 @@ type Props = {
   fallback: string;
   variant?: Variant;
   style?: TextStyle;
+  cloze?: ClozeMode;
 };
+
+export type ClozeMode = "hide" | "reveal";
 
 type Inline = NonNullable<Extract<ContentDoc["content"][number], { type: "paragraph" }>["content"]>[number];
 
-function Runs({ nodes, variant, style }: { nodes: readonly Inline[]; variant: Variant; style?: TextStyle }) {
+function Runs({
+  nodes,
+  variant,
+  style,
+  cloze,
+}: {
+  nodes: readonly Inline[];
+  variant: Variant;
+  style?: TextStyle;
+  cloze: ClozeMode;
+}) {
   const t = useTheme();
+  const { t: tr } = useTranslation();
   return (
     <Text variant={variant} style={style}>
       {nodes.map((n, i) => {
@@ -41,9 +57,15 @@ function Runs({ nodes, variant, style }: { nodes: readonly Inline[]; variant: Va
             </Text>
           );
         }
+        const hidden = cloze === "hide";
         return (
-          <Text key={i} variant={variant} style={style}>
-            {n.content.map((c) => c.text).join("")}
+          <Text
+            key={i}
+            variant={variant}
+            accessibilityLabel={hidden ? tr("review.blank") : undefined}
+            style={[style, styles.cloze, { backgroundColor: t.tint, color: t.onTint }]}
+          >
+            {hidden ? ` ${CLOZE_PLACEHOLDER} ` : n.content.map((c) => c.text).join("")}
           </Text>
         );
       })}
@@ -51,7 +73,7 @@ function Runs({ nodes, variant, style }: { nodes: readonly Inline[]; variant: Va
   );
 }
 
-export function ContentText({ doc, fallback, variant = "corpo", style }: Props) {
+export function ContentText({ doc, fallback, variant = "corpo", style, cloze = "reveal" }: Props) {
   const parsed = parseContent(doc);
   if (!parsed.ok) {
     return (
@@ -65,7 +87,7 @@ export function ContentText({ doc, fallback, variant = "corpo", style }: Props) 
       {parsed.doc.content.map((b, i) => {
         if (b.type === "paragraph") {
           return b.content && b.content.length > 0 ? (
-            <Runs key={i} nodes={b.content} variant={variant} style={style} />
+            <Runs key={i} nodes={b.content} variant={variant} style={style} cloze={cloze} />
           ) : (
             <Text key={i} variant={variant} style={style}>
               {" "}
@@ -82,7 +104,7 @@ export function ContentText({ doc, fallback, variant = "corpo", style }: Props) 
                   </Text>
                   <View style={styles.itemBody}>
                     {item.content.map((p, k) => (
-                      <Runs key={k} nodes={p.content ?? []} variant={variant} style={style} />
+                      <Runs key={k} nodes={p.content ?? []} variant={variant} style={style} cloze={cloze} />
                     ))}
                   </View>
                 </View>
@@ -136,6 +158,7 @@ const styles = StyleSheet.create({
   item: { flexDirection: "row", gap: 8 },
   itemBody: { flex: 1 },
   mono: { fontFamily: "monospace" },
+  cloze: { fontWeight: "800" },
   img: { width: "100%", height: 180 },
   audio: { marginTop: 4 },
 });

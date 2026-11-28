@@ -1,1 +1,1 @@
-export { ContentText } from "./ContentText";
+export { ContentText, type ClozeMode } from "./ContentText";
