@@ -1,13 +1,14 @@
 import { ChevronDown, ChevronLeft } from "lucide-react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import type { ContentDoc } from "@/domain/card/content";
 import { CollectionGlyph } from "@/features/collections";
 import type { CardKind, Collection, Importance } from "@/domain/types";
-import { Button, Icon, Input, Sheet, Text } from "@/shared/ui";
+import { Button, Icon, Input, KeyboardScroll, Sheet, Text } from "@/shared/ui";
 import { space } from "@/shared/ui/theme";
+import { MediaStrip } from "./MediaStrip";
 import { RichEditor } from "./RichEditor";
 import type { RichValue } from "./richTypes";
 import { useTheme } from "@/shared/ui/useTheme";
@@ -19,6 +20,14 @@ type Props = {
   backInit: { doc: ContentDoc | null; text: string };
   onFrontRich: (v: RichValue) => void;
   onBackRich: (v: RichValue) => void;
+  frontDoc: ContentDoc | null;
+  backDoc: ContentDoc | null;
+  mediaUris: Record<string, string>;
+  onFrontImage: () => void;
+  onFrontAudio: () => void;
+  onBackImage: () => void;
+  onBackAudio: () => void;
+  onRemoveMedia: (side: "front" | "back", mediaId: string) => void;
   kind: CardKind;
   onKind: (v: CardKind) => void;
   front: string;
@@ -49,11 +58,7 @@ export function NewCardView(p: Props) {
   const [picking, setPicking] = useState(false);
   const selected = p.collections.find((c) => c.id === p.collectionId);
   return (
-    <ScrollView
-      style={{ backgroundColor: t.background }}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-    >
+    <KeyboardScroll style={{ backgroundColor: t.background }} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Pressable
           accessibilityRole="button"
@@ -127,6 +132,15 @@ export function NewCardView(p: Props) {
             onChange={p.onFrontRich}
             error={p.errors.front}
             minHeight={110}
+            onImage={p.onFrontImage}
+            onAudio={p.onFrontAudio}
+            attachments={
+              <MediaStrip
+                doc={p.frontDoc}
+                uris={p.mediaUris}
+                onRemove={(id) => p.onRemoveMedia("front", id)}
+              />
+            }
           />
           <RichEditor
             key={`back-${p.editorKey}`}
@@ -136,6 +150,11 @@ export function NewCardView(p: Props) {
             onChange={p.onBackRich}
             error={p.errors.back}
             minHeight={80}
+            onImage={p.onBackImage}
+            onAudio={p.onBackAudio}
+            attachments={
+              <MediaStrip doc={p.backDoc} uris={p.mediaUris} onRemove={(id) => p.onRemoveMedia("back", id)} />
+            }
           />
         </>
       ) : null}
@@ -262,7 +281,7 @@ export function NewCardView(p: Props) {
           disabled={p.busy}
         />
       )}
-    </ScrollView>
+    </KeyboardScroll>
   );
 }
 

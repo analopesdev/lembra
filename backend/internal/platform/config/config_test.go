@@ -18,9 +18,14 @@ func TestLoad(t *testing.T) {
 		want    config.Config
 		wantErr bool
 	}{
-		{"padrões", map[string]string{}, config.Config{Env: "local", HTTPAddr: ":8080", LogLevel: slog.LevelInfo}, false},
+		{"padrões", map[string]string{}, config.Config{
+			Env: "local", HTTPAddr: ":8080", LogLevel: slog.LevelInfo,
+			S3Endpoint: "http://127.0.0.1:9000", S3Region: "us-east-1", S3Bucket: "lembra",
+			S3AccessKey: "lembra", S3SecretKey: "lembra-secret", S3PathStyle: true,
+			LocalUserID: "01900000-0000-7000-8000-000000000001",
+		}, false},
 		{"valores", map[string]string{"LEMBRA_ENV": "prod", "LEMBRA_HTTP_ADDR": ":9", "LEMBRA_LOG_LEVEL": "DEBUG", "LEMBRA_DATABASE_URL": "x"},
-			config.Config{Env: "prod", HTTPAddr: ":9", LogLevel: slog.LevelDebug, DatabaseURL: "x"}, false},
+			config.Config{Env: "prod", HTTPAddr: ":9", LogLevel: slog.LevelDebug, DatabaseURL: "x", S3PathStyle: true}, false},
 		{"nível inválido", map[string]string{"LEMBRA_LOG_LEVEL": "xx"}, config.Config{}, true},
 	}
 	for _, tt := range tests {

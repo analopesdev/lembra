@@ -15,6 +15,7 @@ import (
 	"github.com/getkin/kin-openapi/routers/gorillamux"
 
 	"github.com/analopesdev/lembra/backend/internal/kernel"
+	mediaapp "github.com/analopesdev/lembra/backend/internal/modules/media/app"
 	"github.com/analopesdev/lembra/backend/internal/platform/apigen"
 	"github.com/analopesdev/lembra/backend/internal/platform/httpx"
 	"github.com/analopesdev/lembra/backend/internal/platform/observ"
@@ -29,7 +30,7 @@ func (s *seqIDs) NewID() kernel.ID {
 
 func newHandler(buf *bytes.Buffer) http.Handler {
 	clock := kernel.NewFakeClock(time.Date(2026, 11, 22, 12, 0, 0, 0, time.UTC))
-	return httpx.NewHandler(observ.NewLogger(buf, -4), clock, &seqIDs{})
+	return httpx.NewHandler(observ.NewLogger(buf, -4), clock, &seqIDs{}, nil, "local", "01900000-0000-7000-8000-000000000001")
 }
 
 // Contrato HTTP: a resposta precisa obedecer ao contracts/openapi.yaml.
@@ -130,6 +131,42 @@ func TestRecoverTurnsPanicInto500(t *testing.T) {
 	h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/", nil))
 	if rec.Code != 500 {
 		t.Fatalf("status = %d", rec.Code)
+	}
+}
+
+type fakeObjects struct {
+	puts []string
+	keys map[string]bool
+}
+
+func (f *fakeObjects) PresignPut(_ context.Context, key, _ string, _ time.Duration) (string, error) {
+	f.puts = append(f.puts, key)
+	return "https://minio.local/put/" + key, nil
+}
+func (f *fakeObjects) PresignGet(_ context.Context, key string, _ time.Duration) (string, error) {
+	return "https://minio.local/get/" + key, nil
+}
+func (f *fakeObjects) Exists(_ context.Context, key string) (bool, error) { return f.keys[key], nil }
+
+func TestCreateMediaUpload(t *testing.T) {
+	clock := kernel.NewFakeClock(time.Date(2026, 11, 24, 12, 0, 0, 0, time.UTC))
+	ids := &seqIDs{}
+	media := mediaapp.New(ids, clock, &fakeObjects{keys: map[string]bool{}})
+	h := httpx.NewHandler(observ.NewLogger(&bytes.Buffer{}, -4), clock, ids, media, "local", "01900000-0000-7000-8000-000000000001")
+	body, _ := json.Marshal(map[string]any{"kind": "image", "contentType": "image/webp", "byteSize": 80})
+	req := httptest.NewRequest(http.MethodPost, "/v1/media", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status=%d body=%s", rec.Code, rec.Body.String())
+	}
+	var out apigen.MediaUpload
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	if out.Key == "" || out.UploadUrl == "" {
+		t.Fatalf("%+v", out)
 	}
 }
 

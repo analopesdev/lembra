@@ -47,5 +47,8 @@ export const MIGRATIONS: readonly (readonly string[])[] = [
   ],
   [
     "CREATE INDEX `idx_cards_pair` ON `cards` (`pair_id`);"
+  ],
+  [
+    "CREATE TABLE `media` (\n\t`id` text PRIMARY KEY NOT NULL,\n\t`kind` text NOT NULL,\n\t`mime` text NOT NULL,\n\t`local_path` text NOT NULL,\n\t`byte_size` integer NOT NULL,\n\t`uploaded_at` integer,\n\t`created_at` integer NOT NULL\n);"
   ]
 ];

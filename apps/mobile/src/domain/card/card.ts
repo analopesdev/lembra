@@ -10,6 +10,8 @@ export interface CardDraftInput {
   readonly collectionId: string | null;
   readonly importance: Importance;
   readonly kind?: CardKind;
+  readonly frontHasMedia?: boolean;
+  readonly backHasMedia?: boolean;
 }
 
 export type CardDraftResult =
@@ -31,9 +33,9 @@ export function validateCardDraft(input: CardDraftInput): CardDraftResult {
   const errors: CardDraftError[] = [];
   const doc = kind === "cloze" ? clozeDocFromSyntax(front) : null;
   const view = doc ? clozeView(serializeContent(doc)) : null;
-  if (front === "") errors.push("front_empty");
+  if (front === "" && !(kind !== "cloze" && input.frontHasMedia)) errors.push("front_empty");
   else if (kind === "cloze" && !view) errors.push("cloze_missing");
-  if (kind !== "cloze" && back === "") errors.push("back_empty");
+  if (kind !== "cloze" && back === "" && !input.backHasMedia) errors.push("back_empty");
   if (input.collectionId === null) errors.push("collection_missing");
   if (errors.length > 0 || input.collectionId === null) return { ok: false, errors };
   if (kind === "cloze" && doc && view) {

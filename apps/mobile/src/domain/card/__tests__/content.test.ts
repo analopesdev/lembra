@@ -1,4 +1,5 @@
 import {
+  appendMedia,
   clozeDocFromSyntax,
   clozeIds,
   clozeSyntaxFromDoc,
@@ -9,6 +10,8 @@ import {
   isEmptyContent,
   mediaIds,
   parseContent,
+  removeMedia,
+  retainMedia,
   serializeContent,
   toPlainText,
   type ContentDoc,
@@ -64,6 +67,17 @@ describe("conteúdo rico (ADR-0017)", () => {
 
   it("mídias são referenciadas por mediaId, na ordem do documento", () => {
     expect(mediaIds(rich)).toEqual(["m-1", "m-2"]);
+  });
+
+  it("appendMedia e retainMedia: o editor de texto não apaga as mídias", () => {
+    const withImg = appendMedia(fromPlainText("pergunta"), "image", "m-9");
+    expect(mediaIds(withImg)).toEqual(["m-9"]);
+    const typed = fromPlainText("pergunta nova");
+    expect(mediaIds(retainMedia(withImg, typed))).toEqual(["m-9"]);
+    expect(toPlainText(retainMedia(withImg, typed))).toBe("pergunta nova");
+    const two = appendMedia(withImg, "audio", "m-10");
+    expect(mediaIds(removeMedia(two, "m-9"))).toEqual(["m-10"]);
+    expect(toPlainText(removeMedia(two, "m-9"))).toBe("pergunta");
   });
 
   it("vazio: só espaço não conta, mídia sozinha conta como conteúdo", () => {

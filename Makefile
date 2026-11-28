@@ -1,7 +1,8 @@
 .PHONY: dev gen test test-int lint lint-arch-test migrate-up deps-up deps-down
 
 deps-up:
-	docker compose up -d --wait
+	docker compose up -d --wait postgres minio
+	docker compose run --rm minio-init
 
 deps-down:
 	docker compose down

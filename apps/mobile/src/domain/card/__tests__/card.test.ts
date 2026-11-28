@@ -21,6 +21,17 @@ describe("validateCardDraft (RF-20)", () => {
   ] as const)("recusa %j", (partial, errors) => {
     expect(validateCardDraft({ importance: 2, ...partial })).toEqual({ ok: false, errors });
   });
+  it("frente ou verso só com mídia é aceito", () => {
+    const r = validateCardDraft({
+      front: "",
+      back: "",
+      collectionId: "c1",
+      importance: 2,
+      frontHasMedia: true,
+      backHasMedia: true,
+    });
+    expect(r.ok).toBe(true);
+  });
 });
 
 describe("validateCardDraft por tipo (RF-51)", () => {

@@ -103,6 +103,16 @@ export const reviewLogs = sqliteTable(
   (t) => [index("idx_review_logs_card").on(t.cardId, t.at)],
 );
 
+export const media = sqliteTable("media", {
+  id: text("id").primaryKey(),
+  kind: text("kind").$type<"image" | "audio" | "video">().notNull(),
+  mime: text("mime").notNull(),
+  localPath: text("local_path").notNull(),
+  byteSize: integer("byte_size").notNull(),
+  uploadedAt: integer("uploaded_at", { mode: "timestamp_ms" }),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+});
+
 // Outbox (ADR-0008): gravada na mesma transação que a mudança.
 export const outbox = sqliteTable("outbox", {
   seq: integer("seq").primaryKey({ autoIncrement: true }),

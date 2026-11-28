@@ -8,11 +8,14 @@ import type { CollectionsRepository } from "./repositories/collections";
 import type { SettingsRepository } from "./repositories/settings";
 import { SqliteSettingsRepository } from "./repositories/settings.sqlite";
 import { SqliteCollectionsRepository } from "./repositories/collections.sqlite";
+import type { MediaRepository } from "./repositories/media";
+import { SqliteMediaRepository } from "./repositories/media.sqlite";
 
 export interface Container {
   readonly cards: CardsRepository;
   readonly collections: CollectionsRepository;
   readonly settings: SettingsRepository;
+  readonly media: MediaRepository;
   readonly now: () => Date;
   readonly newId: () => string;
 }
@@ -29,6 +32,7 @@ export function getContainer(): Promise<Container> {
       cards: new SqliteCardsRepository(db, deps),
       collections: new SqliteCollectionsRepository(db, deps),
       settings: new SqliteSettingsRepository(db, deps),
+      media: new SqliteMediaRepository(db),
       now,
       newId,
     };

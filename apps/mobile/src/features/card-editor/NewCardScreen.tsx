@@ -3,10 +3,18 @@ import { useTranslation } from "react-i18next";
 
 import { getContainer } from "@/data/container";
 import { validateCardDraft } from "@/domain/card/card";
+import { pickAudio, pickImage } from "@/data/media/capture";
+import { storeLocal } from "@/data/media/files";
+import { uploadIfPossible } from "@/data/media/upload";
 import {
+  appendMedia,
   clozeSyntaxFromDoc,
+  fromPlainText,
   hasFormatting,
+  mediaIds,
   parseContent,
+  removeMedia,
+  retainMedia,
   serializeContent,
   type ContentDoc,
 } from "@/domain/card/content";
@@ -43,6 +51,7 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [mediaUris, setMediaUris] = useState<Record<string, string>>({});
   const editing = cardId !== undefined;
 
   useEffect(() => {
@@ -87,7 +96,15 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
   }, [cardId]);
 
   const persist = async (): Promise<boolean> => {
-    const result = validateCardDraft({ front, back, collectionId, importance, kind });
+    const result = validateCardDraft({
+      front,
+      back,
+      collectionId,
+      importance,
+      kind,
+      frontHasMedia: !!frontRich && mediaIds(frontRich).length > 0,
+      backHasMedia: !!backRich && mediaIds(backRich).length > 0,
+    });
     if (!result.ok) {
       setErrors({
         front: result.errors.includes("front_empty")
@@ -139,6 +156,11 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
       } else {
         await c.cards.save(main);
       }
+      const ids = [...(frontRich ? mediaIds(frontRich) : []), ...(backRich ? mediaIds(backRich) : [])];
+      for (const id of ids) {
+        const item = await c.media.get(id);
+        if (item) void uploadIfPossible(c.media, item);
+      }
       return true;
     } finally {
       setBusy(false);
@@ -180,12 +202,33 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
 
   const onFrontRich = useCallback((v: RichValue) => {
     setFront(v.text);
-    setFrontRich(v.doc);
+    setFrontRich((prev) => retainMedia(prev, v.doc));
   }, []);
   const onBackRich = useCallback((v: RichValue) => {
     setBack(v.text);
-    setBackRich(v.doc);
+    setBackRich((prev) => retainMedia(prev, v.doc));
   }, []);
+
+  const attach = async (side: "front" | "back", kind: "image" | "audio") => {
+    const captured = kind === "image" ? await pickImage() : await pickAudio();
+    if (!captured) return;
+    const c = await getContainer();
+    const id = c.newId();
+    const stored = await storeLocal(id, captured.uri, captured.ext);
+    await c.media.save({
+      id,
+      kind: captured.kind,
+      mime: captured.mime,
+      localPath: stored.path,
+      byteSize: stored.bytes,
+      uploadedAt: null,
+      createdAt: c.now(),
+    });
+    setMediaUris((prev) => ({ ...prev, [id]: stored.path }));
+    const apply = side === "front" ? setFrontRich : setBackRich;
+    const text = side === "front" ? front : back;
+    apply((prev) => appendMedia(prev ?? fromPlainText(text), captured.kind, id));
+  };
 
   return (
     <>
@@ -196,6 +239,16 @@ export function NewCardScreen({ onDone, onClose, initialCollectionId, cardId }: 
         backInit={init.back}
         onFrontRich={onFrontRich}
         onBackRich={onBackRich}
+        frontDoc={frontRich}
+        backDoc={backRich}
+        mediaUris={mediaUris}
+        onFrontImage={() => void attach("front", "image")}
+        onFrontAudio={() => void attach("front", "audio")}
+        onBackImage={() => void attach("back", "image")}
+        onBackAudio={() => void attach("back", "audio")}
+        onRemoveMedia={(side, id) =>
+          (side === "front" ? setFrontRich : setBackRich)((prev) => (prev ? removeMedia(prev, id) : prev))
+        }
         kind={kind}
         onKind={setKind}
         front={front}

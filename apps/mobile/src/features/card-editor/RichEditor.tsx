@@ -23,7 +23,17 @@ import type { RichEditorProps, RichValue } from "./richTypes";
 
 export type { RichValue };
 
-function RichEditorInner({ label, initialDoc, initialText, onChange, error, minHeight = 120 }: RichEditorProps) {
+function RichEditorInner({
+  label,
+  initialDoc,
+  initialText,
+  onChange,
+  error,
+  minHeight = 120,
+  attachments,
+  onImage,
+  onAudio,
+}: RichEditorProps) {
   const t = useTheme();
   const [focused, setFocused] = useState(false);
   const onChangeRef = useRef(onChange);
@@ -31,7 +41,7 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
   useEffect(() => {
     onChangeRef.current = onChange;
   }, [onChange]);
-  const css = `* { background-color: ${t.surface}; color: ${t.text}; font-family: system-ui, sans-serif; font-size: 16px; } body { padding: 12px; }`;
+  const css = `* { background-color: ${t.surface}; color: ${t.text}; font-family: system-ui, sans-serif; font-size: 16px; } html, body { margin: 0; padding: 0; } #root div.dynamic-height div.ProseMirror { box-sizing: border-box; padding: 12px; min-height: ${minHeight}px; } div.ProseMirror p { margin: 0 0 8px; }`;
   const initialContent = useMemo(
     () => toEditorJson(initialDoc ?? fromPlainText(initialText)),
     [initialDoc, initialText],
@@ -44,6 +54,7 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
   const editor = useEditorBridge({
     autofocus: false,
     avoidIosKeyboard: true,
+    dynamicHeight: true,
     initialContent,
     bridgeExtensions: extensions,
     theme: theme as never,
@@ -66,6 +77,7 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
       <View style={{ minHeight }} onTouchStart={() => setFocused(true)}>
         <RichText editor={editor} style={{ minHeight }} onBlur={() => setFocused(false)} />
       </View>
+      {attachments}
       <FormatToolbar
         bold={state.isBoldActive}
         italic={state.isItalicActive}
@@ -73,6 +85,8 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
         onBold={() => editor.toggleBold()}
         onItalic={() => editor.toggleItalic()}
         onList={() => editor.toggleBulletList()}
+        onImage={onImage}
+        onAudio={onAudio}
       />
     </EditorField>
   );
@@ -80,5 +94,9 @@ function RichEditorInner({ label, initialDoc, initialText, onChange, error, minH
 
 export function RichEditor(props: RichEditorProps) {
   const mounted = useHydrated();
-  return mounted ? <RichEditorInner {...props} /> : <View style={{ minHeight: (props.minHeight ?? 120) + 44 }} />;
+  return mounted ? (
+    <RichEditorInner {...props} />
+  ) : (
+    <View style={{ minHeight: (props.minHeight ?? 120) + 44 }} />
+  );
 }

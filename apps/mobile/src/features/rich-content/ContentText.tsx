@@ -1,5 +1,7 @@
-import { StyleSheet, View, type TextStyle } from "react-native";
+import { useEffect, useState } from "react";
+import { Image, StyleSheet, View, type TextStyle } from "react-native";
 
+import { getContainer } from "@/data/container";
 import { parseContent, type ContentDoc } from "@/domain/card/content";
 import { Text, type Variant } from "@/shared/ui";
 import { useTheme } from "@/shared/ui/useTheme";
@@ -95,9 +97,36 @@ export function ContentText({ doc, fallback, variant = "corpo", style }: Props) 
             </Text>
           );
         }
+        if (b.type === "image" || b.type === "audio" || b.type === "video") {
+          return <AttachedMedia key={i} id={b.attrs.mediaId} kind={b.type} />;
+        }
         return null;
       })}
     </View>
+  );
+}
+
+function AttachedMedia({ id, kind }: { id: string; kind: "image" | "audio" | "video" }) {
+  const [uri, setUri] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    void getContainer().then((c) =>
+      c.media.get(id).then((m) => {
+        if (live) setUri(m?.localPath ?? null);
+      }),
+    );
+    return () => {
+      live = false;
+    };
+  }, [id]);
+  if (!uri) return null;
+  if (kind === "image") {
+    return <Image source={{ uri }} style={styles.img} accessibilityLabel="" />;
+  }
+  return (
+    <Text variant="legenda" style={styles.audio}>
+      {uri}
+    </Text>
   );
 }
 
@@ -107,4 +136,6 @@ const styles = StyleSheet.create({
   item: { flexDirection: "row", gap: 8 },
   itemBody: { flex: 1 },
   mono: { fontFamily: "monospace" },
+  img: { width: "100%", height: 180 },
+  audio: { marginTop: 4 },
 });

@@ -12,12 +12,14 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { enableScreens } from "react-native-screens";
 
+import { useMediaUploads } from "@/features/media-sync";
 import { useApplySettings } from "@/features/settings";
 
 enableScreens(true);
 
 export default function RootLayout() {
   useApplySettings();
+  useMediaUploads();
   // Manrope para texto e Sora (tabular-nums) para números de dados (DESIGN.md).
   const [loaded, error] = useFonts({
     Manrope_400Regular,
